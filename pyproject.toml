@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "storybook-factory"
+version = "0.1.0"
+description = "Generate personalized kids' coloring books (visual bible + prompts + Lulu-ready PDFs) from briefs."
+authors = [{name = "You", email = "you@example.com"}]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "Pillow>=10.0.0",
+    "PyYAML>=6.0",
+    "Jinja2>=3.1.0",
+    "openai>=1.0.0"
+
+]
+
+[project.scripts]
+storybook-factory = "storybook_factory.cli:main"

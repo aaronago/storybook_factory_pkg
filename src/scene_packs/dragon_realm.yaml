@@ -1,0 +1,312 @@
+# ============================================================
+# DRAGON REALM — REUSABLE SCENE PACK (POLISHED)
+# ============================================================
+
+
+# ============================================================
+# COVER PROMPTS — STORYBOOK PAINTERLY LOOK (LIKE REFERENCE)
+# ============================================================
+
+# ============================================================
+# COVER PROMPTS — REFERENCE-ANCHORED STORYBOOK STYLE
+# ============================================================
+
+covers:
+  front_cover:
+    file: "front_cover_color.png"
+
+    # CRITICAL: this is the image you uploaded that looks right
+    style_reference_image: "src/scene_packs/cover_refs/princess_cover_reference.png"
+
+    prompt: |
+      Children’s picture-book FRONT COVER illustration.
+
+      STYLE (MATCH REFERENCE IMAGE EXACTLY):
+      Match the illustration style, texture, color treatment, proportions,
+      and overall visual grammar of the provided reference image.
+      This includes:
+      - storybook gouache / airbrushed painterly finish
+      - clean, confident edges on characters
+      - softer, simplified background
+      - subtle canvas or paper texture
+      - saturated but clean colors (not pastel, not washed out)
+      - large expressive eyes, rounded cheeks, slightly oversized heads
+      - simplified, sturdy bodies (not thin, not floaty)
+
+      Do NOT reinterpret the style.
+      Do NOT switch to watercolor, pastel, or flat vector art.
+
+      ------------------------------------------------------------
+      CHARACTERS
+      ------------------------------------------------------------
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
+      must follow the same proportions, facial style, and rendering
+      treatment as characters in the reference image.
+
+      ------------------------------------------------------------
+      COMPOSITION (FRONT COVER — PRINT SAFE)
+      ------------------------------------------------------------
+
+      Camera:
+      Medium shot, knee-up framing.
+      Eye-level camera.
+      Characters are the largest and most detailed elements.
+
+      Blocking:
+      {{ child_names|join(' & ') }} stand close together as a unified pair.
+      One child is slightly forward and centered (primary hero).
+      The other child is slightly behind and overlapping at the shoulder (co-hero).
+      Avoid perfect symmetry and equal spacing.
+
+      Expression:
+      Both children smile warmly and make direct eye contact with the viewer.
+
+      Companion:
+      {{ pet_names|join(' & ') }} appear small and supportive near the lower edge,
+      clearly secondary and not competing with faces.
+
+      Background:
+      A colorful fantasy castle appears in the distance,
+      clearly smaller and less detailed than the characters.
+      Foreground grass and flowers are simple and uncluttered.
+
+      Title-safe area:
+      The top 35–40% of the image is clean open sky,
+      reserved for title placement.
+      Nothing may enter this area (no towers, birds, sparkles, dragons).
+
+      Print rules:
+      High contrast between characters and background.
+      Keep all faces and important details well inside safety margins.
+      No text in the artwork.
+
+      STRICT NEGATIVES:
+      - no text, letters, numbers, logos
+      - no extra children or pets
+      - no dramatic action poses or running
+      - no vignette, frame, or border
+      - no flat vector style
+      - no watercolor bleed or pastel wash
+
+  back_cover:
+    file: "back_cover_color.png"
+
+    # SAME reference image to lock style consistency
+    style_reference_image: "src/scene_packs/cover_refs/princess_cover_reference.png"
+
+    prompt: |
+      Children’s picture-book BACK COVER illustration.
+
+      STYLE (MATCH REFERENCE IMAGE EXACTLY):
+      Match the illustration style, texture, color treatment,
+      and character proportions of the provided reference image.
+      Maintain visual continuity with the front cover.
+
+      ------------------------------------------------------------
+      CHARACTERS
+      ------------------------------------------------------------
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
+      must match the front cover exactly in appearance and style.
+
+      ------------------------------------------------------------
+      COMPOSITION (BACK COVER — QUIET & TEXT FRIENDLY)
+      ------------------------------------------------------------
+
+      Scene:
+      {{ child_names|join(' & ') }} are seen from behind,
+      walking side-by-side along a gentle path toward a distant castle.
+      Their heads are close together, clearly connected.
+      {{ pet_names|join(' & ') }} walk calmly beside them, small and secondary.
+
+      Tone:
+      Peaceful, story-continuing.
+      No eye contact with the viewer.
+      No dramatic gestures or action.
+
+      Background:
+      Rolling hills and a distant castle, softly simplified.
+      Upper 50% of the image is clean open sky
+      reserved for back-cover text.
+      Bottom-right area is visually calm for ISBN barcode.
+
+      Contrast:
+      Slightly softer contrast and saturation than the front cover,
+      but same color palette and style.
+
+      Print rules:
+      Keep all key elements inside safety margins.
+      No text in the artwork.
+
+      STRICT NEGATIVES:
+      - no text, letters, numbers, logos
+      - no extra characters or creatures
+      - no dramatic lighting or storms
+      - no vignette, frame, or border
+      - no flat vector or watercolor styles
+
+
+
+# ============================================================
+# INTERIOR SCENES (SCENE ONLY — STYLE & BIBLE ADDED BY GENERATOR)
+# ============================================================
+
+scenes:
+  - page: 2
+    title: "Portal Discovery"
+    prompt: |
+      {{ child_names|join(' & ') }} discover a swirling magical portal in a bright, open forest clearing.
+      Inside the portal are outline-only silhouettes of two friendly dragons.
+      {{ pet_names|join(' & ') }} look up curiously.
+      Environment: tall trees, mushrooms, ferns, and forest plants with lots of white space.
+      Composition: portal in the upper half; kids and pets in the lower half.
+
+  - page: 3
+    title: "Dragon Hatchlings"
+    prompt: |
+      {{ child_names|join(' & ') }} kneel beside a nest of dragon eggs.
+      Baby dragons peek out of cracked shells.
+      {{ pet_names|join(' & ') }} watch sweetly.
+      Environment: grass, flowers, and smooth stones with plenty of white space.
+      Composition: nest in foreground; kids behind.
+
+  - page: 4
+    title: "Wizard’s Tower"
+    prompt: |
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} walk up a hill toward a tall wizard’s tower.
+      A friendly dragon waves from a balcony.
+      Environment: winding path, hills, clouds, and distant mountains.
+      Composition: tower in upper area; characters lower area; open sky.
+
+  - page: 5
+    title: "Rainbow Bridge"
+    prompt: |
+      {{ child_names|join(' & ') }} cross a high arched bridge with {{ pet_names|join(' & ') }} close beside them.
+      A friendly dragon flies alongside.
+      Environment: clouds and distant hills.
+      Composition: bridge sweeping across the page with open sky and lots of white space.
+
+  - page: 6
+    title: "Training Day"
+    prompt: |
+      {{ child_names|join(' & ') }} practice gentle dragon training in an open field.
+      {{ pet_names|join(' & ') }} sit nearby watching.
+      Environment: simple props, grass, and rolling hills.
+      Composition: characters centered with open space around them.
+
+  - page: 7
+    title: "Fairy Grove"
+    prompt: |
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} explore a grove of giant mushrooms and flowers.
+      Tiny sprites and baby dragons peek out from behind plants.
+      Environment: layered plants and trees with lots of white space.
+
+  - page: 8
+    title: "Dragon Flight"
+    prompt: |
+      {{ child_names|join(' & ') }} ride safely on a friendly dragon through the sky, with {{ pet_names|join(' & ') }} riding along.
+      Environment: clouds and rolling hills below.
+      Composition: dragon sweeping diagonally across the page; open sky.
+
+  - page: 9
+    title: "Crystal Cave"
+    prompt: |
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} explore a crystal cave with simple geometric crystals.
+      Environment: crystals along cave walls; clear outlines; plenty of white space.
+      Composition: cave walls framing the scene.
+
+  - page: 10
+    title: "Friendly Goblins"
+    prompt: |
+      Friendly goblins greet {{ child_names|join(' & ') }} and offer flowers.
+      {{ pet_names|join(' & ') }} sniff curiously.
+      Environment: small village clearing with huts, paths, and simple plants.
+
+  - page: 11
+    title: "Storm Magic"
+    prompt: |
+      Magical storm clouds swirl gently above a lake.
+      Dragon-shaped lightning appears as simple line squiggles.
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} stand safely beneath a tree.
+      Composition: sky upper half; characters lower half; keep background mostly white.
+
+  - page: 12
+    title: "Moonlight Library"
+    prompt: |
+      {{ child_names|join(' & ') }} read books in an open-air library while {{ pet_names|join(' & ') }} rest nearby.
+      Environment: shelves, tables, stars, and a moon drawn simply.
+      Keep the sky mostly white with outlines only (no filled dark areas).
+
+  - page: 13
+    title: "Grand Feast"
+    prompt: |
+      {{ child_names|join(' & ') }} share a feast with friendly dragons at a long table.
+      {{ pet_names|join(' & ') }} sit nearby.
+      Environment: plates, banners, and smiling creatures; lots of white space.
+
+  - page: 14
+    title: "Elder Blessing"
+    prompt: |
+      An elder dragon gently blesses {{ child_names|join(' & ') }} while {{ pet_names|join(' & ') }} sit calmly.
+      Magical sparkles float as simple star icons.
+      Environment: open area with minimal background clutter and plenty of white space.
+
+  - page: 15
+    title: "Coronation"
+    prompt: |
+      Dragons place small crowns or wreaths on {{ child_names|join(' & ') }}.
+      {{ pet_names|join(' & ') }} wear tiny crowns.
+      Environment: cheering dragons, simple banners, and open space.
+
+  - page: 17
+    title: "Hatchling Ride"
+    prompt: |
+      {{ child_names|join(' & ') }} ride young dragons above rolling hills with {{ pet_names|join(' & ') }} riding securely.
+      Environment: river, hills, clouds.
+      Composition: open sky; minimal heavy background lines.
+
+  - page: 18
+    title: "Hidden Waterfall"
+    prompt: |
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} discover a cave behind a waterfall.
+      Small dragons peek out from the cave entrance.
+      Environment: rocks, flowing water, cave opening; use outlines only and lots of white space.
+
+  - page: 19
+    title: "Ancient Runes"
+    prompt: |
+      {{ child_names|join(' & ') }} trace simple runes on tall standing stones while {{ pet_names|join(' & ') }} explore nearby.
+      Environment: stone circle, grass, and small plants; plenty of white space.
+
+  - page: 20
+    title: "Forest Music"
+    prompt: |
+      {{ child_names|join(' & ') }} sit in a forest clearing as sprites play music.
+      {{ pet_names|join(' & ') }} relax nearby.
+      Environment: trees, simple instruments, lanterns; keep background mostly white.
+
+  - page: 21
+    title: "Potion Workshop"
+    prompt: |
+      {{ child_names|join(' & ') }} mix potions in a wizard’s workshop while {{ pet_names|join(' & ') }} watch curiously.
+      Environment: shelves, bottles, tables; outline-only bubbles; lots of white space.
+
+  - page: 22
+    title: "Dream Tree"
+    prompt: |
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} stand beneath a giant dream tree.
+      Tiny dragons nap on branches.
+      Environment: doors in the trunk, leaves, roots; open white space between elements.
+
+  - page: 23
+    title: "Dragon Parade"
+    prompt: |
+      {{ child_names|join(' & ') }} walk in a parade with friendly dragons and mythical creatures while {{ pet_names|join(' & ') }} trot proudly.
+      Environment: village street, flags, confetti shapes; keep the background light and open.
+
+  - page: 24
+    title: "Lantern Festival"
+    prompt: |
+      {{ child_names|join(' & ') }} release lanterns by a calm lake while {{ pet_names|join(' & ') }} help gently.
+      A few friendly dragons glide overhead.
+      Environment: water, reflections, and open sky, all drawn with thin outline strokes only.
+      IMPORTANT: reflections are indicated with a few thin outline strokes only (no filled areas).

@@ -1,0 +1,75 @@
+{
+  "visual_bible_version": "1.3",
+  "project": "Elliott & Colette: The Dragon Realm Adventure",
+  "page_format": {
+    "trim_in": {
+      "w": 8.5,
+      "h": 11.0
+    },
+    "bleed_in": 0.125,
+    "dpi": 300,
+    "pixels": {
+      "w": 2550,
+      "h": 3300
+    },
+    "orientation": "portrait",
+    "interior_color_space": "grayscale",
+    "cover_color_space": "RGB-sRGB"
+  },
+  "style": {
+    "medium": "coloring-book line art",
+    "lines": {
+      "primary_px": 5,
+      "secondary_px": 3,
+      "rules": [
+        "bold, clean outlines",
+        "no shading",
+        "no halftones",
+        "no gradients",
+        "no filled black areas",
+        "white background"
+      ]
+    },
+    "bg_rules": "readable backgrounds; ample white space for coloring",
+    "do_not": [
+      "extra humans not listed in the cast",
+      "duplicate or invented pets",
+      "on-image text/logos except painted title/subtitle on front cover if explicitly requested",
+      "comic panels or split frames"
+    ]
+  },
+  "cast": {
+    "children": [
+      {
+        "name": "Elliott",
+        "age": "4\u20135",
+        "appearance_desc": "short straight light-brown hair; big gray-blue eyes; round cheeks; friendly adventurous expression",
+        "outfit_desc": "medieval tunic with belt and boots or casual explorer outfit",
+        "personality": "brave, gentle, curious",
+        "photo_urls": []
+      },
+      {
+        "name": "Colette",
+        "age": "2\u20133",
+        "appearance_desc": "wavy brown hair in a top knot; large gray-blue eyes; soft cheeks",
+        "outfit_desc": "whimsical princess-meets-adventurer dress with floral or heart motifs",
+        "personality": "joyful, mischievous, fascinated by magic and animals",
+        "photo_urls": []
+      }
+    ],
+    "pets": [
+      {
+        "name": "Winnie",
+        "species": "Chihuahua\u2013Pug mix",
+        "appearance_desc": "tan fur; upright ears; curled tail; small size",
+        "personality": "loyal, playful, slightly regal",
+        "photo_urls": []
+      }
+    ]
+  },
+  "print_safety": {
+    "interior_bleed_in": 0.125,
+    "cover_bleed_in": 0.125,
+    "safety_margin_in": 0.5
+  }
+}
