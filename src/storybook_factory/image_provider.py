@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import base64
 import shutil
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Dict
 
-from PIL import Image, ImageDraw, ImageFont
 from openai import OpenAI
+from PIL import Image, ImageDraw, ImageFont
 
 # Simple default font for placeholder text
 DEFAULT_FONT = ImageFont.load_default()
@@ -105,7 +105,7 @@ class ImageProvider:
         Draw a simple placeholder image with a border and text so you
         can see layout & prompts without paying for image generation.
         """
-        w, h = (self.cover_px if cover else self.interior_px)
+        w, h = self.cover_px if cover else self.interior_px
         img = Image.new("RGB", (w, h), "white")
         draw = ImageDraw.Draw(img)
 
@@ -155,11 +155,13 @@ class ImageProvider:
         filename: str,
         prompt: str,
         cover: bool = False,
-        reference_image: Path | None = None
+        reference_image: Path | None = None,
     ) -> Path:
         """
         Call OpenAI's image API to generate a PNG for this page or cover,
         then resize it to the exact pixel size required by the pipeline.
+
+        If reference_image is provided, use images.edits() to anchor style.
         """
         if self.client is None:
             raise RuntimeError(
@@ -184,26 +186,29 @@ class ImageProvider:
             prompt = self._trim_prompt(prompt, 1000)
 
         if self.dry_run:
-            print(f"[dry-run] would generate {filename} using model={model_name} size={api_size}")
+            print(
+                f"[dry-run] would generate {filename} using model={model_name} size={api_size}"
+            )
+            if reference_image:
+                print(f"[dry-run] reference_image={reference_image}")
             print(prompt)
             print("-" * 80)
-            # Emit a placeholder instead of calling the API
             return self._placeholder(filename, f"[DRY RUN] {prompt}", cover=cover)
 
-        # Handle reference image if provided
+        # --- IMPORTANT: branch here ---
         if reference_image:
-            # Encode reference image as base64
-            with open(reference_image, "rb") as img_file:
-                ref_b64 = base64.b64encode(img_file.read()).decode('utf-8')
-            
-            # For gpt-image-1, use the reference_image parameter
-            result = self.client.images.generate(
-                model=model_name,
-                prompt=prompt,
-                size=api_size,
-                n=1,
-                reference_image=ref_b64,
-            )
+            with open(reference_image, "rb") as f:
+                kwargs = dict(
+                    model=model_name,  # "gpt-image-1"
+                    image=[f],  # NOTE: list of file objects
+                    prompt=prompt,
+                    size=api_size,
+                )
+                # Optional: only if your SDK supports it
+                kwargs["input_fidelity"] = "high"
+
+                result = self.client.images.edit(**kwargs)
+
         else:
             result = self.client.images.generate(
                 model=model_name,
@@ -228,7 +233,7 @@ class ImageProvider:
     # Public API used by the pipeline
     # ------------------------------------------------------------------
 
-    def render_interior(self, interior_prompts: Iterable[Dict]) -> None:
+    def render_interior(self, interior_prompts: Iterable[dict]) -> None:
         """
         Generate/copy all interior page images according to mode.
         """
@@ -253,7 +258,7 @@ class ImageProvider:
             else:
                 self._placeholder(fname, f"[INTERIOR PAGE] {prompt}", cover=False)
 
-    def render_covers(self, covers: Dict[str, Dict]) -> None:
+    def render_covers(self, covers: dict[str, dict]) -> None:
         """
         Generate/copy cover images (front & back).
 
@@ -294,7 +299,9 @@ class ImageProvider:
                     continue
 
                 if ref_path:
-                    print(f"[gpt-image] generating cover image (with reference): {fname}")
+                    print(
+                        f"[gpt-image] generating cover image (with reference): {fname}"
+                    )
                     print(f"[gpt-image]   reference: {ref_path}")
                 else:
                     print(f"[gpt-image] generating cover image: {fname}")
@@ -308,4 +315,3 @@ class ImageProvider:
 
             else:
                 self._placeholder(fname, f"[COVER {key}] {prompt}", cover=True)
-
