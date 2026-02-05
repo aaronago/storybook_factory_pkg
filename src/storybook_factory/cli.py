@@ -2,11 +2,16 @@ import argparse
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from .generator import generate_from_brief
 from .pipeline import run_pipeline
-from dotenv import load_dotenv
+from .settings import settings
+
 load_dotenv()
 
+
+print(settings.summary())
 
 
 def main():
@@ -43,7 +48,9 @@ def main():
         help="Generate all images, PDFs, and final ZIP package",
     )
     p2.add_argument("--config-dir", required=True, help="Config directory (JSON files)")
-    p2.add_argument("--output-dir", required=True, help="Output directory for artifacts")
+    p2.add_argument(
+        "--output-dir", required=True, help="Output directory for artifacts"
+    )
     p2.add_argument(
         "--assets-dir",
         default="assets",

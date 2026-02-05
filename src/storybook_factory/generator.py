@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Dict, Any, List
-import yaml
 import json
 import re
+from pathlib import Path
+from typing import Any
 
+import yaml
 from jinja2 import Template
 
 DEFAULT_TRIM = {"w": 8.5, "h": 11.0}
@@ -18,20 +18,20 @@ def slug(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 
-def load_yaml(path: Path) -> Dict[str, Any]:
+def load_yaml(path: Path) -> dict[str, Any]:
     return yaml.safe_load(path.read_text())
 
 
-def _render_template(s: str, ctx: Dict[str, Any]) -> str:
+def _render_template(s: str, ctx: dict[str, Any]) -> str:
     return Template(s).render(**ctx)
 
 
-def _describe_child(c: Dict[str, Any]) -> str:
+def _describe_child(c: dict[str, Any]) -> str:
     name = c.get("name", "Child")
     age = c.get("age")
     appearance = c.get("appearance_desc") or c.get("appearance") or ""
     outfit = c.get("outfit_desc") or c.get("outfits") or ""
-    bits: List[str] = [name]
+    bits: list[str] = [name]
     if age:
         bits.append(f"age {age}")
     if appearance:
@@ -41,11 +41,11 @@ def _describe_child(c: Dict[str, Any]) -> str:
     return ", ".join(bits)
 
 
-def _describe_pet(p: Dict[str, Any]) -> str:
+def _describe_pet(p: dict[str, Any]) -> str:
     name = p.get("name", "Pet")
     species = p.get("species")
     appearance = p.get("appearance_desc") or p.get("appearance") or ""
-    bits: List[str] = [name]
+    bits: list[str] = [name]
     if species:
         bits.append(f"a {species}")
     if appearance:
@@ -61,7 +61,7 @@ def _strip_leading_scene_label(text: str) -> str:
     return t
 
 
-def _build_context(brief: Dict[str, Any], theme: Dict[str, Any]) -> Dict[str, Any]:
+def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, Any]:
     children = brief.get("children", []) or []
     pets = brief.get("pets", []) or []
 
@@ -71,7 +71,7 @@ def _build_context(brief: Dict[str, Any], theme: Dict[str, Any]) -> Dict[str, An
     child_descs = [_describe_child(c) for c in children]
     pet_descs = [_describe_pet(p) for p in pets]
 
-    def join_human(names: List[str]) -> str:
+    def join_human(names: list[str]) -> str:
         if not names:
             return "the children"
         if len(names) == 1:
@@ -104,27 +104,33 @@ def _build_context(brief: Dict[str, Any], theme: Dict[str, Any]) -> Dict[str, An
     )
 
     # Character bible (once per prompt)
-    character_bible_lines: List[str] = []
+    character_bible_lines: list[str] = []
     if child_descs:
-        character_bible_lines.append("Children (draw these the same way on every page):")
+        character_bible_lines.append(
+            "Children (draw these the same way on every page):"
+        )
         for desc in child_descs:
             character_bible_lines.append(f"- {desc}")
     else:
-        character_bible_lines.append("Children: use the same specific kids as described in the brief.")
+        character_bible_lines.append(
+            "Children: use the same specific kids as described in the brief."
+        )
 
     if pet_descs:
         character_bible_lines.append("Pets (draw these the same way on every page):")
         for desc in pet_descs:
             character_bible_lines.append(f"- {desc}")
     else:
-        character_bible_lines.append("Pets: use the same specific pets as described in the brief.")
+        character_bible_lines.append(
+            "Pets: use the same specific pets as described in the brief."
+        )
 
     character_bible_lines.append(
         "Keep these characters consistent. Do NOT replace them with generic children or generic pets."
     )
     character_bible = "\n".join(character_bible_lines)
 
-    ctx: Dict[str, Any] = {
+    ctx: dict[str, Any] = {
         "child_names": child_names,
         "pet_names": pet_names,
         "child_descriptions": child_descs,
@@ -140,7 +146,9 @@ def _build_context(brief: Dict[str, Any], theme: Dict[str, Any]) -> Dict[str, An
     return ctx
 
 
-def generate_from_brief(brief_path: Path, theme_path: Path, out_dir: Path) -> Dict[str, Any]:
+def generate_from_brief(
+    brief_path: Path, theme_path: Path, out_dir: Path
+) -> dict[str, Any]:
     """
     Load a YAML brief + theme/scene-pack, construct a rich context (visual bible + cast),
     and emit:
@@ -203,7 +211,7 @@ def generate_from_brief(brief_path: Path, theme_path: Path, out_dir: Path) -> Di
     }
 
     scenes = brief.get("scenes") or theme.get("scenes", [])
-    interior_prompts: List[Dict[str, Any]] = []
+    interior_prompts: list[dict[str, Any]] = []
 
     for sc in scenes:
         page = sc["page"]
@@ -228,7 +236,7 @@ def generate_from_brief(brief_path: Path, theme_path: Path, out_dir: Path) -> Di
         )
 
     covers_cfg = theme.get("covers", {})
-    covers: Dict[str, Any] = {}
+    covers: dict[str, Any] = {}
 
     for key, cov in covers_cfg.items():
         scene_text = _render_template(cov.get("prompt", ""), ctx).strip()
