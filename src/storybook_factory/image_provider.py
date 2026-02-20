@@ -37,6 +37,7 @@ class ImageProvider:
         openai_interior_model: str | None = None,
         assets_dir: Path | None = None,
         dry_run: bool = False,
+        image_quality: str = "standard",
     ):
         self.out_dir = out_dir
         self.interior_px = self._normalize_px(interior_px, name="interior_px")
@@ -47,16 +48,22 @@ class ImageProvider:
         self.assets_dir = assets_dir
         self.dry_run = dry_run
 
-        if self.mode == "gpt-image":
-            self.client = OpenAI()
-        else:
-            self.client = None
-
         # Allow overrides via env
         self.interior_api_size = os.getenv("STORYBOOK_INTERIOR_API_SIZE", "1024x1536")
         self.cover_api_size = os.getenv("STORYBOOK_COVER_API_SIZE", "1536x1024")
-        self.interior_quality = os.getenv("STORYBOOK_INTERIOR_QUALITY", "high")
-        self.cover_quality = os.getenv("STORYBOOK_COVER_QUALITY", "high")
+        self.interior_quality = os.getenv("STORYBOOK_INTERIOR_QUALITY", image_quality)
+        self.cover_quality = os.getenv("STORYBOOK_COVER_QUALITY", image_quality)
+
+        # Prevent "hang forever"
+        # You can override:
+        #   STORYBOOK_OPENAI_TIMEOUT=90
+        #   STORYBOOK_OPENAI_RETRIES=1
+        if self.mode == "gpt-image":
+            timeout_s = float(os.getenv("STORYBOOK_OPENAI_TIMEOUT", "120"))
+            max_retries = int(os.getenv("STORYBOOK_OPENAI_RETRIES", "2"))
+            self.client = OpenAI(timeout=timeout_s, max_retries=max_retries)
+        else:
+            self.client = None
 
     @staticmethod
     def _normalize_px(val, name: str):
@@ -111,6 +118,7 @@ class ImageProvider:
             y += 20
 
         out_path = self.out_dir / filename
+        out_path.parent.mkdir(parents=True, exist_ok=True)
         img.save(out_path, "PNG")
         return out_path
 
@@ -120,12 +128,13 @@ class ImageProvider:
         src = self.assets_dir / filename
         if src.exists():
             dst = self.out_dir / filename
+            dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
             return dst
         return None
 
     # ----------------------------
-    # New: candidate generation
+    # Candidate generation
     # ----------------------------
 
     def generate_candidates(
@@ -135,15 +144,19 @@ class ImageProvider:
         prompt: str,
         cover: bool = False,
         n: int = 1,
+        reference_images: list[Path] | None = None,
     ) -> list[Path]:
         """
-        Generate N candidate images for a given prompt and return their paths.
-        Does not pick the best; that belongs in the pipeline/reviewer.
+        Generate up to 2 candidate images for a given prompt and return their paths.
+        If reference_images are provided, use images.edit() with a blank canvas + refs
+        to anchor identity/style (matches "upload refs with prompt" behavior).
         """
+        # HARD CAP: never exceed 2 candidates
+        n = max(1, min(int(n), 2))
+
         if self.mode != "gpt-image":
             # For mock/folder mode, just create one placeholder candidate.
-            fname = base_filename
-            return [self._placeholder(fname, prompt, cover=cover)]
+            return [self._placeholder(base_filename, prompt, cover=cover)]
 
         if self.client is None:
             raise RuntimeError(
@@ -164,13 +177,12 @@ class ImageProvider:
         if not model_name:
             raise RuntimeError("No OpenAI model configured for this image type.")
 
-        # DALL·E 2 strict prompt limit
-        if model_name == "dall-e-2":
-            prompt = self._trim_prompt(prompt, 1000)
+        refs = [Path(p) for p in (reference_images or []) if Path(p).exists()]
 
         if self.dry_run:
             print(
-                f"[dry-run] would generate {n} candidates for {base_filename} model={model_name} size={api_size}"
+                f"[dry-run] would generate {n} candidates for {base_filename} "
+                f"model={model_name} size={api_size} refs={len(refs)}"
             )
             print(prompt)
             print("-" * 80)
@@ -178,16 +190,67 @@ class ImageProvider:
                 self._placeholder(base_filename, f"[DRY RUN] {prompt}", cover=cover)
             ]
 
-        # Generate N
-        result = self.client.images.generate(
-            model=model_name,
-            prompt=prompt,
-            size=api_size,
-            n=n,
-            quality=quality,
-            output_format="png",
-        )
+        # --- With reference images: use edit endpoint with a blank canvas + refs ---
+        if refs:
+            import io
 
+            # Create a blank canvas matching the API size, so we aren't "editing" a ref sheet.
+            w_str, h_str = api_size.lower().split("x", 1)
+            w, h = int(w_str), int(h_str)
+
+            blank = Image.new("RGB", (w, h), "white")
+            buf = io.BytesIO()
+            blank.save(buf, format="PNG")
+            buf.seek(0)
+
+            # Some SDKs like a filename attribute
+            try:
+                buf.name = "blank.png"  # type: ignore[attr-defined]
+            except Exception:
+                pass
+
+            files = [buf]
+            opened_files = []
+
+            try:
+                for rp in refs:
+                    f = open(rp, "rb")
+                    opened_files.append(f)
+                    files.append(f)
+
+                result = self.client.images.edit(
+                    model=model_name,
+                    image=files,  # blank first, then refs
+                    prompt=prompt,
+                    size=api_size,
+                    n=n,
+                    input_fidelity="high",
+                    quality=quality,
+                )
+            finally:
+                # Close only the on-disk files; BytesIO doesn't need explicit close but safe anyway.
+                for f in opened_files:
+                    try:
+                        f.close()
+                    except Exception:
+                        pass
+                try:
+                    buf.close()
+                except Exception:
+                    pass
+
+        # --- No reference images: standard generation ---
+        else:
+            result = self.client.images.generate(
+                model=model_name,
+                prompt=prompt,
+                size=api_size,
+                n=n,
+                quality=quality,
+                output_format="png",
+            )
+
+        # Write + resize outputs
         out_paths: list[Path] = []
         for i, data in enumerate(result.data):
             b64_data = data.b64_json
@@ -195,6 +258,7 @@ class ImageProvider:
 
             cand_name = self._candidate_name(base_filename, i)
             out_path = self.out_dir / cand_name
+            out_path.parent.mkdir(parents=True, exist_ok=True)
             out_path.write_bytes(img_bytes)
 
             img = (
@@ -208,20 +272,30 @@ class ImageProvider:
 
         return out_paths
 
+    # ----------------------------
+    # Edits (UPGRADED: multi-image + out_subdir)
+    # ----------------------------
+
     def apply_edit(
         self,
         *,
-        input_image: Path,
+        input_images: list[Path],
         prompt: str,
         out_filename: str,
         cover: bool = False,
+        out_subdir: str | None = None,
     ) -> Path:
         """
-        Optional edit pass for a selected candidate.
-        Useful to remove shading, simplify background, thicken outlines, etc.
+        Optional edit pass.
+        UPGRADED:
+          - accepts multiple input images (identity is much better for humans)
+          - supports writing to an output subdirectory (e.g. refs/)
         """
         if self.mode != "gpt-image":
-            return input_image
+            # In non-gpt mode, just return a placeholder.
+            return self._placeholder(
+                out_filename, f"[EDIT SKIPPED] {prompt}", cover=cover
+            )
 
         if self.client is None:
             raise RuntimeError(
@@ -242,7 +316,7 @@ class ImageProvider:
 
         if self.dry_run:
             print(
-                f"[dry-run] would edit {input_image} into {out_filename} using model={model_name} size={api_size}"
+                f"[dry-run] would edit {len(input_images)} images into {out_filename} using model={model_name} size={api_size}"
             )
             print(prompt)
             print("-" * 80)
@@ -250,21 +324,34 @@ class ImageProvider:
                 out_filename, f"[DRY RUN EDIT] {prompt}", cover=cover
             )
 
-        with open(input_image, "rb") as f:
+        files = []
+        try:
+            for p in input_images:
+                files.append(open(p, "rb"))
+
             kwargs = dict(
                 model=model_name,
-                image=[f],
+                image=files,  # multi-image input
                 prompt=prompt,
                 size=api_size,
             )
-            # Some SDKs accept this; harmless if ignored.
+            # Many SDKs accept this; harmless if ignored.
             kwargs["input_fidelity"] = "high"
+
             result = self.client.images.edit(**kwargs)
+        finally:
+            for f in files:
+                try:
+                    f.close()
+                except Exception:
+                    pass
 
         b64_data = result.data[0].b64_json
         img_bytes = base64.b64decode(b64_data)
 
-        out_path = self.out_dir / out_filename
+        base_dir = self.out_dir if not out_subdir else (self.out_dir / out_subdir)
+        base_dir.mkdir(parents=True, exist_ok=True)
+        out_path = base_dir / out_filename
         out_path.write_bytes(img_bytes)
 
         img = (
@@ -276,17 +363,12 @@ class ImageProvider:
         return out_path
 
     def finalize_candidate(self, *, candidate_path: Path, final_filename: str) -> Path:
-        """
-        Copy/rename the chosen candidate image to the final filename the rest of the pipeline expects.
-        """
         final_path = self.out_dir / final_filename
+        final_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(candidate_path, final_path)
         return final_path
 
     def cleanup_candidates(self, *, base_filename: str) -> None:
-        """
-        Remove candidate files for a given base filename.
-        """
         stem = Path(base_filename).stem
         for p in self.out_dir.glob(f"{stem}__cand*.png"):
             try:
@@ -299,15 +381,10 @@ class ImageProvider:
         return f"{p.stem}__cand{idx:02d}.png"
 
     # ----------------------------
-    # Existing public API
+    # Legacy API (kept)
     # ----------------------------
 
     def render_interior(self, interior_prompts: Iterable[dict]) -> None:
-        """
-        Legacy behavior: generate one image per prompt (or placeholder).
-        Kept for backwards compatibility, but the new pipeline should use
-        generate_candidates + reviewer selection.
-        """
         for p in interior_prompts:
             fname = p["file"]
             prompt = p["prompt"]
@@ -334,9 +411,8 @@ class ImageProvider:
                 self._placeholder(fname, f"[INTERIOR PAGE] {prompt}", cover=False)
 
     def render_covers(self, covers: dict[str, dict]) -> None:
-        """
-        Legacy behavior for covers.
-        """
+        # Covers disabled in your current direction, but keeping legacy method
+        # doesn't hurt. You can delete later.
         for key, cov in covers.items():
             fname = cov.get("file")
             prompt = cov.get("prompt", "")

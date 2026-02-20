@@ -65,6 +65,9 @@ PROMPT OPTIMIZATION GUIDELINES:
   (e.g., composition, framing, line clarity)
 - Do NOT add creative flourishes beyond what the user specified
 
+Do NOT include any text, lettering, captions, titles, or typography in the image.
+Illustration only.
+
 OUTPUT FORMAT:
 Return valid JSON exactly in this shape and nothing else:
 {"optimized_prompt": "FINAL PROMPT STRING HERE"}

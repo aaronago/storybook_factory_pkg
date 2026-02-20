@@ -40,6 +40,8 @@ Thumbs.db
 
 # Output files
 outputs/
+out/
+assets/
 *.pdf
 *.zip
 
