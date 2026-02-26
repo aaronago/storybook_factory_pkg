@@ -4,6 +4,7 @@
 
 globals:
 
+
   # ------------------------------------------------------------
   # Global safety (auto-injected by generator)
   # ------------------------------------------------------------
@@ -30,6 +31,29 @@ globals:
   style_action: |
     STYLE: classic kids’ coloring-book illustration (NOT chibi).
     Natural proportions with gentle action energy, but keep shapes simple and readable.
+
+    cover:
+    trim_width_in: 8.625
+    trim_height_in: 11.25
+    full_wrap_width_in: 17.25
+    full_wrap_height_in: 11.25
+    dpi: 300
+
+  # FULL COLOR cover style
+  cover_art_style: |
+    Full-color, premium children’s fantasy book cover illustration.
+    Rich, warm color palette with cinematic lighting and soft atmosphere.
+    Clean, high-detail illustration with crisp edges (not blurry).
+    NOT chibi. Natural child proportions, clear facial expressions.
+    High-end storybook look (modern, elegant, magical).
+    No watermark.
+
+  # Keep predictable negative space for typography
+  cover_comp_rules: |
+    Provide clear negative space for typography:
+    - Leave the top ~25% of the FRONT cover as mostly open sky/glow (low detail).
+    - Do NOT draw frames, rectangles, title boxes, or bordered placeholders.
+    - Do NOT draw any letters/words/symbols or fake text scribbles anywhere.
 
   # ------------------------------------------------------------
   # Composition fragments
@@ -84,6 +108,27 @@ globals:
       stroke_width: 1
       stroke_fill: "white"
       line_spacing: 1.18
+
+    cover_title:
+      size: 520
+      fill: "white"
+      stroke_width: 6   
+      stroke_fill: "black"
+
+    cover_subtitle:
+      size: 220
+      fill: "white"
+      stroke_width: 4
+      stroke_fill: "black"
+
+      cover_back_blurb:
+        font_path: "assets/fonts/CormorantGaramond-VariableFont_wght.ttf"
+        size: 120
+        fill: "white"
+        stroke_width: 5
+        stroke_fill: "black"
+        line_spacing: 1.25
+        align: "center"
   # ------------------------------------------------------------
   # One-line reusable scene header (MOST IMPORTANT)
   # ------------------------------------------------------------
@@ -111,6 +156,73 @@ globals:
     {{ globals.style_line_art }}
     {{ globals.style_action }}
     {{ globals.comp_flight_diagonal }}
+
+covers:
+
+  front:
+    title: "Front Cover Art"
+    prefix: "cover"
+    include_bible: true
+    include_safety: true
+    pixels: { w: 2550, h: 3300 }
+
+    prompt: |
+      {{ globals.cover_art_style }}
+
+      FRONT COVER SCENE:
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} in the foreground,
+      discovering a swirling magical portal in a forest clearing.
+      A large friendly dragon rises protectively behind them,
+      wings subtly framing the composition.
+      A distant castle silhouette beyond the trees.
+
+      LIGHTING:
+      The portal emits a soft golden magical glow that illuminates the children and dragon.
+      The upper sky area should transition into a slightly darker twilight blue-violet gradient.
+      Behind where the title will sit, create a gentle radiant halo glow in the sky.
+      The glow should be soft, atmospheric, and cinematic — not neon or overpowering.
+
+      COMPOSITION:
+      Subjects fill the lower ~65–75% of the cover.
+      Leave the top ~25% mostly open sky with low detail to allow typography to stand out.
+
+      Do NOT draw any text.
+      Do NOT draw placeholder boxes or frames.
+      Do NOT draw fake lettering or symbols.
+
+    overlays:
+      - type: "text"
+        style: "cover_title"
+        content: "{{ child_names|join(' & ') }}"
+        region_pct: { x: 8, y: 6, w: 84, h: 16 }
+
+      - type: "text"
+        style: "cover_subtitle"
+        content: "The Dragon Realm Adventure"
+        region_pct: { x: 10, y: 20, w: 80, h: 10 }
+    
+  back:
+    title: "Back Cover Art"
+    prefix: "cover"
+    include_bible: false
+    include_safety: true
+    pixels: { w: 2550, h: 3300 }
+
+    prompt: |
+      {{ globals.cover_art_style }}
+
+      BACK COVER SCENE:
+      A whimsical magical dragon-realm landscape suitable for the back cover.
+      Rolling hills, distant castle silhouette, glowing stars,
+      subtle magical particles in the air, and gentle twilight sky.
+      Include soft atmospheric depth and rich color, but keep composition calm and balanced.
+
+      Leave the central area moderately open in case a small blurb is added later.
+      Do NOT include the children or pets on the back cover.
+      Do NOT draw any text.
+      Do NOT draw placeholder boxes or frames.
+
+    overlays: []
 
 front_matter:
   - title: "Title Page"

@@ -479,11 +479,17 @@ def generate_from_brief(
             + scene_text
         )
 
+        # Generate filename from prefix + key (e.g., "cover_front.png")
+        prefix = cov.get("prefix", "cover")
+        filename = f"{prefix}_{key}.png"
+
         covers[str(key)] = {
-            "file": cov.get("file"),
+            "file": filename,
             "prompt": final_cover_prompt,
             "pixels": _validate_pixels(cov.get("pixels"), COVER_PX),
             "style_reference_image": cov.get("style_reference_image"),
+            "title": cov.get("title"),
+            "overlays": cov.get("overlays", []),
         }
 
     page_prompts = {

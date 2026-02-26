@@ -8,6 +8,7 @@ from typing import Any
 
 from PIL import Image
 
+from .covers import build_cover_pdf
 from .image_provider import ImageProvider, ensure_dir
 from .overlay_renderer import TextStyle, apply_overlays
 from .prompt_optimizer import PromptOptimizer
@@ -446,8 +447,30 @@ def run_pipeline(
     interior_pdf = output_dir / "book" / "interior.pdf"
     build_interior_pdf(images_dir, page_prompts, pipeline_cfg, interior_pdf)
 
+    # -----------------------------
+    # Build Cover PDF
+    # -----------------------------
+
+    cover_pdf = output_dir / "book" / "cover.pdf"
+
+    build_cover_pdf(
+        page_prompts=page_prompts,
+        pipeline_cfg=pipeline_cfg,
+        images_dir=images_dir,
+        out_pdf=cover_pdf,
+        provider=provider,
+        optimizer=optimizer,
+        ref_sheets=ref_sheets,
+        overlay_styles=overlay_styles,
+        image_provider_mode=image_provider_mode,
+        cand_n=cand_n,
+        keep_candidates=keep_candidates,
+        repo_root=config_dir.parent,  # so relative font paths resolve
+    )
+
     return {
         "interior_pdf": str(interior_pdf),
+        "cover_pdf": str(cover_pdf),
         "images_dir": str(images_dir),
         "refs_used": [p.name for p in ref_sheets],
         "front_matter_count": len(front_list),
