@@ -2,16 +2,33 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, TypedDict, cast
 
 import yaml
 from jinja2 import Template
 
+# -----------------------------
+# Defaults
+# -----------------------------
+
 DEFAULT_TRIM = {"w": 8.5, "h": 11.0}
 DEFAULT_DPI = 300
+
+# 8.5x11 @ 300dpi
 INTERIOR_PX = {"w": 2550, "h": 3300}
+
+# cover template may vary; keep as-is
 COVER_PX = {"w": 2625, "h": 3375}
+
+VISUAL_BIBLE_VERSION = "1.5"
+
+
+# -----------------------------
+# Utilities
+# -----------------------------
 
 
 def slug(s: str) -> str:
@@ -19,11 +36,21 @@ def slug(s: str) -> str:
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
-    return yaml.safe_load(path.read_text())
+    data = yaml.safe_load(path.read_text())
+    if not isinstance(data, dict):
+        raise ValueError(f"Expected YAML mapping at {path}, got: {type(data)}")
+    return cast(dict[str, Any], data)
 
 
 def _render_template(s: str, ctx: dict[str, Any]) -> str:
     return Template(s).render(**ctx)
+
+
+def _strip_leading_scene_label(text: str) -> str:
+    t = text.strip()
+    if t.lower().startswith("scene:"):
+        return t.split(":", 1)[1].strip()
+    return t
 
 
 def _describe_child(c: dict[str, Any]) -> str:
@@ -31,11 +58,11 @@ def _describe_child(c: dict[str, Any]) -> str:
     age = c.get("age")
     appearance = c.get("appearance_desc") or c.get("appearance") or ""
     outfit = c.get("outfit_desc") or c.get("outfits") or ""
-    bits: list[str] = [name]
+    bits: list[str] = [str(name)]
     if age:
         bits.append(f"age {age}")
     if appearance:
-        bits.append(appearance)
+        bits.append(str(appearance))
     if outfit:
         bits.append(f"wearing {outfit}")
     return ", ".join(bits)
@@ -45,66 +72,216 @@ def _describe_pet(p: dict[str, Any]) -> str:
     name = p.get("name", "Pet")
     species = p.get("species")
     appearance = p.get("appearance_desc") or p.get("appearance") or ""
-    bits: list[str] = [name]
+    bits: list[str] = [str(name)]
     if species:
         bits.append(f"a {species}")
     if appearance:
-        bits.append(appearance)
+        bits.append(str(appearance))
     return ", ".join(bits)
 
 
-def _strip_leading_scene_label(text: str) -> str:
-    # Helps if any YAML prompt still begins with "Scene:" — we don't need it.
-    t = text.strip()
-    if t.lower().startswith("scene:"):
-        return t.split(":", 1)[1].strip()
-    return t
+def _join_human(names: list[str], fallback: str) -> str:
+    if not names:
+        return fallback
+    if len(names) == 1:
+        return names[0]
+    if len(names) == 2:
+        return f"{names[0]} and {names[1]}"
+    return ", ".join(names[:-1]) + f", and {names[-1]}"
+
+
+def _ensure_list(x: Any) -> list[Any]:
+    if x is None:
+        return []
+    if isinstance(x, list):
+        return x
+    raise ValueError(f"Expected list, got {type(x)}: {x!r}")
+
+
+# -----------------------------
+# Prompt item schema
+# -----------------------------
+
+
+class Pixels(TypedDict):
+    w: int
+    h: int
+
+
+class PromptOut(TypedDict, total=False):
+    page: int
+    title: str
+    file: str
+    prompt: str
+    pixels: Pixels
+    kind: str
+
+
+@dataclass(frozen=True)
+class PromptBuildDefaults:
+    prefix: str
+    pixels: Pixels
+    include_bible: bool = True
+    include_safety: bool = True
+
+
+def _validate_pixels(p: Any, default_px: Pixels) -> Pixels:
+    if p is None:
+        return default_px
+    if not isinstance(p, dict):
+        raise ValueError(f"pixels must be a mapping like {{w,h}}. Got: {p!r}")
+    w = p.get("w")
+    h = p.get("h")
+    if not isinstance(w, int) or not isinstance(h, int):
+        raise ValueError(f"pixels must contain integer w/h. Got: {p!r}")
+    return {"w": w, "h": h}
+
+
+def _filename_for_item(
+    title: str,
+    *,
+    page: int | None,
+    prefix: str,
+    explicit_file: str | None,
+) -> str:
+    if explicit_file:
+        return explicit_file
+    safe_title = slug(title) or "untitled"
+    if page is None:
+        return f"{prefix}_{safe_title}.png"
+    return f"{prefix}_{int(page):02d}_{safe_title}.png"
+
+
+def _build_prompt_item(
+    item: dict[str, Any],
+    ctx: dict[str, Any],
+    defaults: PromptBuildDefaults,
+    *,
+    kind: str,
+) -> PromptOut:
+    title = item.get("title")
+    prompt_t = item.get("prompt")
+
+    if not isinstance(title, str) or not title.strip():
+        raise ValueError(f"{kind} item missing non-empty 'title': {item}")
+    if not isinstance(prompt_t, str) or not prompt_t.strip():
+        raise ValueError(f"{kind} item missing non-empty 'prompt': {item}")
+
+    page_val = item.get("page")
+    page: int | None
+    if page_val is None:
+        page = None
+    else:
+        if not isinstance(page_val, int):
+            raise ValueError(f"{kind} item 'page' must be int. Got: {page_val!r}")
+        page = page_val
+
+    prefix = str(item.get("prefix") or defaults.prefix)
+    pixels = _validate_pixels(item.get("pixels"), defaults.pixels)
+
+    include_bible = bool(item.get("include_bible", defaults.include_bible))
+    include_safety = bool(item.get("include_safety", defaults.include_safety))
+
+    # Render the scene template (which can reference {{ globals.* }})
+    rendered = str(prompt_t)
+    for _ in range(3):  # enough for sane nesting
+        new_rendered = _render_template(rendered, ctx)
+        if new_rendered == rendered:
+            break
+        rendered = new_rendered
+
+    rendered = _strip_leading_scene_label(rendered).strip()
+
+    parts: list[str] = []
+
+    if include_bible:
+        parts.append("Character bible:\n" + str(ctx["character_bible"]).strip())
+
+    if include_safety:
+        global_safety = str(ctx.get("global_safety_rules") or "").strip()
+        if global_safety:
+            parts.append("GLOBAL SAFETY (IMPORTANT):\n" + global_safety)
+
+    parts.append(rendered)
+
+    final_prompt = "\n\n".join(p for p in parts if p).strip()
+
+    fname = _filename_for_item(
+        title.strip(),
+        page=page,
+        prefix=prefix,
+        explicit_file=cast(Optional[str], item.get("file")),
+    )
+
+    out: PromptOut = {
+        "title": title.strip(),
+        "file": fname,
+        "prompt": final_prompt,
+        "pixels": pixels,
+        "kind": kind,
+    }
+    if page is not None:
+        out["page"] = page
+        # -----------------------------
+    # Pass-through overlays (YAML -> JSON)
+    # -----------------------------
+    overlays = item.get("overlays")
+    if overlays is not None:
+        if not isinstance(overlays, list):
+            raise ValueError(
+                f"{kind} item 'overlays' must be a list. Got: {type(overlays)}"
+            )
+
+        rendered_overlays: list[dict[str, Any]] = []
+        for ov in overlays:
+            if not isinstance(ov, dict):
+                raise ValueError(f"{kind} overlay must be mapping. Got: {type(ov)}")
+
+            ov2 = dict(ov)
+
+            # allow templating inside overlay content (e.g., {{ child_names|join(' & ') }})
+            if isinstance(ov2.get("content"), str):
+                ov2["content"] = _render_template(ov2["content"], ctx).strip()
+
+            rendered_overlays.append(ov2)
+
+        out["overlays"] = rendered_overlays
+    return out
+
+
+# -----------------------------
+# Context / bible (LEAN)
+# -----------------------------
+
+
+def _merge_globals(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, Any]:
+    theme_globals = theme.get("globals", {}) or {}
+    brief_globals = brief.get("globals", {}) or {}
+
+    if not isinstance(theme_globals, dict):
+        raise ValueError("theme.globals must be a mapping")
+    if not isinstance(brief_globals, dict):
+        raise ValueError("brief.globals must be a mapping")
+
+    # brief overrides theme
+    return {**theme_globals, **brief_globals}
 
 
 def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, Any]:
-    children = brief.get("children", []) or []
-    pets = brief.get("pets", []) or []
+    children = cast(list[dict[str, Any]], brief.get("children", []) or [])
+    pets = cast(list[dict[str, Any]], brief.get("pets", []) or [])
 
-    child_names = [c.get("name", "Child") for c in children]
-    pet_names = [p.get("name", "Pet") for p in pets]
+    child_names = [str(c.get("name", "Child")) for c in children]
+    pet_names = [str(p.get("name", "Pet")) for p in pets]
 
     child_descs = [_describe_child(c) for c in children]
     pet_descs = [_describe_pet(p) for p in pets]
 
-    def join_human(names: list[str]) -> str:
-        if not names:
-            return "the children"
-        if len(names) == 1:
-            return names[0]
-        if len(names) == 2:
-            return f"{names[0]} and {names[1]}"
-        return ", ".join(names[:-1]) + f", and {names[-1]}"
-
-    child_summary_sentence = (
-        join_human(child_names) + " (" + "; ".join(d for d in child_descs) + ")"
-        if child_descs
-        else join_human(child_names)
-    )
-
-    if pet_descs:
-        pet_summary_sentence = (
-            join_human(pet_names) + " (" + "; ".join(d for d in pet_descs) + ")"
-        )
-    else:
-        pet_summary_sentence = join_human(pet_names) if pet_names else "the pets"
-
-    # Keep this SHORT. Over-specifying leads to dark/inverted outputs.
-    line_art_style = (
-        "Black-and-white kids' coloring book page. "
-        "Simple, clean black outlines on a white background. "
-        "No shading, no gray tones, no shadows, no gradients. "
-        "No large filled black areas; background stays mostly white. "
-        "All characters and objects are outlined only, leaving the insides white for coloring. "
-        "Cute, friendly proportions with clear shapes and plenty of white space."
-    )
-
-    # Character bible (once per prompt)
+    # -------------------------------------------------
+    # Character bible (injected by pipeline unless disabled)
+    # -------------------------------------------------
     character_bible_lines: list[str] = []
+
     if child_descs:
         character_bible_lines.append(
             "Children (draw these the same way on every page):"
@@ -130,43 +307,98 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
     )
     character_bible = "\n".join(character_bible_lines)
 
+    # -------------------------------------------------
+    # Globals (YAML-owned reusable prompt fragments & settings)
+    # brief.globals overrides theme.globals
+    # -------------------------------------------------
+    merged_globals = _merge_globals(brief, theme)
+
+    # Normalize overlay styles so downstream is predictable
+    overlay_styles = merged_globals.get("overlay_styles", {})
+    if overlay_styles is None:
+        overlay_styles = {}
+    if not isinstance(overlay_styles, dict):
+        raise ValueError("globals.overlay_styles must be a mapping (dict) if provided")
+
+    # Normalize global safety rules
+    global_safety_rules = merged_globals.get("global_safety_rules", "")
+    if global_safety_rules is None:
+        global_safety_rules = ""
+
+    # Optional: a convenient “cast summary” string for templates
+    cast_summary_parts: list[str] = []
+    if child_names:
+        cast_summary_parts.append("Children: " + ", ".join(child_names))
+    if pet_names:
+        cast_summary_parts.append("Pets: " + ", ".join(pet_names))
+    cast_summary = " | ".join(cast_summary_parts) if cast_summary_parts else ""
+
     ctx: dict[str, Any] = {
+        # for templates
         "child_names": child_names,
         "pet_names": pet_names,
-        "child_descriptions": child_descs,
-        "pet_descriptions": pet_descs,
-        "child_summary_sentence": child_summary_sentence,
-        "pet_summary_sentence": pet_summary_sentence,
-        "line_art_style": line_art_style,
+        "children": children,
+        "pets": pets,
+        "cast_summary": cast_summary,
+        # reusable prompt fragments live here (YAML "globals")
+        "globals": merged_globals,
+        # convenience: styles for overlays (pipeline reads from JSON, but templates may use too)
+        "overlay_styles": overlay_styles,
+        # injected blocks
         "character_bible": character_bible,
-        # Back-compat if any templates still reference this:
-        "character_consistency": character_bible,
+        "global_safety_rules": global_safety_rules,
+        # optional
         "mythic_elements": theme.get("mythic_elements", {}),
     }
     return ctx
 
 
+# -----------------------------
+# Selection logic (brief overrides theme)
+# -----------------------------
+
+
+def _select_items(
+    brief: dict[str, Any],
+    theme: dict[str, Any],
+    key: str,
+) -> list[dict[str, Any]]:
+    if key in brief:
+        return cast(list[dict[str, Any]], _ensure_list(brief.get(key)))
+    return cast(list[dict[str, Any]], _ensure_list(theme.get(key)))
+
+
+def _sort_by_page_then_title(items: Iterable[PromptOut]) -> list[PromptOut]:
+    def k(it: PromptOut) -> tuple[int, str]:
+        p = it.get("page")
+        page_int = int(p) if isinstance(p, int) else 10_000
+        return (page_int, it.get("title", ""))
+
+    return sorted(list(items), key=k)
+
+
+# -----------------------------
+# Main generator
+# -----------------------------
+
+
 def generate_from_brief(
-    brief_path: Path, theme_path: Path, out_dir: Path
+    brief_path: Path,
+    theme_path: Path,
+    out_dir: Path,
 ) -> dict[str, Any]:
-    """
-    Load a YAML brief + theme/scene-pack, construct a rich context (visual bible + cast),
-    and emit:
-      - visual_bible.json
-      - page_prompts.json
-      - pipeline_config.json
-    """
     out_dir.mkdir(parents=True, exist_ok=True)
+
     brief = load_yaml(brief_path)
     theme = load_yaml(theme_path)
 
-    children = brief.get("children", []) or []
-    pets = brief.get("pets", []) or []
+    children = cast(list[dict[str, Any]], brief.get("children", []) or [])
+    pets = cast(list[dict[str, Any]], brief.get("pets", []) or [])
 
     ctx = _build_context(brief, theme)
 
     visual_bible = {
-        "visual_bible_version": "1.3",
+        "visual_bible_version": VISUAL_BIBLE_VERSION,
         "project": brief.get("project_title", "Custom Storybook"),
         "page_format": {
             "trim_in": DEFAULT_TRIM,
@@ -174,88 +406,93 @@ def generate_from_brief(
             "dpi": DEFAULT_DPI,
             "pixels": INTERIOR_PX,
             "orientation": "portrait",
-            "interior_color_space": "grayscale",
-            "cover_color_space": "RGB-sRGB",
         },
-        "style": {
-            "medium": "coloring-book line art",
-            "lines": {
-                "primary_px": 5,
-                "secondary_px": 3,
-                "rules": [
-                    "bold, clean outlines",
-                    "no shading",
-                    "no halftones",
-                    "no gradients",
-                    "no filled black areas",
-                    "white background",
-                ],
-            },
-            "bg_rules": "readable backgrounds; ample white space for coloring",
-            "do_not": [
-                "extra humans not listed in the cast",
-                "duplicate or invented pets",
-                "on-image text/logos except painted title/subtitle on front cover if explicitly requested",
-                "comic panels or split frames",
-            ],
-        },
-        "cast": {
-            "children": children,
-            "pets": pets,
-        },
+        "cast": {"children": children, "pets": pets},
         "print_safety": {
             "interior_bleed_in": 0.125,
             "cover_bleed_in": 0.125,
             "safety_margin_in": 0.5,
         },
+        "globals_keys": sorted(list((ctx.get("globals") or {}).keys())),
     }
 
-    scenes = brief.get("scenes") or theme.get("scenes", [])
-    interior_prompts: list[dict[str, Any]] = []
+    front_matter_items = _select_items(brief, theme, "front_matter")
+    scene_items = _select_items(brief, theme, "scenes")
+    back_matter_items = _select_items(brief, theme, "back_matter")
 
-    for sc in scenes:
-        page = sc["page"]
-        title = sc["title"]
-        prompt_t = sc["prompt"]  # scene-only template from YAML
-        fname = f"page_{page:02d}_{slug(title)}.png"
+    front_defaults = PromptBuildDefaults(prefix="front_matter", pixels=INTERIOR_PX)
+    interior_defaults = PromptBuildDefaults(prefix="page", pixels=INTERIOR_PX)
+    back_defaults = PromptBuildDefaults(prefix="back_matter", pixels=INTERIOR_PX)
 
-        scene_text = _render_template(prompt_t, ctx)
-        scene_text = _strip_leading_scene_label(scene_text)
-
-        # Final interior prompt = style + bible + scene
-        final_prompt = (
-            ctx["line_art_style"].strip()
-            + "\n\nCharacter bible:\n"
-            + ctx["character_bible"].strip()
-            + "\n\n"
-            + scene_text.strip()
+    front_matter_prompts: list[PromptOut] = []
+    for fm in front_matter_items:
+        if not isinstance(fm, dict):
+            raise ValueError(f"front_matter item must be mapping, got: {type(fm)}")
+        front_matter_prompts.append(
+            _build_prompt_item(fm, ctx, front_defaults, kind="front_matter")
         )
 
+    interior_prompts: list[PromptOut] = []
+    for sc in scene_items:
+        if not isinstance(sc, dict):
+            raise ValueError(f"scene item must be mapping, got: {type(sc)}")
+        if "page" not in sc:
+            raise ValueError(f"scene is missing 'page': {sc}")
         interior_prompts.append(
-            {"page": page, "title": title, "file": fname, "prompt": final_prompt}
+            _build_prompt_item(sc, ctx, interior_defaults, kind="scene")
         )
 
-    covers_cfg = theme.get("covers", {})
-    covers: dict[str, Any] = {}
+    back_matter_prompts: list[PromptOut] = []
+    for bm in back_matter_items:
+        if not isinstance(bm, dict):
+            raise ValueError(f"back_matter item must be mapping, got: {type(bm)}")
+        back_matter_prompts.append(
+            _build_prompt_item(bm, ctx, back_defaults, kind="back_matter")
+        )
 
+    front_matter_prompts = _sort_by_page_then_title(front_matter_prompts)
+    interior_prompts = _sort_by_page_then_title(interior_prompts)
+    back_matter_prompts = _sort_by_page_then_title(back_matter_prompts)
+
+    pages = [p["page"] for p in interior_prompts if "page" in p]
+    if len(pages) != len(set(pages)):
+        dupes = sorted({p for p in pages if pages.count(p) > 1})
+        raise ValueError(f"Duplicate interior page numbers found: {dupes}")
+
+    # Covers (optional)
+    covers_cfg = theme.get("covers", {}) or {}
+    if not isinstance(covers_cfg, dict):
+        raise ValueError("theme.covers must be a mapping")
+
+    covers: dict[str, Any] = {}
     for key, cov in covers_cfg.items():
-        scene_text = _render_template(cov.get("prompt", ""), ctx).strip()
+        if not isinstance(cov, dict):
+            raise ValueError(f"Cover entry must be mapping. key={key}, got={type(cov)}")
+
+        scene_text = _render_template(str(cov.get("prompt", "")), ctx).strip()
 
         final_cover_prompt = (
             "You are drawing a full-color storybook cover illustration.\n"
             "\nCharacter bible (keep consistent with the interior cast):\n"
-            + ctx["character_bible"].strip()
+            + str(ctx["character_bible"]).strip()
             + "\n\n"
             + scene_text
         )
 
-        covers[key] = {
+        covers[str(key)] = {
             "file": cov.get("file"),
             "prompt": final_cover_prompt,
-            "style_reference_image": cov.get("style_reference_image"),  # <-- add this
+            "pixels": _validate_pixels(cov.get("pixels"), COVER_PX),
+            "style_reference_image": cov.get("style_reference_image"),
         }
 
-    page_prompts = {"interior_prompts": interior_prompts, "covers": covers}
+    page_prompts = {
+        "front_matter_prompts": front_matter_prompts,
+        "interior_prompts": interior_prompts,
+        "back_matter_prompts": back_matter_prompts,
+        "covers": covers,
+    }
+    page_prompts["overlay_styles"] = ctx.get("overlay_styles", {})
 
     pipeline_config = {
         "trim_in": DEFAULT_TRIM,

@@ -37,7 +37,7 @@ class ImageProvider:
         openai_interior_model: str | None = None,
         assets_dir: Path | None = None,
         dry_run: bool = False,
-        image_quality: str = "standard",
+        image_quality: str = "low",
     ):
         self.out_dir = out_dir
         self.interior_px = self._normalize_px(interior_px, name="interior_px")
@@ -224,8 +224,6 @@ class ImageProvider:
                     prompt=prompt,
                     size=api_size,
                     n=n,
-                    input_fidelity="high",
-                    quality=quality,
                 )
             finally:
                 # Close only the on-disk files; BytesIO doesn't need explicit close but safe anyway.
@@ -335,8 +333,6 @@ class ImageProvider:
                 prompt=prompt,
                 size=api_size,
             )
-            # Many SDKs accept this; harmless if ignored.
-            kwargs["input_fidelity"] = "high"
 
             result = self.client.images.edit(**kwargs)
         finally:

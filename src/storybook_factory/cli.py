@@ -185,9 +185,9 @@ def main():
     )
     p2.add_argument(
         "--image-quality",
-        choices=["standard", "hd"],
-        default="standard",
-        help="Image quality for OpenAI generation (default: standard)",
+        choices=["low", "medium", "high", "auto"],
+        default="low",
+        help="Image quality for OpenAI generation (default: low)",
     )
     p2.add_argument(
         "--dry-run",

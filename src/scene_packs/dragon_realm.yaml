@@ -1,77 +1,163 @@
-covers:
-  front_cover:
-    file: "front_cover_color.png"
-    style_reference_image: "src/scene_packs/cover_refs/princess_cover_reference.png"
+# ============================================================
+# DRAGON REALM SCENE PACK (DRY + MACRO VERSION)
+# ============================================================
+
+globals:
+
+  # ------------------------------------------------------------
+  # Global safety (auto-injected by generator)
+  # ------------------------------------------------------------
+  global_safety_rules: |
+    - No object intersections or impossible overlaps.
+    - Clean occlusion: if objects overlap, the front object clearly covers the back object.
+    - No extra limbs, no duplicated faces, no merged hands/feet.
+    - Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.
+    - Keep shapes simple and readable for coloring.
+
+  # ------------------------------------------------------------
+  # Style fragments
+  # ------------------------------------------------------------
+  style_line_art: |
+    Black-and-white children’s coloring-book line art.
+    Clean black outlines on white.
+    No shading, no gray, no gradients, no shadows.
+    Avoid large filled-black regions; keep interiors open for coloring.
+
+  style_classic: |
+    STYLE: classic coloring-book illustration (NOT chibi).
+    Natural child proportions. Clear facial expressions.
+
+  style_action: |
+    STYLE: classic kids’ coloring-book illustration (NOT chibi).
+    Natural proportions with gentle action energy, but keep shapes simple and readable.
+
+  # ------------------------------------------------------------
+  # Composition fragments
+  # ------------------------------------------------------------
+  comp_medium_close: |
+    FULL-PAGE COMPOSITION: medium-close framing.
+    {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
+    fill ~70–85% of page height.
+    Avoid large blank sky.
+
+  comp_vertical_dynamic: |
+    FULL-PAGE COMPOSITION: dynamic vertical composition.
+    {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
+    fill most of the lower two-thirds.
+    Key elements extend upward toward the top edge.
+
+  comp_epic_upward: |
+    FULL-PAGE COMPOSITION: dramatic upward composition.
+    Main dragon wings extend near the top margin.
+    Characters fill the lower half prominently.
+
+  comp_flight_diagonal: |
+    FULL-PAGE COMPOSITION: dynamic diagonal composition.
+    One MAIN dragon fills ~80–85% of page height.
+    Wings extend near the top margin (partial crop OK).
+
+  # ------------------------------------------------------------
+  # Front-matter overlay styles (auto-injected by generator)
+  # ------------------------------------------------------------
+
+  overlay_styles:
+    title:
+      font_path: "assets/fonts/Cinzel-VariableFont_wght.ttf"
+      size: 260
+      fill: "black"
+      stroke_width: 2
+      stroke_fill: "white"
+      line_spacing: 1.02
+
+    subtitle:
+      font_path: "assets/fonts/CormorantGaramond-VariableFont_wght.ttf"
+      size: 135
+      fill: "black"
+      stroke_width: 2
+      stroke_fill: "white"
+      line_spacing: 1.05
+
+    dedication:
+      font_path: "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf"
+      size: 145
+      fill: "black"
+      stroke_width: 1
+      stroke_fill: "white"
+      line_spacing: 1.18
+  # ------------------------------------------------------------
+  # One-line reusable scene header (MOST IMPORTANT)
+  # ------------------------------------------------------------
+  base_scene_header: |
+    {{ globals.style_line_art }}
+    {{ globals.style_classic }}
+    {{ globals.comp_medium_close }}
+
+  base_scene_header_vertical: |
+    {{ globals.style_line_art }}
+    {{ globals.style_classic }}
+    {{ globals.comp_vertical_dynamic }}
+
+  base_scene_header_action: |
+    {{ globals.style_line_art }}
+    {{ globals.style_action }}
+    {{ globals.comp_vertical_dynamic }}
+
+  base_scene_header_epic: |
+    {{ globals.style_line_art }}
+    {{ globals.style_classic }}
+    {{ globals.comp_epic_upward }}
+
+  base_scene_header_flight: |
+    {{ globals.style_line_art }}
+    {{ globals.style_action }}
+    {{ globals.comp_flight_diagonal }}
+
+front_matter:
+  - title: "Title Page"
+    page: 0
+    prefix: "front"
+    include_bible: false
+    include_safety: false
     prompt: |
-      Children’s picture-book FRONT COVER illustration.
+      Black-and-white coloring-book line art. Clean outlines only. No shading.
 
-      STYLE (MATCH REFERENCE IMAGE EXACTLY):
-      Match the illustration style, texture, color treatment, proportions,
-      and overall visual grammar of the provided reference image.
-      This includes:
-      - storybook gouache / airbrushed painterly finish
-      - clean, confident edges on characters
-      - softer, simplified background
-      - subtle canvas or paper texture
-      - saturated but clean colors (not pastel, not washed out)
-      - large expressive eyes, rounded cheeks, slightly oversized heads
-      - simplified, sturdy bodies (not thin, not floaty)
+      TITLE PAGE LAYOUT:
+      Leave a very large blank centered area for the title.
+      IMPORTANT: The title area must be blank white paper with NO box, NO border, NO rectangle, NO frame, NO lines.
 
-      Do NOT reinterpret the style.
-      Do NOT switch to watercolor, pastel, or flat vector art.
+      Add a small baby dragon and a small castle near the bottom.
+      Do NOT draw any letters/words/symbols.
 
-      CHARACTERS:
-      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
-      must follow the same proportions, facial style, and rendering treatment
-      as characters in the reference image.
+    overlays:
+    - type: "text"
+      style: "title"
+      content: "{{ child_names|join(' & ') }}"
+      region_pct: { x: 10, y: 18, w: 80, h: 14 }
 
-      COMPOSITION (FRONT COVER — PRINT SAFE):
-      - Medium shot, knee-up framing, eye-level camera.
-      - Characters are the largest and most detailed elements.
-      - One child slightly forward and centered (primary hero).
-      - The other child slightly behind, overlapping at the shoulder (co-hero).
-      - Both children smile warmly and make direct eye contact with the viewer.
-      - {{ pet_names|join(' & ') }} small and supportive near the lower edge, secondary to faces.
-      - Background: a colorful fantasy castle in the distance, smaller and less detailed.
-      - Foreground grass and flowers are simple and uncluttered.
-      - Title-safe area: top 35–40% is clean open sky (no towers, birds, sparkles, dragons).
+    - type: "text"
+      style: "subtitle"
+      content: "The Dragon Realm Adventure"
+      region_pct: { x: 10, y: 30, w: 80, h: 10 }
 
-      Print rules:
-      - High contrast between characters and background.
-      - Keep faces and important details well inside safety margins.
-      - No text in the artwork.
-
-      STRICT NEGATIVES:
-      - no text, letters, numbers, logos
-      - no extra children or pets
-      - no dramatic action poses or running
-      - no vignette, frame, or border
-      - no flat vector style
-      - no watercolor bleed or pastel wash
-
-  back_cover:
-    file: "back_cover_color.png"
-    style_reference_image: "src/scene_packs/cover_refs/princess_cover_reference.png"
+  - title: "Dedication Page"
+    page: 1
+    prefix: "front"
+    include_bible: false
+    include_safety: false
     prompt: |
-      Children’s picture-book BACK COVER illustration.
+      Black-and-white coloring-book line art. Clean outlines only. No shading.
+      Leave a very large blank center area for dedication text (DO NOT draw text).
+      Add a simple thin border of vines and stars.
+      IMPORTANT: Do NOT draw any letters/words/symbols. Keep center blank.
 
-      STYLE (MATCH REFERENCE IMAGE EXACTLY):
-      Match the illustration style, texture, color treatment,
-      and character proportions of the provided reference image.
-      Maintain visual continuity with the front cover.
-
-      Composition:
-      A simple, warm vignette with {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
-      in the lower 2/3 of the page, with a clean, uncluttered area reserved for back-cover text
-      (leave room but do NOT include text).
-
-      STRICT NEGATIVES:
-      - no text, letters, numbers, logos
-      - no extra children or pets
+    overlays:
+      - type: "text"
+        style: "dedication"
+        content: "For {{ child_names|join(' & ') }}—\nmay your imaginations always soar."
+        region_pct: { x: 15, y: 38, w: 70, h: 24 }
 
 # ============================================================
-# INTERIOR SCENES — OPTIMIZED FOR: FULL-PAGE, LESS CHIBI, LESS VERTICAL WHITESPACE
-# PLUS: GLOBAL "NO INTERSECTIONS / CLEAN LAYERING" RULES
+# SCENES
 # ============================================================
 
 scenes:
@@ -79,238 +165,110 @@ scenes:
   - page: 2
     title: "Portal Discovery"
     prompt: |
-      Black-and-white children’s coloring-book line art.
-      Clean black outlines on white. No shading, no gray, no gradients, no shadows.
-      Avoid large filled-black regions; keep interiors open for coloring.
+      {{ globals.base_scene_header }}
 
-      STYLE: classic children’s coloring-book illustration (NOT chibi).
-      Slightly more natural kid proportions: moderate head size, smaller eyes than chibi,
-      clear facial features, simple but believable clothing folds.
-
-      FULL-PAGE COMPOSITION: medium-close framing.
-      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} fill ~70–85% of page height.
-      Heads near the top margin and feet/foreground near the bottom margin (cropping is OK).
-      Avoid large blank sky.
-
-      SCENE: In a forest clearing, {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} discover a swirling magical portal behind them.
+      SCENE:
+      In a forest clearing, {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
+      discover a swirling magical portal behind them.
       The portal is large and reaches toward the top edge.
       Inside the portal, outline-only silhouettes of two friendly winged dragons are visible.
-      Frame the scene with tall trees, hanging vines, and oversized mushrooms reaching near the top edge.
-      Add grass and rocks in the foreground.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - No object intersections or impossible overlaps.
-      - Clean occlusion: if objects overlap, the front object clearly covers the back object.
-      - No extra limbs, no duplicated faces, no merged hands/feet.
-      - Keep outlines clean and readable for coloring.
+      Tall trees and hanging vines frame the upper area.
 
   - page: 3
     title: "Dragon Hatchlings"
     prompt: |
-      Black-and-white coloring-book line art. Clean black outlines only.
-      No shading/gray/gradients. No big filled blacks.
+      {{ globals.base_scene_header }}
 
-      STYLE: classic kids’ coloring-book illustration (NOT chibi), moderately sized eyes, simple crisp linework.
-
-      FULL-PAGE COMPOSITION: medium-close.
-      Main group fills ~70–85% of page height.
-      Bring the nest and characters closer to camera; reduce empty background.
-
-      SCENE: {{ child_names|join(' & ') }} kneel beside a large nest of dragon eggs in the foreground.
-      Several baby flame dragons peek from cracked shells with tiny wings and rounded snouts.
-      {{ pet_names|join(' & ') }} watches sweetly near the bottom edge.
-      Background framing: large leaves and stone pillars rising toward the top edge, leaving white spaces between elements for coloring.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - No object intersections or impossible overlaps.
-      - No duplicated hatchlings or extra heads.
-      - Clean, simple outlines; keep interiors open.
+      SCENE:
+      {{ child_names|join(' & ') }} kneel beside a large nest of dragon eggs.
+      Several baby flame dragons peek from cracked shells.
+      {{ pet_names|join(' & ') }} watches nearby.
 
   - page: 4
     title: "The Sky Bridge"
     prompt: |
-      Black-and-white coloring-book line art. Clean outlines only. No shading or solid black areas.
+      {{ globals.base_scene_header_vertical }}
 
-      STYLE: classic coloring-book illustration (NOT chibi).
-      Natural child proportions. Clear facial expressions.
-
-      FULL-PAGE COMPOSITION: dynamic vertical composition.
-      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} fill most of the lower two-thirds.
-      The dragon extends upward toward the top edge to avoid blank sky.
-
-      SCENE: {{ child_names|join(' & ') }} walk across a floating stone bridge in the sky.
-      Above them coils a long cloud-serpent dragon with whiskers and flowing mane, wingless and elegant.
-      Puffy clouds and curved stone rails frame the upper portion of the page.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - No object intersections; no bridge rail cutting through bodies.
-      - Keep the serpent dragon’s body continuous (no broken segments).
-      - Clean occlusion where the dragon overlaps clouds.
+      SCENE:
+      {{ child_names|join(' & ') }} walk across a floating stone bridge.
+      Above them coils a long cloud-serpent dragon with whiskers and flowing mane.
+      Puffy clouds frame the top portion of the page.
 
   - page: 5
     title: "Forest Dragons"
     prompt: |
-      Black-and-white coloring-book line art. Clean black outlines on white.
-      No shading, no gradients, no filled shadows.
+      {{ globals.base_scene_header }}
 
-      STYLE: classic children’s coloring-book illustration (NOT chibi). Clear readable silhouettes.
-
-      FULL-PAGE COMPOSITION: medium-close.
-      The children and one dragon fill ~75% of page height.
-      Large plant shapes reach near the top margin.
-
-      SCENE: In a magical grove, {{ child_names|join(' & ') }} meet a forest dragon with leaf-shaped wings and branch-like antlers.
-      The dragon stands protectively among oversized flowers and curling vines.
+      SCENE:
+      In a magical grove, {{ child_names|join(' & ') }} meet a forest dragon
+      with leaf-shaped wings and branch-like antlers.
       {{ pet_names|join(' & ') }} sits near the foreground grass.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - No vine/branch intersections through faces, hands, or eyes.
-      - Antlers and wings must be symmetrical and clearly attached.
-      - Clean, readable outlines for coloring.
 
   - page: 6
     title: "Dragon Training Grounds"
     prompt: |
-      Black-and-white coloring-book line art. Clean outlines only.
-      No gray, no gradients, no heavy shadow blocks.
+      {{ globals.base_scene_header_action }}
 
-      STYLE: classic kids’ coloring-book illustration (NOT chibi).
-      Slight action energy but simple linework.
-
-      FULL-PAGE COMPOSITION: energetic composition.
-      Characters and dragons fill ~80% of page height.
-      Action elements rise toward the top edge.
-
-      SCENE: In an open stone courtyard, young dragons practice gentle fire puffs into floating ring targets.
+      SCENE:
+      In an open courtyard, young dragons practice gentle fire puffs
+      into floating ring targets.
       A sleek ninja-style dragon leaps between rooftops in the background.
-      {{ child_names|join(' & ') }} watch excitedly while {{ pet_names|join(' & ') }} stands near their feet.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - No extra limbs/extra wings on dragons.
-      - Fire puffs are simple outline shapes (no gray smoke shading).
-      - Ring targets must be clean circles/ovals (not warped messy loops).
-      - No object intersections (targets not cutting into dragons).
+      Keep rings clean and circular.
 
   - page: 7
     title: "Crystal Valley"
     prompt: |
-      Black-and-white coloring-book line art. Clean black outlines.
-      No solid black fills. No dark cave shading.
+      {{ globals.base_scene_header_vertical }}
 
-      STYLE: classic coloring-book style (NOT chibi). Elegant and readable dragon form.
-
-      FULL-PAGE COMPOSITION: wide but filled composition.
-      Foreground characters large; crystals extend upward toward the top edge.
-
-      SCENE: {{ child_names|join(' & ') }} stand in a valley filled with large crystal formations.
-      An ice dragon with icicle-shaped horns stands proudly on a crystal ledge.
-      Frost swirl patterns float lightly around it in outline form.
-      {{ pet_names|join(' & ') }} stands near the bottom foreground.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - No crystal spikes intersecting faces/hands/eyes.
-      - Crystals must have clean planar edges (no melted/warped geometry).
-      - Dragon limbs and tail are clearly separated from crystals (clean occlusion).
+      SCENE:
+      {{ child_names|join(' & ') }} stand in a valley filled with large crystal formations.
+      An ice dragon with icicle-shaped horns stands on a crystal ledge.
 
   - page: 8
     title: "Dragon Festival"
     prompt: |
-      Black-and-white coloring-book line art. Clean black outlines only. No shading or filled blacks.
+      {{ globals.base_scene_header_vertical }}
 
-      STYLE: classic children’s coloring-book illustration (NOT chibi).
-      Joyful expressions and simple decorative details.
-
-      FULL-PAGE COMPOSITION: lively but balanced.
-      Main characters fill most of the center while decorative lanterns and dragons extend toward the top edge.
-
-      SCENE: A joyful festival in the dragon realm.
-      Baby dragons of different types play around {{ child_names|join(' & ') }}.
-      A long cloud-serpent dragon arches gracefully overhead.
-      Hanging lanterns and banners fill the upper space with open areas for coloring.
-      {{ pet_names|join(' & ') }} interacts playfully with a tiny dragon.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - Lantern strings must not cut through heads/eyes.
-      - No duplicated baby dragons merged together.
-      - Clean occlusion between banners, serpent body, and clouds.
+      SCENE:
+      A joyful dragon festival.
+      Baby dragons play around {{ child_names|join(' & ') }}.
+      A long cloud-serpent dragon arches overhead.
+      Hanging lanterns fill the upper space.
 
   - page: 9
     title: "The Guardian Dragon"
     prompt: |
-      Black-and-white coloring-book line art. Clean outlines only.
-      No heavy shading. Avoid large black regions.
+      {{ globals.base_scene_header_epic }}
 
-      STYLE: classic kids’ coloring-book illustration (NOT chibi).
-      Slightly epic but still friendly.
+      SCENE:
+      On a grand stone plateau, {{ child_names|join(' & ') }}
+      stand before a majestic elder guardian dragon.
+      The dragon spreads its wings protectively.
 
-      FULL-PAGE COMPOSITION: dramatic upward composition.
-      The guardian dragon’s wings extend near the top margin.
-      Characters fill the lower half prominently.
-
-      SCENE: On a grand stone plateau, {{ child_names|join(' & ') }} stand before a majestic elder guardian dragon.
-      The dragon spreads its large wings in a protective pose.
-      Smaller dragons sit respectfully nearby.
-      {{ pet_names|join(' & ') }} stands bravely beside the children.
-
-      WEAPON / BELT RULES (CRITICAL):
-      - If a sword is present, it MUST be fully inside a clearly drawn scabbard (sheath).
-      - The scabbard hangs from the belt at the hip and is clearly attached via strap/loop.
-      - The sword handle and scabbard must be clearly separated from the belt (no sword piercing into/through the belt).
-      - No object intersections, no impossible overlaps; clean layering.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - Dragon wings must be symmetrical and clearly attached.
-      - No extra limbs or duplicated claws.
-      - Clean occlusion where wings overlap background foliage/rocks.
+      PROP RULE:
+      If a sword is present, it MUST be fully inside a clearly drawn scabbard.
+      The scabbard hangs from the belt at the hip.
+      No sword piercing through belt.
 
   - page: 10
     title: "Double Dragon Flight"
     prompt: |
-      Black-and-white coloring-book line art. Clean black outlines only. No shading or gray tones.
+      {{ globals.base_scene_header_flight }}
 
-      STYLE: classic children’s coloring-book illustration (NOT chibi).
-      Natural proportions and dynamic poses, but keep it readable.
-
-      FULL-PAGE COMPOSITION: dynamic diagonal composition.
-      ONE main dragon and riders fill ~80–85% of page height.
-      Wings extend near the top margin to eliminate empty sky.
-
-      SCENE (LOW-FAILURE “DOUBLE DRAGON”):
-      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} ride together on ONE large, friendly winged flame dragon flying through puffy clouds.
-      A SECOND dragon (the long cloud-serpent dragon) flies alongside but is MUCH smaller and farther away (mid-background),
-      partially behind clouds — NO riders on the second dragon.
-      A few tiny distant dragons can appear as simple silhouettes.
-
-      RIDER SAFETY (CRITICAL):
-      - The children sit securely on a simple saddle/blanket with a visible strap or handle.
-      - {{ pet_names|join(' & ') }} is secured safely between them (small harness pouch or sitting on the saddle).
-      - No floating/pasted-on pet.
-      - No merged bodies, no tangled reins, no extra hands/feet.
-      - Clean, logical overlaps and occlusion (no character intersecting the dragon’s neck/wings).
-
-      GLOBAL SAFETY (IMPORTANT):
-      - Keep dragon anatomy clean: 2 wings, 4 limbs, one head.
-      - No duplicated wing membranes or broken wing bones.
-      - Cloud outlines are simple and do not cut through faces.
+      SCENE:
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
+      ride together on ONE large friendly flame dragon.
+      A SECOND dragon flies in the distant background (no riders).
+      Children sit securely on a visible saddle.
+      {{ pet_names|join(' & ') }} is secured safely between them.
 
   - page: 11
     title: "Goodbye, Dragon Realm"
     prompt: |
-      Black-and-white coloring-book line art. Clean outlines only.
-      No shading, no gradients, no heavy black fills.
+      {{ globals.base_scene_header }}
 
-      STYLE: classic coloring-book illustration (NOT chibi). Warm expressions.
-
-      FULL-PAGE COMPOSITION: medium-close.
-      Characters fill ~75% of page height.
-      Portal and trees reach toward the top edge.
-
-      SCENE: Back in the forest clearing, {{ child_names|join(' & ') }} wave goodbye at the glowing portal.
-      A tiny baby dragon peeks from inside the portal smiling.
-      {{ pet_names|join(' & ') }} looks back happily.
-      Tall trees and vines frame the upper edges.
-
-      GLOBAL SAFETY (IMPORTANT):
-      - Portal glow stays outline-only (no gray fill).
-      - No vines/branches intersecting faces/hands.
-      - Clean layering: portal behind characters, clearly separated.
+      SCENE:
+      Back in the forest clearing, {{ child_names|join(' & ') }}
+      wave goodbye at the glowing portal.
+      A tiny baby dragon peeks from inside.
+      Keep portal glow outline-only.
