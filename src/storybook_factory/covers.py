@@ -7,7 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 from .image_provider import ImageProvider, ensure_dir
 from .overlay_renderer import TextStyle, apply_overlays
@@ -132,7 +132,9 @@ def _ensure_cover_image(
     # gpt-image mode
     assert optimizer is not None
 
-    optimized = optimizer.optimize(raw_prompt, page_title=f"{title} ({key})")
+    optimized = optimizer.optimize(
+        raw_prompt, page_title=f"{title} ({key})", kind="cover"
+    )
 
     # Use refs only for front cover (keeps back generic)
     use_refs = key.lower() == "front"
@@ -149,7 +151,11 @@ def _ensure_cover_image(
     )
 
     best = cands[0]
-    provider.finalize_candidate(candidate_path=best, final_filename=fname)
+    provider.finalize_candidate(
+        candidate_path=best,
+        final_filename=fname,
+        cover=True,
+    )
 
     # Apply overlays AFTER final file is in place
     _apply_cover_overlays_in_place(
@@ -183,7 +189,11 @@ def _compose_full_wrap(
 ) -> Image.Image:
     """
     Compose Lulu full-wrap cover: back on left half, front on right half.
-    Spine width is 0, but total width is still the integrated spread.
+
+    IMPORTANT:
+    - Uses crop-to-fit (no stretching/squishing).
+    - If an input image has the wrong aspect ratio, we preserve proportions
+      and crop the excess instead of distorting.
     """
     wrap_w, wrap_h = wrap_size_px
 
@@ -191,12 +201,23 @@ def _compose_full_wrap(
     back_w = wrap_w // 2
     front_w = wrap_w - back_w
 
-    back_resized = back_img.convert("RGB").resize((back_w, wrap_h), Image.LANCZOS)
-    front_resized = front_img.convert("RGB").resize((front_w, wrap_h), Image.LANCZOS)
+    # Fit each half WITHOUT distortion (crop-to-fit)
+    back_fitted = ImageOps.fit(
+        back_img.convert("RGB"),
+        (back_w, wrap_h),
+        method=Image.LANCZOS,
+        centering=(0.5, 0.5),  # center crop
+    )
+    front_fitted = ImageOps.fit(
+        front_img.convert("RGB"),
+        (front_w, wrap_h),
+        method=Image.LANCZOS,
+        centering=(0.5, 0.5),  # center crop
+    )
 
     canvas = Image.new("RGB", (wrap_w, wrap_h), "white")
-    canvas.paste(back_resized, (0, 0))
-    canvas.paste(front_resized, (back_w, 0))
+    canvas.paste(back_fitted, (0, 0))
+    canvas.paste(front_fitted, (back_w, 0))
     return canvas
 
 

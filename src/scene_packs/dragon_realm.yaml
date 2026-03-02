@@ -39,13 +39,37 @@ globals:
     full_wrap_height_in: 11.25
     dpi: 300
 
-  # FULL COLOR cover style
   cover_art_style: |
     Full-color, premium children’s fantasy book cover illustration.
-    Rich, warm color palette with cinematic lighting and soft atmosphere.
-    Clean, high-detail illustration with crisp edges (not blurry).
-    NOT chibi. Natural child proportions, clear facial expressions.
-    High-end storybook look (modern, elegant, magical).
+    High-end animated feature film lighting (Pixar-style fantasy cool).
+
+    COLOR DIRECTION:
+    - World lighting = cool twilight blues, indigo, and soft violet.
+    - Shadows lean blue-violet or teal, NOT brown or orange.
+    - Portal glow = warm golden key light with soft falloff.
+    - Strong warm–cool contrast between portal light and forest atmosphere.
+    - Background should feel cool and magical, not sepia or sunset-orange.
+
+    LIGHTING STYLE:
+    - Cinematic global illumination.
+    - Soft rim lighting separating characters from background.
+    - Subtle cool moonlight or sky fill balancing the warm portal light.
+    - Warm light affects only nearby surfaces; avoid flooding entire scene with orange.
+
+    RENDERING:
+    - Painterly but polished.
+    - Smooth gradients and volumetric glow.
+    - No heavy black contour lines.
+    - Edges defined by light and color transitions, not outlines.
+
+    HARD RULES:
+    - NOT a coloring book page.
+    - No outline-only rendering.
+    - No large white fill areas.
+    - Maintain full color depth and dynamic lighting.
+
+    NOT chibi. Natural child proportions, expressive faces.
+    Modern animated-feature aesthetic.
     No watermark.
 
   # Keep predictable negative space for typography
@@ -54,6 +78,16 @@ globals:
     - Leave the top ~25% of the FRONT cover as mostly open sky/glow (low detail).
     - Do NOT draw frames, rectangles, title boxes, or bordered placeholders.
     - Do NOT draw any letters/words/symbols or fake text scribbles anywhere.
+
+  personalization:
+    font_path: "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf"
+    size: 135
+    fill: "#F3E8D1"
+    stroke_width: 2
+    stroke_fill: "#1E2A3A"   # deep cool navy, not black
+    glow_radius: 8
+    glow_color: "#FFD27A"
+    glow_alpha: 90
 
   # ------------------------------------------------------------
   # Composition fragments
@@ -110,25 +144,25 @@ globals:
       line_spacing: 1.18
 
     cover_title:
-      size: 520
-      fill: "white"
-      stroke_width: 6   
-      stroke_fill: "black"
+      font_path: "assets/fonts/Cinzel-VariableFont_wght.ttf"
+      size: 460
+      fill: "#FFF4D6"              # warm ivory instead of pure white
+      stroke_width: 54             # slightly thinner
+      stroke_fill: "#3A2A1A"       # warm dark brown instead of black
+      glow_radius: 28
+      glow_color: "#FFB347"        # warm portal gold
+      glow_alpha: 160
 
     cover_subtitle:
-      size: 220
-      fill: "white"
-      stroke_width: 4
-      stroke_fill: "black"
+      font_path: "assets/fonts/CormorantGaramond-VariableFont_wght.ttf"
+      size: 190                # down from 220
+      fill: "#F8E8C8"          # slightly softer than title
+      stroke_width: 2          # lighter outline
+      stroke_fill: "#3A2A1A"
+      glow_radius: 14          # reduce glow
+      glow_color: "#FFB347"
+      glow_alpha: 120          # more subtle
 
-      cover_back_blurb:
-        font_path: "assets/fonts/CormorantGaramond-VariableFont_wght.ttf"
-        size: 120
-        fill: "white"
-        stroke_width: 5
-        stroke_fill: "black"
-        line_spacing: 1.25
-        align: "center"
   # ------------------------------------------------------------
   # One-line reusable scene header (MOST IMPORTANT)
   # ------------------------------------------------------------
@@ -164,10 +198,11 @@ covers:
     prefix: "cover"
     include_bible: true
     include_safety: true
-    pixels: { w: 2550, h: 3300 }
-
+    pixels: { w: 2588, h: 3375 }
     prompt: |
       {{ globals.cover_art_style }}
+
+      Rendering must feel like a frame from a high-end animated fantasy film.
 
       FRONT COVER SCENE:
       {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} in the foreground,
@@ -177,37 +212,48 @@ covers:
       A distant castle silhouette beyond the trees.
 
       LIGHTING:
-      The portal emits a soft golden magical glow that illuminates the children and dragon.
-      The upper sky area should transition into a slightly darker twilight blue-violet gradient.
-      Behind where the title will sit, create a gentle radiant halo glow in the sky.
-      The glow should be soft, atmospheric, and cinematic — not neon or overpowering.
+      The forest environment should be cool twilight blue and indigo.
+      Add subtle cool moonlight or sky glow from above/behind.
+      The portal emits a soft golden magical light that illuminates faces and nearby ground.
+      Keep warm light localized — do NOT turn the entire scene orange.
+      Add gentle cool-violet shadow tones in unlit areas.
+      Add slight teal undertones in darker forest areas for depth.
+
+      ATMOSPHERE:
+      Soft volumetric glow around the portal.
+      Light mist or particles catching cool blue light in the distance.
+      Maintain strong warm–cool color separation.
 
       COMPOSITION:
       Subjects fill the lower ~65–75% of the cover.
-      Leave the top ~25% mostly open sky with low detail to allow typography to stand out.
+      Reserve the top ~25% as open cool-toned sky for the title.
+      Keep the title fully within safe margins (not touching edges).
 
-      Do NOT draw any text.
+      TITLE INSTRUCTIONS:
+      Include the exact title text:
+      The Dragon Realm Adventure
+      Place the title centered in the top sky area with generous top margin. Do not place the title near the trim edge.
+
+      Place the title centered in the top sky area.
+      Use elegant fantasy serif typography.
+      Gold-ivory lettering with subtle bevel and soft warm glow.
+      Professional book-cover quality.
+      Clean, readable letterforms.
+      Correct spelling is critical.
+      Do not distort letters.
+      Do not add extra words.
+      No other text anywhere on the cover.
+
       Do NOT draw placeholder boxes or frames.
       Do NOT draw fake lettering or symbols.
+      
 
-    overlays:
-      - type: "text"
-        style: "cover_title"
-        content: "{{ child_names|join(' & ') }}"
-        region_pct: { x: 8, y: 6, w: 84, h: 16 }
-
-      - type: "text"
-        style: "cover_subtitle"
-        content: "The Dragon Realm Adventure"
-        region_pct: { x: 10, y: 20, w: 80, h: 10 }
-    
   back:
     title: "Back Cover Art"
     prefix: "cover"
     include_bible: false
     include_safety: true
-    pixels: { w: 2550, h: 3300 }
-
+    pixels: { w: 2588, h: 3375 }
     prompt: |
       {{ globals.cover_art_style }}
 
@@ -221,8 +267,7 @@ covers:
       Do NOT include the children or pets on the back cover.
       Do NOT draw any text.
       Do NOT draw placeholder boxes or frames.
-
-    overlays: []
+  
 
 front_matter:
   - title: "Title Page"
@@ -231,25 +276,41 @@ front_matter:
     include_bible: false
     include_safety: false
     prompt: |
-      Black-and-white coloring-book line art. Clean outlines only. No shading.
+      Black-and-white children's coloring-book line art.
+      Clean black outlines only. No shading. No gray. No gradients.
 
-      TITLE PAGE LAYOUT:
-      Leave a very large blank centered area for the title.
-      IMPORTANT: The title area must be blank white paper with NO box, NO border, NO rectangle, NO frame, NO lines.
+      TITLE PAGE COMPOSITION:
 
-      Add a small baby dragon and a small castle near the bottom.
-      Do NOT draw any letters/words/symbols.
+      Create a balanced, decorative layout suitable for a coloring book title page.
+
+      Leave a generous open area in the upper-middle of the page for the title text.
+      This area should feel naturally open because of composition,
+      NOT because of an obvious blank rectangle or empty void.
+
+      Add a cute baby dragon sitting near the bottom left.
+      Add a whimsical castle near the bottom right.
+      The dragon and castle should feel connected and part of the same scene.
+
+      Add small decorative elements such as:
+      - stars
+      - tiny clouds
+      - simple swirls
+      - small flowers or sparkles
+
+      Keep the design airy and playful.
+
+      Do NOT draw any letters, words, symbols, boxes, borders, or frames.
 
     overlays:
     - type: "text"
       style: "title"
       content: "{{ child_names|join(' & ') }}"
-      region_pct: { x: 10, y: 18, w: 80, h: 14 }
+      region_pct: { x: 12, y: 28, w: 76, h: 16 }
 
     - type: "text"
       style: "subtitle"
       content: "The Dragon Realm Adventure"
-      region_pct: { x: 10, y: 30, w: 80, h: 10 }
+      region_pct: { x: 12, y: 42, w: 76, h: 10 }
 
   - title: "Dedication Page"
     page: 1

@@ -90,7 +90,10 @@ def _ensure_refs_for_build(
     provider = ImageProvider(
         out_dir=images_dir,
         interior_px=(1024, 1536),
-        cover_px=(1024, 1536),  # unused
+        cover_px=(
+            2588,
+            3375,
+        ),  # unused since we're only generating refs, but set to actual cover size just in case
         mode=image_provider,
         openai_interior_model=openai_interior_model,
         openai_cover_model=None,
@@ -182,6 +185,11 @@ def main():
         "--openai-interior-model",
         default="dall-e-2",
         help="OpenAI model for interior pages + character sheets (default: dall-e-2)",
+    )
+    p2.add_argument(
+        "--openai-cover-model",
+        default=None,
+        help="OpenAI model for cover pages (default: same as --openai-interior-model)",
     )
     p2.add_argument(
         "--image-quality",
@@ -298,7 +306,10 @@ def main():
         provider = ImageProvider(
             out_dir=images_dir,
             interior_px=(1024, 1536),
-            cover_px=(1024, 1536),  # unused
+            cover_px=(
+                2588,
+                3375,
+            ),  # unused since we're only generating refs, but set to actual cover size just in case
             mode=args.image_provider,
             openai_interior_model=args.openai_interior_model,
             openai_cover_model=None,
@@ -362,6 +373,7 @@ def main():
             assets_dir=assets_dir,
             image_provider_mode=args.image_provider,
             openai_interior_model=args.openai_interior_model,
+            openai_cover_model=args.openai_cover_model,
             dry_run=args.dry_run,
             image_quality=args.image_quality,
         )

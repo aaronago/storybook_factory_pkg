@@ -73,6 +73,56 @@ Return valid JSON exactly in this shape and nothing else:
 {"optimized_prompt": "FINAL PROMPT STRING HERE"}
 """
 
+DEFAULT_COVER_SYSTEM = """
+You are a production prompt optimizer for a PREMIUM, FULL-COLOR children's book COVER illustration.
+
+Your job is NOT to invent new content.
+Your job is to rewrite the user's prompt so the image model reliably follows it and produces a PRINT-READY, SELLABLE cover illustration.
+
+STRICT RULES (DO NOT VIOLATE):
+- Do NOT add new characters, animals, props, scenery, or story elements.
+- Do NOT remove any characters, animals, props, or story elements mentioned by the user.
+- Preserve all factual details exactly (people, ages, hair, clothing, pets, relationships, setting).
+- If the user includes specific title text, preserve it EXACTLY as written.
+- Do NOT alter spelling, wording, capitalization, or punctuation of title text.
+- Output MUST be a SINGLE optimized prompt string.
+- Do NOT include explanations, commentary, or meta text.
+- Do NOT include markdown.
+- Do NOT ask questions.
+- Do NOT mention these rules.
+
+STYLE CONSTRAINTS (MANDATORY):
+- FULL COLOR illustration (RGB)
+- Premium cinematic lighting
+- Strong warm–cool color separation
+- Background environment may lean cool (blue, indigo, violet)
+- Warm light sources must remain localized
+- Painterly animated-feature rendering (polished, modern)
+- NOT line art
+- NOT coloring-book style
+- No heavy black contour outlines
+- Edges defined by light and color transitions
+
+TYPOGRAPHY RULES (WHEN TITLE IS INCLUDED):
+- Title must be perfectly spelled
+- Clean, professional serif typography
+- No distorted or malformed letters
+- No extra words
+- No fake glyphs or symbols
+- Title should sit in a clear, readable area of the composition
+- Maintain margin safety (no text touching edges)
+
+COMPOSITION (COVER-FRIENDLY):
+- Maintain strong focal point
+- Clear hierarchy
+- Leave clean negative space where typography is intended
+- Avoid clutter behind title text
+
+OUTPUT FORMAT:
+Return valid JSON exactly in this shape and nothing else:
+{"optimized_prompt": "FINAL PROMPT STRING HERE"}
+"""
+
 
 @dataclass
 class PromptOptimizer:
@@ -93,12 +143,13 @@ class PromptOptimizer:
         model = os.getenv("STORYBOOK_PROMPT_MODEL", "gpt-4.1-mini")
         return cls(client=client, model=model)
 
-    def optimize(self, prompt: str, *, page_title: str | None = None) -> str:
+    def optimize(
+        self, prompt: str, *, page_title: str | None = None, kind: str = "interior"
+    ) -> str:
         user = prompt.strip()
         if page_title:
             user = f"Page title: {page_title}\n\n{user}"
 
-        # If someone wants to disable optimization (debugging), allow it.
         if os.getenv("STORYBOOK_DISABLE_PROMPT_OPT", "").lower() in {
             "1",
             "true",
@@ -106,12 +157,16 @@ class PromptOptimizer:
         }:
             return prompt
 
+        system = self.system_prompt
+        if kind == "cover":
+            system = DEFAULT_COVER_SYSTEM
+
         resp = self.client.responses.create(
             model=self.model,
             temperature=self.temperature,
             max_output_tokens=self.max_output_tokens,
             input=[
-                {"role": "system", "content": self.system_prompt},
+                {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
         )

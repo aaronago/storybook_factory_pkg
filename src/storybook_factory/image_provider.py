@@ -50,7 +50,7 @@ class ImageProvider:
 
         # Allow overrides via env
         self.interior_api_size = os.getenv("STORYBOOK_INTERIOR_API_SIZE", "1024x1536")
-        self.cover_api_size = os.getenv("STORYBOOK_COVER_API_SIZE", "1536x1024")
+        self.cover_api_size = os.getenv("STORYBOOK_COVER_API_SIZE", "1024x1536")
         self.interior_quality = os.getenv("STORYBOOK_INTERIOR_QUALITY", image_quality)
         self.cover_quality = os.getenv("STORYBOOK_COVER_QUALITY", image_quality)
 
@@ -167,7 +167,7 @@ class ImageProvider:
             api_size = self.cover_api_size
             target_w, target_h = self.cover_px
             model_name = self.cover_model
-            quality = self.cover_quality
+            quality = "high"
         else:
             api_size = self.interior_api_size
             target_w, target_h = self.interior_px
@@ -224,6 +224,8 @@ class ImageProvider:
                     prompt=prompt,
                     size=api_size,
                     n=n,
+                    quality=quality,
+                    output_format="png",
                 )
             finally:
                 # Close only the on-disk files; BytesIO doesn't need explicit close but safe anyway.
@@ -358,11 +360,16 @@ class ImageProvider:
         img.save(out_path, "PNG")
         return out_path
 
-    def finalize_candidate(self, *, candidate_path: Path, final_filename: str) -> Path:
-        final_path = self.out_dir / final_filename
-        final_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(candidate_path, final_path)
-        return final_path
+    def finalize_candidate(
+        self, candidate_path: Path, final_filename: str, *, cover: bool
+    ) -> None:
+        img = Image.open(candidate_path)
+        if cover:
+            img = img.convert("RGB")
+            img.save(self.out_dir / final_filename, "PNG")
+        else:
+            img = img.convert("L")
+            img.save(self.out_dir / final_filename)
 
     def cleanup_candidates(self, *, base_filename: str) -> None:
         stem = Path(base_filename).stem

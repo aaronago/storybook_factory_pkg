@@ -21,7 +21,7 @@ DEFAULT_DPI = 300
 INTERIOR_PX = {"w": 2550, "h": 3300}
 
 # cover template may vary; keep as-is
-COVER_PX = {"w": 2625, "h": 3375}
+COVER_PX = {"w": 2588, "h": 3375}
 
 VISUAL_BIBLE_VERSION = "1.5"
 
@@ -44,6 +44,19 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 def _render_template(s: str, ctx: dict[str, Any]) -> str:
     return Template(s).render(**ctx)
+
+
+def _render_template_multipass(s: str, ctx: dict[str, Any], *, passes: int = 3) -> str:
+    """
+    Render a template up to N times to allow globals that themselves contain templates.
+    """
+    rendered = str(s)
+    for _ in range(passes):
+        new_rendered = _render_template(rendered, ctx)
+        if new_rendered == rendered:
+            break
+        rendered = new_rendered
+    return rendered
 
 
 def _strip_leading_scene_label(text: str) -> str:
@@ -98,6 +111,33 @@ def _ensure_list(x: Any) -> list[Any]:
     raise ValueError(f"Expected list, got {type(x)}: {x!r}")
 
 
+def _render_overlay_fields(ov2: dict[str, Any], ctx: dict[str, Any]) -> dict[str, Any]:
+    """
+    Render common overlay text fields. Supports both 'text' (current) and 'content' (legacy).
+    """
+    for field in ("text", "content", "label"):
+        if isinstance(ov2.get(field), str):
+            ov2[field] = _render_template_multipass(str(ov2[field]), ctx).strip()
+    return ov2
+
+
+def _render_overlays(
+    overlays: Any, ctx: dict[str, Any], *, label: str
+) -> list[dict[str, Any]]:
+    if overlays is None:
+        return []
+    if not isinstance(overlays, list):
+        raise ValueError(f"{label} must be a list. Got: {type(overlays)}")
+
+    rendered_overlays: list[dict[str, Any]] = []
+    for ov in overlays:
+        if not isinstance(ov, dict):
+            raise ValueError(f"{label} overlay must be mapping. Got: {type(ov)}")
+        ov2 = dict(ov)
+        rendered_overlays.append(_render_overlay_fields(ov2, ctx))
+    return rendered_overlays
+
+
 # -----------------------------
 # Prompt item schema
 # -----------------------------
@@ -115,6 +155,7 @@ class PromptOut(TypedDict, total=False):
     prompt: str
     pixels: Pixels
     kind: str
+    overlays: list[dict[str, Any]]
 
 
 @dataclass(frozen=True)
@@ -182,14 +223,8 @@ def _build_prompt_item(
     include_bible = bool(item.get("include_bible", defaults.include_bible))
     include_safety = bool(item.get("include_safety", defaults.include_safety))
 
-    # Render the scene template (which can reference {{ globals.* }})
-    rendered = str(prompt_t)
-    for _ in range(3):  # enough for sane nesting
-        new_rendered = _render_template(rendered, ctx)
-        if new_rendered == rendered:
-            break
-        rendered = new_rendered
-
+    # Render the scene template (which can reference {{ globals.* }}) with multi-pass support
+    rendered = _render_template_multipass(str(prompt_t), ctx, passes=3)
     rendered = _strip_leading_scene_label(rendered).strip()
 
     parts: list[str] = []
@@ -220,32 +255,17 @@ def _build_prompt_item(
         "pixels": pixels,
         "kind": kind,
     }
+
     if page is not None:
         out["page"] = page
-        # -----------------------------
-    # Pass-through overlays (YAML -> JSON)
+
+    # -----------------------------
+    # Pass-through overlays (YAML -> JSON) + TEMPLATE RENDER
     # -----------------------------
     overlays = item.get("overlays")
     if overlays is not None:
-        if not isinstance(overlays, list):
-            raise ValueError(
-                f"{kind} item 'overlays' must be a list. Got: {type(overlays)}"
-            )
+        out["overlays"] = _render_overlays(overlays, ctx, label=f"{kind}.overlays")
 
-        rendered_overlays: list[dict[str, Any]] = []
-        for ov in overlays:
-            if not isinstance(ov, dict):
-                raise ValueError(f"{kind} overlay must be mapping. Got: {type(ov)}")
-
-            ov2 = dict(ov)
-
-            # allow templating inside overlay content (e.g., {{ child_names|join(' & ') }})
-            if isinstance(ov2.get("content"), str):
-                ov2["content"] = _render_template(ov2["content"], ctx).strip()
-
-            rendered_overlays.append(ov2)
-
-        out["overlays"] = rendered_overlays
     return out
 
 
@@ -469,10 +489,14 @@ def generate_from_brief(
         if not isinstance(cov, dict):
             raise ValueError(f"Cover entry must be mapping. key={key}, got={type(cov)}")
 
-        scene_text = _render_template(str(cov.get("prompt", "")), ctx).strip()
+        # Multi-pass template render so {{ globals.* }} can themselves contain templates.
+        scene_text = _render_template_multipass(
+            str(cov.get("prompt", "")), ctx, passes=3
+        ).strip()
 
         final_cover_prompt = (
             "You are drawing a full-color storybook cover illustration.\n"
+            "Full color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n"
             "\nCharacter bible (keep consistent with the interior cast):\n"
             + str(ctx["character_bible"]).strip()
             + "\n\n"
@@ -483,13 +507,20 @@ def generate_from_brief(
         prefix = cov.get("prefix", "cover")
         filename = f"{prefix}_{key}.png"
 
+        # Render overlays for covers (THIS is what fixes literal {{ ... }} on cover text)
+        rendered_cover_overlays = _render_overlays(
+            cov.get("overlays", []),
+            ctx,
+            label=f"covers.{key}.overlays",
+        )
+
         covers[str(key)] = {
             "file": filename,
             "prompt": final_cover_prompt,
             "pixels": _validate_pixels(cov.get("pixels"), COVER_PX),
             "style_reference_image": cov.get("style_reference_image"),
             "title": cov.get("title"),
-            "overlays": cov.get("overlays", []),
+            "overlays": rendered_cover_overlays,
         }
 
     page_prompts = {
