@@ -1,0 +1,69 @@
+{
+  "visual_bible_version": "1.5",
+  "project": "Elliott & Colette: The Dragon Realm Adventure",
+  "page_format": {
+    "trim_in": {
+      "w": 8.5,
+      "h": 11.0
+    },
+    "bleed_in": 0.125,
+    "dpi": 300,
+    "pixels": {
+      "w": 2550,
+      "h": 3300
+    },
+    "orientation": "portrait"
+  },
+  "cast": {
+    "children": [
+      {
+        "name": "Elliott",
+        "age": "4\u20135",
+        "appearance_desc": "short straight light-brown hair cut above the ears",
+        "outfit_desc": "medieval tunic with belt and boots or casual explorer outfit",
+        "personality": "brave, gentle, curious",
+        "photo_urls": []
+      },
+      {
+        "name": "Colette",
+        "age": "2\u20133",
+        "appearance_desc": "short curly light-brown hair with a small bow",
+        "outfit_desc": "whimsical princess-meets-adventurer dress with floral or heart motifs",
+        "personality": "joyful, mischievous, fascinated by magic and animals",
+        "photo_urls": []
+      }
+    ],
+    "pets": [
+      {
+        "name": "Winnie",
+        "species": "Chihuahua\u2013Pug mix",
+        "appearance_desc": "tan fur; upright ears; curled tail; small size",
+        "personality": "loyal, playful, slightly regal",
+        "photo_urls": []
+      }
+    ]
+  },
+  "print_safety": {
+    "interior_bleed_in": 0.125,
+    "cover_bleed_in": 0.125,
+    "safety_margin_in": 0.5
+  },
+  "globals_keys": [
+    "base_scene_header",
+    "base_scene_header_action",
+    "base_scene_header_epic",
+    "base_scene_header_flight",
+    "base_scene_header_vertical",
+    "comp_epic_upward",
+    "comp_flight_diagonal",
+    "comp_medium_close",
+    "comp_vertical_dynamic",
+    "cover_art_style",
+    "cover_comp_rules",
+    "global_safety_rules",
+    "overlay_styles",
+    "style_action",
+    "style_classic",
+    "style_line_art"
+  ]
+}

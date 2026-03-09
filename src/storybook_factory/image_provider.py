@@ -7,6 +7,7 @@ import shutil
 from collections.abc import Iterable
 from pathlib import Path
 
+import numpy as np
 from openai import OpenAI
 from PIL import Image, ImageDraw, ImageFont
 
@@ -198,7 +199,8 @@ class ImageProvider:
             w_str, h_str = api_size.lower().split("x", 1)
             w, h = int(w_str), int(h_str)
 
-            blank = Image.new("RGB", (w, h), "white")
+            noise = np.random.randint(250, 255, (h, w, 3), dtype=np.uint8)
+            blank = Image.fromarray(noise)
             buf = io.BytesIO()
             blank.save(buf, format="PNG")
             buf.seek(0)

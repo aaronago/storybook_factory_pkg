@@ -8,72 +8,65 @@ from typing import Any
 from openai import OpenAI
 
 DEFAULT_SYSTEM = """
-You are a production prompt optimizer for a children's coloring-book image generator.
+You are a production prompt optimizer for a children's line-art image generator.
 
-Your job is NOT to invent new content.
-Your job is to rewrite the user's prompt so the image model reliably follows it and produces a SELLABLE coloring-book page.
+Your job is to rewrite the user's prompt into a SINGLE strong natural-sounding illustration prompt
+that works well for image generation.
 
-STRICT RULES (DO NOT VIOLATE):
+GOAL:
+Produce a prompt that reads like a clear descriptive illustration brief, not a technical spec sheet.
+
+STRICT RULES:
 - Do NOT add new characters, animals, props, scenery, or story elements.
-- Do NOT remove any characters, animals, props, or story elements mentioned by the user.
-- Preserve all factual details exactly (people, ages, hair, clothing, pets, relationships, setting).
+- Do NOT remove any characters, animals, props, scenery, or story elements mentioned by the user.
+- Preserve all factual details exactly.
 - Output MUST be a SINGLE optimized prompt string.
-- Do NOT include explanations, commentary, or meta text.
-- Do NOT include markdown.
-- Do NOT ask questions.
+- Do NOT include explanations, commentary, markdown, lists, bullets, or questions.
 - Do NOT mention these rules.
 
-STYLE & SAFETY CONSTRAINTS (MANDATORY):
-- Black-and-white line art ONLY
-- NO color
-- NO shading
-- NO gray
-- NO gradients
-- NO cross-hatching
-- NO filled black areas
-- Clean, printable outlines suitable for coloring
-- Medium, consistent line weight with clear shape separation
-
-COMPOSITION & FRAMING (CRITICAL):
-- Full-page composition: main subjects should fill ~75–90% of the page height
-- Camera framing: medium-close shot
-- Crop closer than typical (heads, hands, feet near page edges is OK)
-- Reduce empty space: avoid large blank sky or ground
-- Background elements should support the scene but NOT dominate it
-- Clear foreground, midground, and background separation using outlines only
-
-STYLE DIRECTION (IMPORTANT):
-- Classic children’s storybook illustration style
-- Childlike but NOT chibi
-- Avoid super-deformed or kawaii styles
-- Balanced head-to-body proportions
-- Slightly elongated limbs compared to chibi
-- Expressive but restrained facial expressions
-- Whimsical, warm, and friendly tone without exaggeration
-
-CHARACTER IDENTITY PRESERVATION (CRITICAL):
-- The character descriptions represent specific real children.
-- Preserve their facial structure and proportions exactly as described.
-- Do NOT idealize, beautify, or convert them into generic animated characters.
-- Do NOT exaggerate eye size, head size, or facial symmetry.
+IDENTITY PRIORITY:
+- If the prompt describes specific real children or pets, preserve their identity.
+- Do NOT idealize, beautify, or genericize their faces.
+- Do NOT turn them into generic animated, doll-like, or storybook-template characters.
+- Avoid oversized eyes, exaggerated symmetry, or exaggerated cuteness.
 - Personal likeness is more important than stylistic polish.
 
-SCENE CLARITY:
-- Ensure a clear focal point
-- Characters should interact naturally with each other or the environment
-- Avoid clutter while maintaining a rich, engaging scene
-- Ensure all characters are fully visible and clearly readable
+STYLE RULES:
+- Black-and-white line art only
+- No color
+- No shading
+- No gray
+- No gradients
+- No shadows
+- No cross-hatching
+- No filled black areas
+- Clean, printable outlines suitable for coloring
 
-PROMPT OPTIMIZATION GUIDELINES:
-- Reorder instructions for maximum compliance
-- Compress redundant phrasing
-- Resolve contradictions
-- Add ONLY minimal, helpful art-direction that improves results
-  (e.g., composition, framing, line clarity)
-- Do NOT add creative flourishes beyond what the user specified
+PROMPT SHAPE:
+- Write the final prompt as one natural descriptive paragraph or two.
+- Put the main scene early.
+- Keep the wording image-native and descriptive.
+- Integrate character details naturally into the scene when possible.
+- Keep composition guidance simple and descriptive, not mathematical.
+- Keep the prompt concise and avoid repetition.
 
-Do NOT include any text, lettering, captions, titles, or typography in the image.
-Illustration only.
+AVOID THESE PHRASES OR IDEAS:
+- "classic children's coloring-book illustration"
+- "clear facial expressions"
+- "natural child proportions"
+- "character-focused framing"
+- precise page-fill percentages unless absolutely necessary
+- repeated reminders about readability or recognizability
+- anything that pushes the model toward generic children's-book faces
+
+REFERENCE RULE:
+- If references are mentioned, treat them as identity references, not style references.
+- Do NOT say the references define the style.
+- Identity only.
+
+TECHNICAL CLEANUP:
+- A small amount of cleanup language at the end is okay, such as avoiding extra limbs, impossible overlaps, or clutter.
+- Keep this brief.
 
 OUTPUT FORMAT:
 Return valid JSON exactly in this shape and nothing else:
@@ -153,7 +146,6 @@ class PromptOptimizer:
     def optimize(
         self, prompt: str, *, page_title: str | None = None, kind: str = "interior"
     ) -> str:
-
         if os.getenv("STORYBOOK_DISABLE_PROMPT_OPT", "").lower() in {
             "1",
             "true",
@@ -161,62 +153,117 @@ class PromptOptimizer:
         }:
             return prompt
 
-        # -----------------------------
-        # Split protected sections
-        # -----------------------------
-
-        bible = ""
-        safety = ""
-        scene = prompt
-
-        if "Character bible:" in prompt:
-            before, after = prompt.split("Character bible:", 1)
-            bible = "Character bible:" + after.split("\n\n", 1)[0]
-            scene = after.split("\n\n", 1)[1] if "\n\n" in after else ""
-
-        if "GLOBAL SAFETY" in scene:
-            before, after = scene.split("GLOBAL SAFETY", 1)
-            safety = "GLOBAL SAFETY" + after.split("\n\n", 1)[0]
-            scene = after.split("\n\n", 1)[1] if "\n\n" in after else ""
-
-        scene = scene.strip()
-
-        user = scene
-        if page_title:
-            user = f"Page title: {page_title}\n\n{scene}"
-
-        system = self.system_prompt
         if kind == "cover":
             system = DEFAULT_COVER_SYSTEM
+            user = prompt.strip()
+            if page_title:
+                user = f"Page title: {page_title}\n\n{user}"
+
+            resp = self.client.responses.create(
+                model=self.model,
+                temperature=self.temperature,
+                max_output_tokens=self.max_output_tokens,
+                input=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+            data = self._extract_json(resp)
+            out = (data.get("optimized_prompt") or "").strip()
+
+            return out if out else prompt
+
+        # -----------------------------
+        # Split sections
+        # -----------------------------
+        bible = ""
+        safety = ""
+        remainder = prompt.strip()
+
+        if "Character bible:" in remainder:
+            _, after = remainder.split("Character bible:", 1)
+            if "\n\n" in after:
+                bible_body, remainder = after.split("\n\n", 1)
+                bible = bible_body.strip()
+            else:
+                bible = after.strip()
+                remainder = ""
+
+        if "GLOBAL SAFETY" in remainder:
+            before, after = remainder.split("GLOBAL SAFETY", 1)
+            remainder = before.strip()
+            if "\n\n" in after:
+                safety_body, tail = after.split("\n\n", 1)
+                safety = safety_body.strip()
+                if tail.strip():
+                    remainder = (remainder + "\n\n" + tail.strip()).strip()
+            else:
+                safety = after.strip()
+
+        remainder = remainder.strip()
+
+        # -----------------------------
+        # Ask optimizer for natural scene prompt
+        # -----------------------------
+        user_parts = []
+
+        if page_title:
+            user_parts.append(f"Page title: {page_title}")
+
+        user_parts.append(
+            "Rewrite the following into one natural descriptive illustration prompt. "
+            "Do not use section labels. Keep it concise, visual, and image-native."
+        )
+
+        if remainder:
+            user_parts.append(remainder)
+
+        user = "\n\n".join(user_parts).strip()
 
         resp = self.client.responses.create(
             model=self.model,
             temperature=self.temperature,
             max_output_tokens=self.max_output_tokens,
             input=[
-                {"role": "system", "content": system},
+                {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": user},
             ],
         )
 
         data = self._extract_json(resp)
-        optimized_scene = (data.get("optimized_prompt") or scene).strip()
+        optimized_scene = (data.get("optimized_prompt") or remainder).strip()
 
         # -----------------------------
-        # Reassemble final prompt
+        # Build short natural add-ons
         # -----------------------------
-
-        parts = []
-
+        identity_clause = ""
         if bible:
-            parts.append(bible)
+            identity_clause = (
+                "Use the attached character sheet reference images as the identity reference "
+                "for the children and dog, and preserve their recognizable facial structure."
+            )
 
+        safety_clause = ""
         if safety:
-            parts.append(safety)
+            safety_clause = (
+                "Avoid object intersections, impossible overlaps, extra limbs, duplicated faces, "
+                "merged hands or feet, and unreadable clutter."
+            )
 
-        parts.append(optimized_scene)
+        # -----------------------------
+        # Reassemble naturally
+        # -----------------------------
+        parts = [optimized_scene]
 
-        return "\n\n".join(parts)
+        if identity_clause:
+            parts.append(identity_clause)
+
+        if safety_clause:
+            parts.append(safety_clause)
+
+        print("OPOIUOIUPIOUPIOU", "\n\n".join(p for p in parts if p).strip())
+
+        return "\n\n".join(p for p in parts if p).strip()
 
     def _extract_json(self, resp: Any) -> dict[str, Any]:
         """

@@ -232,12 +232,12 @@ def _build_prompt_item(
     if include_bible:
         parts.append("Character bible:\n" + str(ctx["character_bible"]).strip())
 
+    parts.append(rendered)
+
     if include_safety:
         global_safety = str(ctx.get("global_safety_rules") or "").strip()
         if global_safety:
             parts.append("GLOBAL SAFETY (IMPORTANT):\n" + global_safety)
-
-    parts.append(rendered)
 
     final_prompt = "\n\n".join(p for p in parts if p).strip()
 

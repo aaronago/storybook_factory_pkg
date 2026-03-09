@@ -16,20 +16,6 @@ globals:
   # ------------------------------------------------------------
   # Style fragments
   # ------------------------------------------------------------
-  style_line_art: |
-    Black-and-white children’s coloring-book line art.
-    Clean black outlines on white.
-    No shading, no gray, no gradients, no shadows.
-    Avoid large filled-black regions; keep interiors open for coloring.
-
-  style_classic: |
-    STYLE: classic coloring-book illustration (NOT chibi).
-    Natural child proportions. Clear facial expressions.
-
-  style_action: |
-    STYLE: classic kids’ coloring-book illustration (NOT chibi).
-    Natural proportions with gentle action energy, but keep shapes simple and readable.
-
   cover_art_style: |
     Full-color, premium children’s fantasy book cover illustration.
     High-end animated feature film lighting (Pixar-style fantasy cool).
@@ -59,7 +45,7 @@ globals:
     - No large white fill areas.
     - Maintain full color depth and dynamic lighting.
 
-    NOT chibi. Natural child proportions, expressive faces.
+    Expressive faces.
     Modern animated-feature aesthetic.
     No watermark.
 
@@ -74,10 +60,14 @@ globals:
   # Composition fragments
   # ------------------------------------------------------------
   comp_medium_close: |
-    FULL-PAGE COMPOSITION: medium-close framing.
+    FULL-PAGE COMPOSITION: medium-close character-focused framing.
+    The children are the primary focus of the illustration.
+
     {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
-    fill ~70–85% of page height.
-    Avoid large blank sky.
+    occupy roughly the lower 75–80% of the page.
+
+    Leave open space above for environment elements.
+    Avoid pushing the characters too far from the viewer.
 
   comp_vertical_dynamic: |
     FULL-PAGE COMPOSITION: dynamic vertical composition.
@@ -111,6 +101,20 @@ globals:
   # ------------------------------------------------------------
   # One-line reusable scene header (MOST IMPORTANT)
   # ------------------------------------------------------------
+  style_line_art: |
+    clean black ink line drawing suitable for coloring
+    Clean black outlines on white.
+    No shading, no gray, no gradients, no shadows.
+    Avoid large filled-black regions; keep interiors open for coloring.
+
+  style_classic: |
+    Avoid exaggerated cartoon faces or oversized eyes.
+    Preserve the real facial proportions from the reference images.
+
+  style_action: |
+    STYLE: Preserve the real facial proportions from the reference images.
+    gentle action energy, but keep shapes simple and readable.
+
   base_scene_header: |
     {{ globals.style_line_art }}
     {{ globals.style_classic }}
@@ -138,65 +142,65 @@ globals:
 
 covers:
   front:
-  title: 'Front Cover Art'
-  prefix: 'cover'
-  include_bible: true
-  include_safety: true
-  pixels: { w: 2588, h: 3375 }
-  prompt: |
-    {{ globals.cover_art_style }}
+    title: 'Front Cover Art'
+    prefix: 'cover'
+    include_bible: true
+    include_safety: true
+    pixels: { w: 2588, h: 3375 }
+    prompt: |
+      {{ globals.cover_art_style }}
 
-    Rendering must feel like a frame from a high-end animated fantasy film.
+      Rendering must feel like a frame from a high-end animated fantasy film.
 
-    FRONT COVER SCENE:
-    {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} in the foreground,
-    discovering a swirling magical portal in a forest clearing.
-    A large friendly dragon rises protectively behind them,
-    wings subtly framing the composition.
-    A distant castle silhouette beyond the trees.
+      FRONT COVER SCENE:
+      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} in the foreground,
+      discovering a swirling magical portal in a forest clearing.
+      A large friendly dragon rises protectively behind them,
+      wings subtly framing the composition.
+      A distant castle silhouette beyond the trees.
 
-    LIGHTING:
-    The forest environment should be cool twilight blue and indigo.
-    Add subtle cool moonlight or sky glow from above/behind.
-    The portal emits a soft golden magical light that illuminates faces and nearby ground.
-    Keep warm light localized — do NOT turn the entire scene orange.
-    Add gentle cool-violet shadow tones in unlit areas.
-    Add slight teal undertones in darker forest areas for depth.
+      LIGHTING:
+      The forest environment should be cool twilight blue and indigo.
+      Add subtle cool moonlight or sky glow from above/behind.
+      The portal emits a soft golden magical light that illuminates faces and nearby ground.
+      Keep warm light localized — do NOT turn the entire scene orange.
+      Add gentle cool-violet shadow tones in unlit areas.
+      Add slight teal undertones in darker forest areas for depth.
 
-    ATMOSPHERE:
-    Soft volumetric glow around the portal.
-    Light mist or particles catching cool blue light in the distance.
-    Maintain strong warm–cool color separation.
+      ATMOSPHERE:
+      Soft volumetric glow around the portal.
+      Light mist or particles catching cool blue light in the distance.
+      Maintain strong warm–cool color separation.
 
-    COMPOSITION:
-    Subjects fill the lower ~65–70% of the cover.
-    Reserve the upper ~30–35% as open cool-toned sky for title placement.
-    Keep this upper area clean and uncluttered (no branches or wings behind text).
+      COMPOSITION:
+      Subjects fill the lower ~65–70% of the cover.
+      Reserve the upper ~30–35% as open cool-toned sky for title placement.
+      Keep this upper area clean and uncluttered (no branches or wings behind text).
 
-    TITLE PLACEMENT RULES:
-    Include the exact title text:
-    The Dragon Realm Adventure
+      TITLE PLACEMENT RULES:
+      Include the exact title text:
+      The Dragon Realm Adventure
 
-    The title must sit comfortably inside the safe zone.
-    Leave a generous clear margin above the word “The”.
-    The top of the title block must not approach the trim edge.
-    Ensure visible breathing room between the top of the cover and the title.
+      The title must sit comfortably inside the safe zone.
+      Leave a generous clear margin above the word "The".
+      The top of the title block must not approach the trim edge.
+      Ensure visible breathing room between the top of the cover and the title.
 
-    Center the title horizontally in the upper sky area.
-    Position the entire title block slightly lower than the very top —
-    never tight to the edge.
+      Center the title horizontally in the upper sky area.
+      Position the entire title block slightly lower than the very top —
+      never tight to the edge.
 
-    Use elegant fantasy serif typography.
-    Gold-ivory lettering with subtle bevel and soft warm glow.
-    Professional book-cover quality.
-    Clean, readable letterforms.
-    Correct spelling is critical.
-    Do not distort letters.
-    Do not add extra words.
-    No other text anywhere on the cover.
+      Use elegant fantasy serif typography.
+      Gold-ivory lettering with subtle bevel and soft warm glow.
+      Professional book-cover quality.
+      Clean, readable letterforms.
+      Correct spelling is critical.
+      Do not distort letters.
+      Do not add extra words.
+      No other text anywhere on the cover.
 
-    Do NOT draw placeholder boxes or frames.
-    Do NOT draw fake lettering or symbols.
+      Do NOT draw placeholder boxes or frames.
+      Do NOT draw fake lettering or symbols.
 
   back:
     title: 'Back Cover Art'
@@ -244,7 +248,7 @@ scenes:
   - page: 2
     title: 'Portal Discovery'
     prompt: |
-      {{ globals.base_scene_header }}
+      {{ globals.style_line_art }}
 
       SCENE:
       In a forest clearing, {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
@@ -310,7 +314,7 @@ scenes:
   - page: 7
     title: 'The Thunder Dragon'
     prompt: |
-      {{ base_scene_header }}
+      {{ globals.base_scene_header }}
 
       SCENE:
       On a rocky hill beneath large rolling storm clouds,
@@ -421,7 +425,7 @@ scenes:
   - page: 12
     title: 'The Lost Flame Dragon'
     prompt: |
-      {{ base_scene_header }}
+      {{ globals.base_scene_header }}
 
 
       FULL-PAGE COMPOSITION:
@@ -436,10 +440,6 @@ scenes:
       {{ child_names|join(' & ') }} approach the dragon gently.
       One child reaches out a hand in reassurance.
       {{ pet_names|join(' & ') }} stands beside them.
-
-      The dragon is clearly reptilian and proportional.
-      Keep the pose simple and grounded.
-      No tangled vines or complex overlaps.
 
       Keep the background minimal with a few trees and rocks.
       Maintain clean, readable shapes for coloring.
@@ -473,13 +473,11 @@ scenes:
       one slightly ahead of the other.
       {{ pet_names|join(' & ') }} stands between them.
 
-      In the background, three other dragons
-      (forest dragon, ice dragon, cloud-serpent dragon)
-      perch separately on tall rock spires,
-      forming a wide arc behind the central dragon.
+      In the distant background,
+      two other dragons perch far apart on tall rock spires.
 
-      Keep each dragon clearly separated.
-      Do not overlap wings between different dragons.
+      Keep the background dragons small and secondary.
+      The central dragon and the children remain the primary focus.
 
   - page: 15
     title: 'Goodbye, Dragon Realm'

@@ -1,0 +1,230 @@
+{
+  "front_matter_prompts": [
+    {
+      "title": "Dedication Page",
+      "file": "front_01_dedication-page.png",
+      "prompt": "Black-and-white coloring-book line art. Clean outlines only. No shading.\nLeave a very large blank center area for dedication text (DO NOT draw text).\nAdd a simple thin border of vines and stars.\nIMPORTANT: Do NOT draw any letters/words/symbols. Keep center blank.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "front_matter",
+      "page": 1,
+      "overlays": [
+        {
+          "type": "text",
+          "style": "dedication",
+          "content": "For Elliott & Colette\u2014\nmay your imaginations always soar.",
+          "region_pct": {
+            "x": 15,
+            "y": 38,
+            "w": 70,
+            "h": 24
+          }
+        }
+      ]
+    }
+  ],
+  "interior_prompts": [
+    {
+      "title": "Portal Discovery",
+      "file": "page_02_portal-discovery.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\n\nSCENE:\nIn a forest clearing, Elliott & Colette and Winnie\ndiscover a swirling magical portal behind them.\nThe portal is large and reaches toward the top edge.\nInside the portal, outline-only silhouettes of two friendly winged dragons are visible.\nTall trees and hanging vines frame the upper area.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 2
+    },
+    {
+      "title": "Dragon Hatchlings",
+      "file": "page_03_dragon-hatchlings.png",
+      "prompt": "Black-and-white line art coloring book page with clean, medium-weight outlines and no shading, gray, gradients, or filled black areas. Full-page vertical composition featuring Elliott (4–5 years old, short straight light-brown hair, big gray-blue eyes, round cheeks, friendly adventurous expression, wearing a medieval tunic with belt and boots or casual explorer outfit), Colette (2–3 years old, wavy brown hair in a top knot, large gray-blue eyes, soft cheeks, wearing a whimsical princess-meets-adventurer dress with floral or heart motifs), and Winnie (tan Chihuahua–Pug mix with upright ears and curled tail, small size) kneeling beside a large nest of dragon eggs in a forest clearing. One baby dragon hatchling peeks out from a cracked egg while the other eggs remain whole and nestled together. Elliott gently reaches toward the hatchling while Colette watches with delighted curiosity and Winnie stands nearby observing the scene. The children and nest fill most of the lower two-thirds of the page while trees and simple forest foliage frame the upper portion to avoid empty space. The baby dragon has small wings, a rounded snout, and a friendly expression suitable for a children’s story. No object intersections or nest edges cutting through bodies. Characters and dragon have natural child and animal proportions with clear, expressive but restrained facial expressions in a classic children’s storybook style (not chibi). The scene has clear foreground, midground, and background separation using outlines only, with reduced empty space and a dynamic, engaging composition suitable for coloring.\n\nUse the attached character sheet reference images as the canonical identity and style.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 3
+    },
+    {
+      "title": "The Sky Bridge",
+      "file": "page_04_the-sky-bridge.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: dynamic vertical composition.\nElliott & Colette and Winnie\nfill most of the lower two-thirds.\nKey elements extend upward toward the top edge.\n\n\n\nSCENE:\nElliott & Colette walk across a floating stone bridge.\nAbove them coils a long cloud-serpent dragon with whiskers and flowing mane.\nPuffy clouds frame the top portion of the page.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 4
+    },
+    {
+      "title": "Forest Dragons",
+      "file": "page_05_forest-dragons.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\nIn a magical grove, Elliott & Colette meet a forest dragon\nwith leaf-shaped wings and branch-like antlers.\nWinnie sits near the foreground grass.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 5
+    },
+    {
+      "title": "Dragon Training Grounds",
+      "file": "page_06_dragon-training-grounds.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\n['Elliott', 'Colette'] and ['Winnie'] stand a few steps in front of one strong young dragon.\n\nThe dragon is slightly taller than the children,\nstanding upright with wings partially open.\nIt looks focused and alert, not babyish and not aggressive.\n\n['Elliott', 'Colette'] are interacting confidently:\n- One child reaches a hand toward the dragon\u2019s shoulder.\n- The other stands ready, watching closely.\n\n['Winnie'] stands beside them on the ground,\nlooking up at the dragon.\n\nIn the background:\nSimple stone walls and a few training targets.\nLarge open sky above.\nKeep shapes bold and readable.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 6
+    },
+    {
+      "title": "The Thunder Dragon",
+      "file": "page_07_the-thunder-dragon.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\nOn a rocky hill beneath large rolling storm clouds,\nElliott & Colette stand side by side,\nsteady and brave in the wind.\nWinnie stands at their feet.\n\nAbove them, a powerful thunder dragon sweeps across the sky\nin a strong diagonal arc.\n\nThe thunder dragon has lightning-shaped horns\nand broad angular wings.\nIts expression is intense but noble.\n\nA bold bolt of lightning bursts from the dragon\u2019s mouth,\nbranching naturally in thick, flowing lines.\n\nKeep cloud shapes large and dramatic.\nEmphasize strong diagonal movement.\nAvoid small repeated textures.\nKeep silhouettes clean and bold for coloring.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 7
+    },
+    {
+      "title": "Frostfall Peaks",
+      "file": "page_08_frostfall-peaks.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: dynamic vertical composition.\nElliott & Colette and Winnie\nfill most of the lower two-thirds.\nKey elements extend upward toward the top edge.\n\n\n\nSCENE:\nHigh in the snowy mountains, Elliott & Colette\nclimb a gentle icy slope.\n\nA majestic ice dragon with crystalline horns\nand jagged frost-covered wings perches on a snowy ridge.\n\nLarge snowdrifts and angular ice formations\nframe the lower and side edges of the page.\n\nKeep shapes bold and clean.\nAvoid tiny snowflake details.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 8
+    },
+    {
+      "title": "The Ocean Dragon",
+      "file": "page_09_the-ocean-dragon.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: dynamic vertical composition.\nElliott & Colette and Winnie\nfill most of the lower two-thirds.\nKey elements extend upward toward the top edge.\n\n\n\nSCENE:\nOn a wide sandy shore, Elliott & Colette stand at the water\u2019s edge.\nGentle ocean waves roll toward them.\n\nA majestic ocean dragon rises gracefully from the sea.\nThe dragon has fin-like wings, a long flowing body,\nand coral-shaped horns.\n\nKeep the shoreline calm and spacious.\nUse broad, smooth wave lines with minimal internal detail.\nDo NOT create face-like shapes in the water.\nAvoid eye-like or mouth-like foam patterns.\nKeep wave crests abstract and flowing.\n\nThe horizon line stays simple and clean.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 9
+    },
+    {
+      "title": "The Moonlight Dragon",
+      "file": "page_10_the-moonlight-dragon.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: dynamic vertical composition.\nElliott & Colette and Winnie\nfill most of the lower two-thirds.\nKey elements extend upward toward the top edge.\n\n\n\nSCENE:\nIn a glowing moonlit meadow,\nElliott & Colette look up at a graceful moonlight dragon.\nWinnie sits calmly beside them in the foreground.\n\nThe dragon has long flowing wings\nand crescent-shaped horns.\n\nLarge rounded moon shapes and smooth rolling hills\nframe the background.\n\nKeep lines bold and avoid tiny star clutter.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 10
+    },
+    {
+      "title": "Dragon Flight",
+      "file": "page_11_dragon-flight.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nFULL-PAGE COMPOSITION:\nStrong diagonal flight composition.\nOne large flame dragon flies from lower-left toward upper-right.\nKeep the sky open and spacious.\nAvoid crowding the dragon.\n\nSCENE:\nElliott & Colette\nride together on one majestic flame dragon high above a wide valley.\n\nThe children lean slightly with the motion of flight.\nHair and clothing stream gently backward in the wind.\n\nThe flame dragon looks powerful and noble.\nWings fully extended.\nHead forward in confident motion.\n\nFar below, Winnie\nruns along a winding path beside the river,\nlooking up toward the flying dragon.\n\nThe valley below is simple:\nrolling hills, a winding river, distant mountains.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 11
+    },
+    {
+      "title": "The Lost Flame Dragon",
+      "file": "page_12_the-lost-flame-dragon.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\n\nFULL-PAGE COMPOSITION:\nVertical composition.\nThe dragon stands in the center of the page.\nLeave open space around the characters for clarity.\n\nSCENE:\nA flame dragon stands alone in a forest clearing,\nlooking uncertain and slightly worried.\n\nElliott & Colette approach the dragon gently.\nOne child reaches out a hand in reassurance.\nWinnie stands beside them.\n\nKeep the background minimal with a few trees and rocks.\nMaintain clean, readable shapes for coloring.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 12
+    },
+    {
+      "title": "Grateful Flame Dragon",
+      "file": "page_13_grateful-flame-dragon.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\nElliott & Colette stand beside a majestic flame dragon.\n\nWinnie stands between them.\n\nInclude exactly one Winnie.\nDo NOT duplicate the pet.\n\nThe dragon lowers its head in a gesture of gratitude.\nKeep the pose calm and grounded.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 13
+    },
+    {
+      "title": "The Dragon Alliance",
+      "file": "page_14_the-dragon-alliance.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\nA large flame dragon stands proudly at the center,\nwings raised in a wide V shape.\n\nElliott & Colette stand confidently in front of the dragon,\none slightly ahead of the other.\nWinnie stands between them.\n\nIn the distant background,\ntwo other dragons perch far apart on tall rock spires.\n\nKeep the background dragons small and secondary.\nThe central dragon and the children remain the primary focus.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 14
+    },
+    {
+      "title": "Goodbye, Dragon Realm",
+      "file": "page_15_goodbye-dragon-realm.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nElliott & Colette and Winnie\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nFULL-PAGE COMPOSITION:\nGentle centered composition with soft framing trees.\n\nSCENE:\nBack in the forest clearing,\nElliott & Colette stand side by side,\nholding hands.\n\nWinnie sits between them.\n\nInside the glowing portal,\na majestic flame dragon stands in silhouette,\nwings partially open.\n\nThe dragon lowers its head in a final gesture of respect.\n\nThe portal light softly illuminates the children's faces.\n\nKeep the scene calm and uncluttered.\nEmphasize emotion over action.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 15
+    },
+    {
+      "title": "Memory Page",
+      "file": "page_16_memory-page.png",
+      "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\n\nPERSONAL MEMORY PAGE \u2013 calm and sentimental.\n\nLAYOUT:\nBalanced vertical composition with generous negative space.\n\nAt the top, include simple outlined lettering:\n\"Elliott & Colette's Dragon Realm Memories\"\n\nBelow the title, create a large open rectangular drawing space\noccupying 60\u201370% of the page height.\n\nAdd a thin decorative border of small stars and dragon-scale motifs.\n\nIn the lower-left corner,\ninclude a small full-body portrait of Elliott & Colette\nin their medieval outfits.\n\nDo NOT include any dragons on this page.\nKeep the design minimal and calm.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 16
+    }
+  ],
+  "back_matter_prompts": [],
+  "covers": {
+    "front": {
+      "file": "cover_front.png",
+      "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nFull-color, premium children\u2019s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm\u2013cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nRendering must feel like a frame from a high-end animated fantasy film.\n\nFRONT COVER SCENE:\nElliott & Colette and Winnie in the foreground,\ndiscovering a swirling magical portal in a forest clearing.\nA large friendly dragon rises protectively behind them,\nwings subtly framing the composition.\nA distant castle silhouette beyond the trees.\n\nLIGHTING:\nThe forest environment should be cool twilight blue and indigo.\nAdd subtle cool moonlight or sky glow from above/behind.\nThe portal emits a soft golden magical light that illuminates faces and nearby ground.\nKeep warm light localized \u2014 do NOT turn the entire scene orange.\nAdd gentle cool-violet shadow tones in unlit areas.\nAdd slight teal undertones in darker forest areas for depth.\n\nATMOSPHERE:\nSoft volumetric glow around the portal.\nLight mist or particles catching cool blue light in the distance.\nMaintain strong warm\u2013cool color separation.\n\nCOMPOSITION:\nSubjects fill the lower ~65\u201370% of the cover.\nReserve the upper ~30\u201335% as open cool-toned sky for title placement.\nKeep this upper area clean and uncluttered (no branches or wings behind text).\n\nTITLE PLACEMENT RULES:\nInclude the exact title text:\nThe Dragon Realm Adventure\n\nThe title must sit comfortably inside the safe zone.\nLeave a generous clear margin above the word \"The\".\nThe top of the title block must not approach the trim edge.\nEnsure visible breathing room between the top of the cover and the title.\n\nCenter the title horizontally in the upper sky area.\nPosition the entire title block slightly lower than the very top \u2014\nnever tight to the edge.\n\nUse elegant fantasy serif typography.\nGold-ivory lettering with subtle bevel and soft warm glow.\nProfessional book-cover quality.\nClean, readable letterforms.\nCorrect spelling is critical.\nDo not distort letters.\nDo not add extra words.\nNo other text anywhere on the cover.\n\nDo NOT draw placeholder boxes or frames.\nDo NOT draw fake lettering or symbols.",
+      "pixels": {
+        "w": 2588,
+        "h": 3375
+      },
+      "style_reference_image": null,
+      "title": "Front Cover Art",
+      "overlays": []
+    },
+    "back": {
+      "file": "cover_back.png",
+      "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair cut above the ears, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, short curly light-brown hair with a small bow, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nFull-color, premium children\u2019s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm\u2013cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nBACK COVER SCENE:\nA whimsical magical dragon-realm landscape suitable for the back cover.\nRolling hills, distant castle silhouette, glowing stars,\nsubtle magical particles in the air, and gentle twilight sky.\nInclude soft atmospheric depth and rich color, but keep composition calm and balanced.\n\nLeave the central area moderately open in case a small blurb is added later.\nDo NOT include the children or pets on the back cover.\nDo NOT draw any text.\nDo NOT draw placeholder boxes or frames.",
+      "pixels": {
+        "w": 2588,
+        "h": 3375
+      },
+      "style_reference_image": null,
+      "title": "Back Cover Art",
+      "overlays": []
+    }
+  },
+  "overlay_styles": {
+    "dedication": {
+      "font_path": "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf",
+      "size": 145,
+      "fill": "black",
+      "stroke_width": 1,
+      "stroke_fill": "white",
+      "line_spacing": 1.18
+    }
+  }
+}
