@@ -14,6 +14,43 @@ from .overlay_renderer import TextStyle, apply_overlays
 from .prompt_optimizer import PromptOptimizer
 
 # -----------------------------
+# Config defaults (no pipeline_config.json required)
+# -----------------------------
+
+
+DEFAULT_PIPELINE_CFG: dict[str, Any] = {
+    # Output quality
+    "dpi": 300,
+    # Single-sided coloring book behavior
+    "one_sided": True,
+    "blank_after_interior": True,
+    "blank_after_front_matter": False,
+    "blank_after_back_matter": False,
+    "pad_to_multiple_of_4": True,
+    # Overlays default ON to apply text overlays (dedication, titles, etc).
+    "disable_overlays": False,
+    # Fallback pixel size if not provided elsewhere
+    # (Ideally your generator sets pixels per page in page_prompts.json, but this keeps you safe.)
+    "interior_pixels": {"w": 2550, "h": 3300},
+    "cover_pixels": {"w": 2588, "h": 3375},
+}
+
+
+def _load_optional_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text())
+
+
+def _merge_cfg(defaults: dict[str, Any], overrides: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(defaults)
+    for k, v in overrides.items():
+        # shallow merge is fine for this use-case
+        merged[k] = v
+    return merged
+
+
+# -----------------------------
 # IO helpers
 # -----------------------------
 
@@ -48,9 +85,6 @@ def _sorted_interior_prompts(page_prompts: dict[str, Any]) -> list[dict[str, Any
 
 
 def _load_reference_sheets(images_dir: Path) -> list[Path]:
-    """
-    Character sheets live at: <output_dir>/images/refs/*.png
-    """
     refs_dir = images_dir / "refs"
     if not refs_dir.exists():
         return []
@@ -63,10 +97,6 @@ def _load_reference_sheets(images_dir: Path) -> list[Path]:
 
 
 def _build_overlay_styles(page_prompts: dict[str, Any]) -> dict[str, TextStyle]:
-    """
-    page_prompts.json contains:
-      overlay_styles: { "title": {...}, "body": {...} }
-    """
     raw = page_prompts.get("overlay_styles", {}) or {}
     if not isinstance(raw, dict):
         raise ValueError("page_prompts['overlay_styles'] must be a dict if present")
@@ -79,12 +109,14 @@ def _build_overlay_styles(page_prompts: dict[str, Any]) -> dict[str, TextStyle]:
         "stroke_width",
         "stroke_fill",
         "line_spacing",
+        "glow_radius",
+        "glow_color",
+        "glow_alpha",
     }
 
     for k, v in raw.items():
         if not isinstance(v, dict):
             raise ValueError(f"overlay_styles['{k}'] must be a dict")
-        # Filter to only valid TextStyle parameters
         filtered = {key: val for key, val in v.items() if key in valid_keys}
         styles[k] = TextStyle(**filtered)
     return styles
@@ -95,10 +127,12 @@ def _apply_item_overlays_if_any(
     images_dir: Path,
     item: dict[str, Any],
     overlay_styles: dict[str, TextStyle],
+    overlays_enabled: bool,
+    force_grayscale: bool = True,
 ) -> None:
-    """
-    If item has overlays: [...] apply them onto the final image file in-place.
-    """
+    if not overlays_enabled:
+        return
+
     overlays = item.get("overlays")
     if not overlays:
         return
@@ -112,13 +146,13 @@ def _apply_item_overlays_if_any(
 
     img = Image.open(img_path)
     out = apply_overlays(img, overlays=overlays, styles=overlay_styles)
-
-    # For coloring book interiors, keep grayscale
-    out.convert("L").save(img_path)
+    if force_grayscale:
+        out = out.convert("L")
+    out.save(img_path)
 
 
 # -----------------------------
-# PDF assembly (pure)
+# PDF assembly (single-sided optimized)
 # -----------------------------
 
 
@@ -128,18 +162,13 @@ def build_interior_pdf(
     pipeline_cfg: dict[str, Any],
     out_pdf: Path,
 ) -> Path:
-    """
-    Assemble a grayscale interior PDF from already-generated images.
-
-    Ordering:
-      1) front_matter_prompts (as listed)
-      2) interior_prompts sorted by page
-      3) back_matter_prompts (as listed)
-    """
     images: list[Image.Image] = []
 
     def _load_grayscale(path: Path) -> Image.Image:
         return Image.open(path).convert("L")
+
+    def _blank_like(ref: Image.Image) -> Image.Image:
+        return Image.new("L", ref.size, 255)
 
     front = _as_list_of_dicts(
         page_prompts.get("front_matter_prompts"), "front_matter_prompts"
@@ -149,7 +178,6 @@ def build_interior_pdf(
         page_prompts.get("back_matter_prompts"), "back_matter_prompts"
     )
 
-    # Keep front/back order stable. If you provide "page" fields, we sort by them.
     def _sort_optional_page(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if any(isinstance(it.get("page"), int) for it in items):
             return sorted(
@@ -163,6 +191,21 @@ def build_interior_pdf(
     front = _sort_optional_page(front)
     back = _sort_optional_page(back)
 
+    one_sided = bool(pipeline_cfg.get("one_sided", True))
+    blank_after_interior = bool(pipeline_cfg.get("blank_after_interior", True))
+    blank_after_front_matter = bool(pipeline_cfg.get("blank_after_front_matter", False))
+    blank_after_back_matter = bool(pipeline_cfg.get("blank_after_back_matter", False))
+    pad_to_multiple_of_4 = bool(pipeline_cfg.get("pad_to_multiple_of_4", True))
+
+    blank_ref: Image.Image | None = None
+
+    def _append(img: Image.Image) -> None:
+        nonlocal blank_ref
+        images.append(img)
+        if blank_ref is None:
+            blank_ref = img
+
+    # Front matter
     for fm in front:
         fname = fm.get("file")
         if not fname:
@@ -170,16 +213,22 @@ def build_interior_pdf(
         p = images_dir / fname
         if not p.exists():
             raise FileNotFoundError(f"Missing front-matter image: {p}")
-        images.append(_load_grayscale(p))
+        _append(_load_grayscale(p))
+        if one_sided and blank_after_front_matter:
+            images.append(_blank_like(blank_ref))
 
+    # Interior coloring pages
     for pmt in interior:
         fname = pmt["file"]
         page_num = pmt["page"]
         p = images_dir / fname
         if not p.exists():
             raise FileNotFoundError(f"Missing interior page {page_num} image: {p}")
-        images.append(_load_grayscale(p))
+        _append(_load_grayscale(p))
+        if one_sided and blank_after_interior:
+            images.append(_blank_like(blank_ref))
 
+    # Back matter
     for bm in back:
         fname = bm.get("file")
         if not fname:
@@ -187,10 +236,18 @@ def build_interior_pdf(
         p = images_dir / fname
         if not p.exists():
             raise FileNotFoundError(f"Missing back-matter image: {p}")
-        images.append(_load_grayscale(p))
+        _append(_load_grayscale(p))
+        if one_sided and blank_after_back_matter:
+            images.append(_blank_like(blank_ref))
 
     if not images:
         raise RuntimeError("No images found; cannot build interior PDF.")
+
+    if pad_to_multiple_of_4:
+        if blank_ref is None:
+            blank_ref = images[0]
+        while (len(images) % 4) != 0:
+            images.append(_blank_like(blank_ref))
 
     out_pdf.parent.mkdir(parents=True, exist_ok=True)
     first, *rest = images
@@ -212,17 +269,12 @@ def _ensure_prompt_images(
     optimizer: PromptOptimizer | None,
     ref_sheets: list[Path],
     overlay_styles: dict[str, TextStyle],
+    overlays_enabled: bool,
     cand_n: int,
     image_provider_mode: str,
     keep_candidates: bool,
     kind_label: str,
 ) -> None:
-    """
-    Ensure images exist for a prompt list (front/interior/back) in new schema.
-    Applies overlays in-place after generation/copy/placeholder if overlays exist.
-    """
-
-    # Avoid “kids appear on title page” by NOT attaching ref sheets for front/back matter.
     use_refs = kind_label not in {"front-matter", "back-matter"}
 
     for item in prompts:
@@ -238,35 +290,44 @@ def _ensure_prompt_images(
 
         final_path = images_dir / fname
 
-        # If file exists, still apply overlays (in case overlays were added later)
         if final_path.exists():
             _apply_item_overlays_if_any(
-                images_dir=images_dir, item=item, overlay_styles=overlay_styles
+                images_dir=images_dir,
+                item=item,
+                overlay_styles=overlay_styles,
+                overlays_enabled=overlays_enabled,
+                force_grayscale=True,
             )
             print(f"[pipeline] skipping existing {kind_label} image: {fname}")
             continue
 
-        # Folder mode: copy from assets if possible; otherwise placeholder
         if image_provider_mode == "folder":
             got = provider._copy_from_assets(fname)
             if got is None:
                 provider._placeholder(
                     fname, f"[MISSING FILE] {raw_prompt}", cover=False
                 )
+
             _apply_item_overlays_if_any(
-                images_dir=images_dir, item=item, overlay_styles=overlay_styles
+                images_dir=images_dir,
+                item=item,
+                overlay_styles=overlay_styles,
+                overlays_enabled=overlays_enabled,
+                force_grayscale=True,
             )
             continue
 
-        # Non-gpt modes: placeholder
         if image_provider_mode != "gpt-image":
             provider._placeholder(fname, raw_prompt, cover=False)
             _apply_item_overlays_if_any(
-                images_dir=images_dir, item=item, overlay_styles=overlay_styles
+                images_dir=images_dir,
+                item=item,
+                overlay_styles=overlay_styles,
+                overlays_enabled=overlays_enabled,
+                force_grayscale=True,
             )
             continue
 
-        # gpt-image mode
         assert optimizer is not None
 
         page_title = title
@@ -275,7 +336,6 @@ def _ensure_prompt_images(
 
         optimized = optimizer.optimize(raw_prompt, page_title=page_title)
 
-        # Only add ref-sheet instruction for interior pages
         if use_refs and ref_sheets:
             optimized += "\n\nUse the attached character sheet reference images as the canonical identity and style."
 
@@ -292,11 +352,16 @@ def _ensure_prompt_images(
         )
 
         best_candidate = cands[0]
-        provider.finalize_candidate(candidate_path=best_candidate, final_filename=fname)
+        provider.finalize_candidate(
+            candidate_path=best_candidate, final_filename=fname, cover=False
+        )
 
-        # Apply overlays AFTER the final file is in place
         _apply_item_overlays_if_any(
-            images_dir=images_dir, item=item, overlay_styles=overlay_styles
+            images_dir=images_dir,
+            item=item,
+            overlay_styles=overlay_styles,
+            overlays_enabled=overlays_enabled,
+            force_grayscale=True,
         )
 
         if keep_candidates:
@@ -328,15 +393,19 @@ def run_pipeline(
     image_provider_mode: str = "mock",
     openai_model: str | None = None,
     openai_interior_model: str | None = None,
+    openai_cover_model: str | None = None,
     dry_run: bool = False,
     image_quality: str = "standard",
 ) -> dict[str, Any]:
     """
     Pipeline expects config_dir contains:
       - page_prompts.json
-      - pipeline_config.json
+
+    Optional:
+      - pipeline_config.json (if you add it later, it will be merged over defaults)
     """
     interior_model = openai_interior_model or openai_model
+    cover_model = openai_cover_model or openai_model
 
     config_dir = config_dir.resolve()
     output_dir = output_dir.resolve()
@@ -347,18 +416,24 @@ def run_pipeline(
     ensure_dir(images_dir)
 
     page_prompts = load_json(config_dir / "page_prompts.json")
-    pipeline_cfg = load_json(config_dir / "pipeline_config.json")
 
-    # Image sizes
-    ip = pipeline_cfg.get("interior_pixels", {"w": 1024, "h": 1536})
+    # If you add pipeline_config.json later, it overrides defaults.
+    cfg_overrides = _load_optional_json(config_dir / "pipeline_config.json")
+    pipeline_cfg = _merge_cfg(DEFAULT_PIPELINE_CFG, cfg_overrides)
+
+    # Size defaults (used by ImageProvider if your generator didn’t set per-page pixels)
+    ip = pipeline_cfg.get("interior_pixels", {"w": 2550, "h": 3300})
     interior_px = (int(ip["w"]), int(ip["h"]))
+
+    cp = pipeline_cfg.get("cover_pixels", ip)
+    cover_px = (int(cp["w"]), int(cp["h"]))
 
     provider = ImageProvider(
         out_dir=images_dir,
         interior_px=interior_px,
-        cover_px=interior_px,  # unused in this interior builder
+        cover_px=cover_px,
         mode=image_provider_mode,
-        openai_cover_model=None,
+        openai_cover_model=cover_model,
         openai_interior_model=interior_model,
         assets_dir=assets_dir,
         dry_run=dry_run,
@@ -369,30 +444,18 @@ def run_pipeline(
     if image_provider_mode == "gpt-image":
         optimizer = PromptOptimizer.from_env()
 
-    # HARD CAP candidates to <= 2
     cand_n = min(int(os.getenv("STORYBOOK_CANDIDATES_N", "2")), 2)
-
     keep_candidates = os.getenv("STORYBOOK_KEEP_CANDIDATES", "").lower() in {
         "1",
         "true",
         "yes",
     }
 
-    # Load character sheets once
     ref_sheets = _load_reference_sheets(images_dir)
-    if ref_sheets:
-        print(
-            f"[pipeline] loaded {len(ref_sheets)} character sheets from {images_dir / 'refs'}"
-        )
-    else:
-        print(
-            "[pipeline] WARNING: no character sheets found in images/refs — pages may drift"
-        )
 
-    # Build overlay styles from JSON (compiled from YAML)
     overlay_styles = _build_overlay_styles(page_prompts)
+    overlays_enabled = not bool(pipeline_cfg.get("disable_overlays", True))
 
-    # Prompt groups (NEW schema)
     front_list = _as_list_of_dicts(
         page_prompts.get("front_matter_prompts"), "front_matter_prompts"
     )
@@ -401,7 +464,6 @@ def run_pipeline(
         page_prompts.get("back_matter_prompts"), "back_matter_prompts"
     )
 
-    # Generate images in order:
     if front_list:
         _ensure_prompt_images(
             prompts=front_list,
@@ -410,6 +472,7 @@ def run_pipeline(
             optimizer=optimizer,
             ref_sheets=ref_sheets,
             overlay_styles=overlay_styles,
+            overlays_enabled=overlays_enabled,
             cand_n=cand_n,
             image_provider_mode=image_provider_mode,
             keep_candidates=keep_candidates,
@@ -423,6 +486,7 @@ def run_pipeline(
         optimizer=optimizer,
         ref_sheets=ref_sheets,
         overlay_styles=overlay_styles,
+        overlays_enabled=overlays_enabled,
         cand_n=cand_n,
         image_provider_mode=image_provider_mode,
         keep_candidates=keep_candidates,
@@ -437,22 +501,17 @@ def run_pipeline(
             optimizer=optimizer,
             ref_sheets=ref_sheets,
             overlay_styles=overlay_styles,
+            overlays_enabled=overlays_enabled,
             cand_n=cand_n,
             image_provider_mode=image_provider_mode,
             keep_candidates=keep_candidates,
             kind_label="back-matter",
         )
 
-    # Assemble final interior PDF
     interior_pdf = output_dir / "book" / "interior.pdf"
     build_interior_pdf(images_dir, page_prompts, pipeline_cfg, interior_pdf)
 
-    # -----------------------------
-    # Build Cover PDF
-    # -----------------------------
-
     cover_pdf = output_dir / "book" / "cover.pdf"
-
     build_cover_pdf(
         page_prompts=page_prompts,
         pipeline_cfg=pipeline_cfg,
@@ -465,7 +524,7 @@ def run_pipeline(
         image_provider_mode=image_provider_mode,
         cand_n=cand_n,
         keep_candidates=keep_candidates,
-        repo_root=config_dir.parent,  # so relative font paths resolve
+        repo_root=config_dir.parent,
     )
 
     return {
@@ -476,5 +535,9 @@ def run_pipeline(
         "front_matter_count": len(front_list),
         "interior_count": len(interior_list),
         "back_matter_count": len(back_list),
-        "overlay_style_keys": sorted(list(overlay_styles.keys())),
+        "overlays_enabled": overlays_enabled,
+        "one_sided": bool(pipeline_cfg.get("one_sided", True)),
+        "blank_after_interior": bool(pipeline_cfg.get("blank_after_interior", True)),
+        "pad_to_multiple_of_4": bool(pipeline_cfg.get("pad_to_multiple_of_4", True)),
+        "dpi": int(pipeline_cfg.get("dpi", 300)),
     }

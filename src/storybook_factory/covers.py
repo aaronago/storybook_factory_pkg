@@ -37,11 +37,21 @@ def _resolve_font_paths(
 
 
 def _cover_wrap_px(
-    *, dpi: int, width_in: float = 17.25, height_in: float = 11.25
+    *,
+    dpi: int,
+    back_in: float = 8.625,
+    front_in: float = 8.625,
+    spine_in: float = 0.132,
+    height_in: float = 11.25,
 ) -> tuple[int, int]:
     """
-    Lulu saddle-stitch no-spine template size (full wrap): 17.25 x 11.25 inches.
+    Lulu perfect-bound full wrap cover size.
+
+    Total width = back + spine + front
+    Height includes bleed.
     """
+    width_in = back_in + spine_in + front_in
+
     w = int(round(width_in * dpi))
     h = int(round(height_in * dpi))
     return w, h
@@ -309,7 +319,7 @@ def build_cover_pdf(
             )
 
     # 2) Compose full wrap canvas
-    wrap_px = _cover_wrap_px(dpi=dpi, width_in=17.25, height_in=11.25)
+    wrap_px = _cover_wrap_px(dpi=300, spine_in=0.132)
 
     front_img = Image.open(front_path).convert("RGB")
     back_img = Image.open(back_path).convert("RGB")

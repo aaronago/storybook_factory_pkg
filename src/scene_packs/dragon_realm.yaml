@@ -3,8 +3,6 @@
 # ============================================================
 
 globals:
-
-
   # ------------------------------------------------------------
   # Global safety (auto-injected by generator)
   # ------------------------------------------------------------
@@ -31,13 +29,6 @@ globals:
   style_action: |
     STYLE: classic kids’ coloring-book illustration (NOT chibi).
     Natural proportions with gentle action energy, but keep shapes simple and readable.
-
-    cover:
-    trim_width_in: 8.625
-    trim_height_in: 11.25
-    full_wrap_width_in: 17.25
-    full_wrap_height_in: 11.25
-    dpi: 300
 
   cover_art_style: |
     Full-color, premium children’s fantasy book cover illustration.
@@ -79,16 +70,6 @@ globals:
     - Do NOT draw frames, rectangles, title boxes, or bordered placeholders.
     - Do NOT draw any letters/words/symbols or fake text scribbles anywhere.
 
-  personalization:
-    font_path: "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf"
-    size: 135
-    fill: "#F3E8D1"
-    stroke_width: 2
-    stroke_fill: "#1E2A3A"   # deep cool navy, not black
-    glow_radius: 8
-    glow_color: "#FFD27A"
-    glow_alpha: 90
-
   # ------------------------------------------------------------
   # Composition fragments
   # ------------------------------------------------------------
@@ -119,49 +100,13 @@ globals:
   # ------------------------------------------------------------
 
   overlay_styles:
-    title:
-      font_path: "assets/fonts/Cinzel-VariableFont_wght.ttf"
-      size: 260
-      fill: "black"
-      stroke_width: 2
-      stroke_fill: "white"
-      line_spacing: 1.02
-
-    subtitle:
-      font_path: "assets/fonts/CormorantGaramond-VariableFont_wght.ttf"
-      size: 135
-      fill: "black"
-      stroke_width: 2
-      stroke_fill: "white"
-      line_spacing: 1.05
-
     dedication:
-      font_path: "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf"
+      font_path: 'assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf'
       size: 145
-      fill: "black"
+      fill: 'black'
       stroke_width: 1
-      stroke_fill: "white"
+      stroke_fill: 'white'
       line_spacing: 1.18
-
-    cover_title:
-      font_path: "assets/fonts/Cinzel-VariableFont_wght.ttf"
-      size: 460
-      fill: "#FFF4D6"              # warm ivory instead of pure white
-      stroke_width: 54             # slightly thinner
-      stroke_fill: "#3A2A1A"       # warm dark brown instead of black
-      glow_radius: 28
-      glow_color: "#FFB347"        # warm portal gold
-      glow_alpha: 160
-
-    cover_subtitle:
-      font_path: "assets/fonts/CormorantGaramond-VariableFont_wght.ttf"
-      size: 190                # down from 220
-      fill: "#F8E8C8"          # slightly softer than title
-      stroke_width: 2          # lighter outline
-      stroke_fill: "#3A2A1A"
-      glow_radius: 14          # reduce glow
-      glow_color: "#FFB347"
-      glow_alpha: 120          # more subtle
 
   # ------------------------------------------------------------
   # One-line reusable scene header (MOST IMPORTANT)
@@ -192,65 +137,70 @@ globals:
     {{ globals.comp_flight_diagonal }}
 
 covers:
-
   front:
-    title: "Front Cover Art"
-    prefix: "cover"
-    include_bible: true
-    include_safety: true
-    pixels: { w: 2588, h: 3375 }
-    prompt: |
-      {{ globals.cover_art_style }}
+  title: 'Front Cover Art'
+  prefix: 'cover'
+  include_bible: true
+  include_safety: true
+  pixels: { w: 2588, h: 3375 }
+  prompt: |
+    {{ globals.cover_art_style }}
 
-      Rendering must feel like a frame from a high-end animated fantasy film.
+    Rendering must feel like a frame from a high-end animated fantasy film.
 
-      FRONT COVER SCENE:
-      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} in the foreground,
-      discovering a swirling magical portal in a forest clearing.
-      A large friendly dragon rises protectively behind them,
-      wings subtly framing the composition.
-      A distant castle silhouette beyond the trees.
+    FRONT COVER SCENE:
+    {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }} in the foreground,
+    discovering a swirling magical portal in a forest clearing.
+    A large friendly dragon rises protectively behind them,
+    wings subtly framing the composition.
+    A distant castle silhouette beyond the trees.
 
-      LIGHTING:
-      The forest environment should be cool twilight blue and indigo.
-      Add subtle cool moonlight or sky glow from above/behind.
-      The portal emits a soft golden magical light that illuminates faces and nearby ground.
-      Keep warm light localized — do NOT turn the entire scene orange.
-      Add gentle cool-violet shadow tones in unlit areas.
-      Add slight teal undertones in darker forest areas for depth.
+    LIGHTING:
+    The forest environment should be cool twilight blue and indigo.
+    Add subtle cool moonlight or sky glow from above/behind.
+    The portal emits a soft golden magical light that illuminates faces and nearby ground.
+    Keep warm light localized — do NOT turn the entire scene orange.
+    Add gentle cool-violet shadow tones in unlit areas.
+    Add slight teal undertones in darker forest areas for depth.
 
-      ATMOSPHERE:
-      Soft volumetric glow around the portal.
-      Light mist or particles catching cool blue light in the distance.
-      Maintain strong warm–cool color separation.
+    ATMOSPHERE:
+    Soft volumetric glow around the portal.
+    Light mist or particles catching cool blue light in the distance.
+    Maintain strong warm–cool color separation.
 
-      COMPOSITION:
-      Subjects fill the lower ~65–75% of the cover.
-      Reserve the top ~25% as open cool-toned sky for the title.
-      Keep the title fully within safe margins (not touching edges).
+    COMPOSITION:
+    Subjects fill the lower ~65–70% of the cover.
+    Reserve the upper ~30–35% as open cool-toned sky for title placement.
+    Keep this upper area clean and uncluttered (no branches or wings behind text).
 
-      TITLE INSTRUCTIONS:
-      Include the exact title text:
-      The Dragon Realm Adventure
-      Place the title centered in the top sky area with generous top margin. Do not place the title near the trim edge.
+    TITLE PLACEMENT RULES:
+    Include the exact title text:
+    The Dragon Realm Adventure
 
-      Place the title centered in the top sky area.
-      Use elegant fantasy serif typography.
-      Gold-ivory lettering with subtle bevel and soft warm glow.
-      Professional book-cover quality.
-      Clean, readable letterforms.
-      Correct spelling is critical.
-      Do not distort letters.
-      Do not add extra words.
-      No other text anywhere on the cover.
+    The title must sit comfortably inside the safe zone.
+    Leave a generous clear margin above the word “The”.
+    The top of the title block must not approach the trim edge.
+    Ensure visible breathing room between the top of the cover and the title.
 
-      Do NOT draw placeholder boxes or frames.
-      Do NOT draw fake lettering or symbols.
-      
+    Center the title horizontally in the upper sky area.
+    Position the entire title block slightly lower than the very top —
+    never tight to the edge.
+
+    Use elegant fantasy serif typography.
+    Gold-ivory lettering with subtle bevel and soft warm glow.
+    Professional book-cover quality.
+    Clean, readable letterforms.
+    Correct spelling is critical.
+    Do not distort letters.
+    Do not add extra words.
+    No other text anywhere on the cover.
+
+    Do NOT draw placeholder boxes or frames.
+    Do NOT draw fake lettering or symbols.
 
   back:
-    title: "Back Cover Art"
-    prefix: "cover"
+    title: 'Back Cover Art'
+    prefix: 'cover'
     include_bible: false
     include_safety: true
     pixels: { w: 2588, h: 3375 }
@@ -267,54 +217,11 @@ covers:
       Do NOT include the children or pets on the back cover.
       Do NOT draw any text.
       Do NOT draw placeholder boxes or frames.
-  
 
 front_matter:
-  - title: "Title Page"
-    page: 0
-    prefix: "front"
-    include_bible: false
-    include_safety: false
-    prompt: |
-      Black-and-white children's coloring-book line art.
-      Clean black outlines only. No shading. No gray. No gradients.
-
-      TITLE PAGE COMPOSITION:
-
-      Create a balanced, decorative layout suitable for a coloring book title page.
-
-      Leave a generous open area in the upper-middle of the page for the title text.
-      This area should feel naturally open because of composition,
-      NOT because of an obvious blank rectangle or empty void.
-
-      Add a cute baby dragon sitting near the bottom left.
-      Add a whimsical castle near the bottom right.
-      The dragon and castle should feel connected and part of the same scene.
-
-      Add small decorative elements such as:
-      - stars
-      - tiny clouds
-      - simple swirls
-      - small flowers or sparkles
-
-      Keep the design airy and playful.
-
-      Do NOT draw any letters, words, symbols, boxes, borders, or frames.
-
-    overlays:
-    - type: "text"
-      style: "title"
-      content: "{{ child_names|join(' & ') }}"
-      region_pct: { x: 12, y: 28, w: 76, h: 16 }
-
-    - type: "text"
-      style: "subtitle"
-      content: "The Dragon Realm Adventure"
-      region_pct: { x: 12, y: 42, w: 76, h: 10 }
-
-  - title: "Dedication Page"
+  - title: 'Dedication Page'
     page: 1
-    prefix: "front"
+    prefix: 'front'
     include_bible: false
     include_safety: false
     prompt: |
@@ -324,8 +231,8 @@ front_matter:
       IMPORTANT: Do NOT draw any letters/words/symbols. Keep center blank.
 
     overlays:
-      - type: "text"
-        style: "dedication"
+      - type: 'text'
+        style: 'dedication'
         content: "For {{ child_names|join(' & ') }}—\nmay your imaginations always soar."
         region_pct: { x: 15, y: 38, w: 70, h: 24 }
 
@@ -334,9 +241,8 @@ front_matter:
 # ============================================================
 
 scenes:
-
   - page: 2
-    title: "Portal Discovery"
+    title: 'Portal Discovery'
     prompt: |
       {{ globals.base_scene_header }}
 
@@ -348,17 +254,17 @@ scenes:
       Tall trees and hanging vines frame the upper area.
 
   - page: 3
-    title: "Dragon Hatchlings"
+    title: 'Dragon Hatchlings'
     prompt: |
       {{ globals.base_scene_header }}
 
       SCENE:
       {{ child_names|join(' & ') }} kneel beside a large nest of dragon eggs.
-      Several baby flame dragons peek from cracked shells.
+      A baby dragon peeks from a cracked shell. The other eggs are whole and unhatched.
       {{ pet_names|join(' & ') }} watches nearby.
 
   - page: 4
-    title: "The Sky Bridge"
+    title: 'The Sky Bridge'
     prompt: |
       {{ globals.base_scene_header_vertical }}
 
@@ -368,7 +274,7 @@ scenes:
       Puffy clouds frame the top portion of the page.
 
   - page: 5
-    title: "Forest Dragons"
+    title: 'Forest Dragons'
     prompt: |
       {{ globals.base_scene_header }}
 
@@ -378,70 +284,251 @@ scenes:
       {{ pet_names|join(' & ') }} sits near the foreground grass.
 
   - page: 6
-    title: "Dragon Training Grounds"
-    prompt: |
-      {{ globals.base_scene_header_action }}
-
-      SCENE:
-      In an open courtyard, young dragons practice gentle fire puffs
-      into floating ring targets.
-      A sleek ninja-style dragon leaps between rooftops in the background.
-      Keep rings clean and circular.
-
-  - page: 7
-    title: "Crystal Valley"
-    prompt: |
-      {{ globals.base_scene_header_vertical }}
-
-      SCENE:
-      {{ child_names|join(' & ') }} stand in a valley filled with large crystal formations.
-      An ice dragon with icicle-shaped horns stands on a crystal ledge.
-
-  - page: 8
-    title: "Dragon Festival"
-    prompt: |
-      {{ globals.base_scene_header_vertical }}
-
-      SCENE:
-      A joyful dragon festival.
-      Baby dragons play around {{ child_names|join(' & ') }}.
-      A long cloud-serpent dragon arches overhead.
-      Hanging lanterns fill the upper space.
-
-  - page: 9
-    title: "The Guardian Dragon"
-    prompt: |
-      {{ globals.base_scene_header_epic }}
-
-      SCENE:
-      On a grand stone plateau, {{ child_names|join(' & ') }}
-      stand before a majestic elder guardian dragon.
-      The dragon spreads its wings protectively.
-
-      PROP RULE:
-      If a sword is present, it MUST be fully inside a clearly drawn scabbard.
-      The scabbard hangs from the belt at the hip.
-      No sword piercing through belt.
-
-  - page: 10
-    title: "Double Dragon Flight"
-    prompt: |
-      {{ globals.base_scene_header_flight }}
-
-      SCENE:
-      {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
-      ride together on ONE large friendly flame dragon.
-      A SECOND dragon flies in the distant background (no riders).
-      Children sit securely on a visible saddle.
-      {{ pet_names|join(' & ') }} is secured safely between them.
-
-  - page: 11
-    title: "Goodbye, Dragon Realm"
+    title: 'Dragon Training Grounds'
     prompt: |
       {{ globals.base_scene_header }}
 
       SCENE:
-      Back in the forest clearing, {{ child_names|join(' & ') }}
-      wave goodbye at the glowing portal.
-      A tiny baby dragon peeks from inside.
-      Keep portal glow outline-only.
+      {{ child_names }} and {{ pet_names }} stand a few steps in front of one strong young dragon.
+
+      The dragon is slightly taller than the children,
+      standing upright with wings partially open.
+      It looks focused and alert, not babyish and not aggressive.
+
+      {{ child_names }} are interacting confidently:
+      - One child reaches a hand toward the dragon’s shoulder.
+      - The other stands ready, watching closely.
+
+      {{ pet_names }} stands beside them on the ground,
+      looking up at the dragon.
+
+      In the background:
+      Simple stone walls and a few training targets.
+      Large open sky above.
+      Keep shapes bold and readable.
+
+  - page: 7
+    title: 'The Thunder Dragon'
+    prompt: |
+      {{ base_scene_header }}
+
+      SCENE:
+      On a rocky hill beneath large rolling storm clouds,
+      {{ child_names|join(' & ') }} stand side by side,
+      steady and brave in the wind.
+      {{ pet_names|join(' & ') }} stands at their feet.
+
+      Above them, a powerful thunder dragon sweeps across the sky
+      in a strong diagonal arc.
+
+      The thunder dragon has lightning-shaped horns
+      and broad angular wings.
+      Its expression is intense but noble.
+
+      A bold bolt of lightning bursts from the dragon’s mouth,
+      branching naturally in thick, flowing lines.
+
+      Keep cloud shapes large and dramatic.
+      Emphasize strong diagonal movement.
+      Avoid small repeated textures.
+      Keep silhouettes clean and bold for coloring.
+  - page: 8
+    title: 'Frostfall Peaks'
+    prompt: |
+      {{ globals.base_scene_header_vertical }}
+
+      SCENE:
+      High in the snowy mountains, {{ child_names|join(' & ') }}
+      climb a gentle icy slope.
+
+      A majestic ice dragon with crystalline horns
+      and jagged frost-covered wings perches on a snowy ridge.
+
+      Large snowdrifts and angular ice formations
+      frame the lower and side edges of the page.
+
+      Keep shapes bold and clean.
+      Avoid tiny snowflake details.
+  - page: 9
+    title: 'The Ocean Dragon'
+    prompt: |
+      {{ globals.base_scene_header_vertical }}
+
+      SCENE:
+      On a wide sandy shore, {{ child_names|join(' & ') }} stand at the water’s edge.
+      Gentle ocean waves roll toward them.
+
+      A majestic ocean dragon rises gracefully from the sea.
+      The dragon has fin-like wings, a long flowing body,
+      and coral-shaped horns.
+
+      Keep the shoreline calm and spacious.
+      Use broad, smooth wave lines with minimal internal detail.
+      Do NOT create face-like shapes in the water.
+      Avoid eye-like or mouth-like foam patterns.
+      Keep wave crests abstract and flowing.
+
+      The horizon line stays simple and clean.
+
+  - page: 10
+    title: 'The Moonlight Dragon'
+    prompt: |
+      {{ globals.base_scene_header_vertical }}
+
+      SCENE:
+      In a glowing moonlit meadow,
+      {{ child_names|join(' & ') }} look up at a graceful moonlight dragon.
+      {{ pet_names|join(' & ') }} sits calmly beside them in the foreground.
+
+      The dragon has long flowing wings
+      and crescent-shaped horns.
+
+      Large rounded moon shapes and smooth rolling hills
+      frame the background.
+
+      Keep lines bold and avoid tiny star clutter.
+
+  - page: 11
+    title: 'Dragon Flight'
+    prompt: |
+      {{ base_scene_header_flight }}
+
+
+      FULL-PAGE COMPOSITION:
+      Strong diagonal flight composition.
+      One large flame dragon flies from lower-left toward upper-right.
+      Keep the sky open and spacious.
+      Avoid crowding the dragon.
+
+      SCENE:
+      {{ child_names|join(' & ') }}
+      ride together on one majestic flame dragon high above a wide valley.
+
+      The children lean slightly with the motion of flight.
+      Hair and clothing stream gently backward in the wind.
+
+      The flame dragon looks powerful and noble.
+      Wings fully extended.
+      Head forward in confident motion.
+
+      Far below, {{ pet_names|join(' & ') }}
+      runs along a winding path beside the river,
+      looking up toward the flying dragon.
+
+      The valley below is simple:
+      rolling hills, a winding river, distant mountains.
+
+  - page: 12
+    title: 'The Lost Flame Dragon'
+    prompt: |
+      {{ base_scene_header }}
+
+
+      FULL-PAGE COMPOSITION:
+      Vertical composition.
+      The dragon stands in the center of the page.
+      Leave open space around the characters for clarity.
+
+      SCENE:
+      A flame dragon stands alone in a forest clearing,
+      looking uncertain and slightly worried.
+
+      {{ child_names|join(' & ') }} approach the dragon gently.
+      One child reaches out a hand in reassurance.
+      {{ pet_names|join(' & ') }} stands beside them.
+
+      The dragon is clearly reptilian and proportional.
+      Keep the pose simple and grounded.
+      No tangled vines or complex overlaps.
+
+      Keep the background minimal with a few trees and rocks.
+      Maintain clean, readable shapes for coloring.
+
+  - page: 13
+    title: 'Grateful Flame Dragon'
+    prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      {{ child_names|join(' & ') }} stand beside a majestic flame dragon.
+
+      {{ pet_names|join(' & ') }} stands between them.
+
+      Include exactly one {{ pet_names|join(' & ') }}.
+      Do NOT duplicate the pet.
+
+      The dragon lowers its head in a gesture of gratitude.
+      Keep the pose calm and grounded.
+
+  - page: 14
+    title: 'The Dragon Alliance'
+    prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      A large flame dragon stands proudly at the center,
+      wings raised in a wide V shape.
+
+      {{ child_names|join(' & ') }} stand confidently in front of the dragon,
+      one slightly ahead of the other.
+      {{ pet_names|join(' & ') }} stands between them.
+
+      In the background, three other dragons
+      (forest dragon, ice dragon, cloud-serpent dragon)
+      perch separately on tall rock spires,
+      forming a wide arc behind the central dragon.
+
+      Keep each dragon clearly separated.
+      Do not overlap wings between different dragons.
+
+  - page: 15
+    title: 'Goodbye, Dragon Realm'
+    prompt: |
+      {{ globals.base_scene_header }}
+
+      FULL-PAGE COMPOSITION:
+      Gentle centered composition with soft framing trees.
+
+      SCENE:
+      Back in the forest clearing,
+      {{ child_names|join(' & ') }} stand side by side,
+      holding hands.
+
+      {{ pet_names|join(' & ') }} sits between them.
+
+      Inside the glowing portal,
+      a majestic flame dragon stands in silhouette,
+      wings partially open.
+
+      The dragon lowers its head in a final gesture of respect.
+
+      The portal light softly illuminates the children's faces.
+
+      Keep the scene calm and uncluttered.
+      Emphasize emotion over action.
+
+  - page: 16
+    title: 'Memory Page'
+    prompt: |
+      {{ globals.style_line_art }}
+      {{ globals.style_classic }}
+
+      PERSONAL MEMORY PAGE – calm and sentimental.
+
+      LAYOUT:
+      Balanced vertical composition with generous negative space.
+
+      At the top, include simple outlined lettering:
+      "{{ child_names|join(' & ') }}'s Dragon Realm Memories"
+
+      Below the title, create a large open rectangular drawing space
+      occupying 60–70% of the page height.
+
+      Add a thin decorative border of small stars and dragon-scale motifs.
+
+      In the lower-left corner,
+      include a small full-body portrait of {{ child_names|join(' & ') }}
+      in their medieval outfits.
+
+      Do NOT include any dragons on this page.
+      Keep the design minimal and calm.

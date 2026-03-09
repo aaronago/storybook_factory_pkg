@@ -323,7 +323,9 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         )
 
     character_bible_lines.append(
-        "Keep these characters consistent. Do NOT replace them with generic children or generic pets."
+        "Keep these characters consistent. They represent specific real children. "
+        "Do NOT replace them with generic children or idealized animated characters. "
+        "Preserve their recognizable facial structure."
     )
     character_bible = "\n".join(character_bible_lines)
 

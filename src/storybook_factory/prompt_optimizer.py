@@ -51,6 +51,13 @@ STYLE DIRECTION (IMPORTANT):
 - Expressive but restrained facial expressions
 - Whimsical, warm, and friendly tone without exaggeration
 
+CHARACTER IDENTITY PRESERVATION (CRITICAL):
+- The character descriptions represent specific real children.
+- Preserve their facial structure and proportions exactly as described.
+- Do NOT idealize, beautify, or convert them into generic animated characters.
+- Do NOT exaggerate eye size, head size, or facial symmetry.
+- Personal likeness is more important than stylistic polish.
+
 SCENE CLARITY:
 - Ensure a clear focal point
 - Characters should interact naturally with each other or the environment
@@ -146,9 +153,6 @@ class PromptOptimizer:
     def optimize(
         self, prompt: str, *, page_title: str | None = None, kind: str = "interior"
     ) -> str:
-        user = prompt.strip()
-        if page_title:
-            user = f"Page title: {page_title}\n\n{user}"
 
         if os.getenv("STORYBOOK_DISABLE_PROMPT_OPT", "").lower() in {
             "1",
@@ -156,6 +160,30 @@ class PromptOptimizer:
             "yes",
         }:
             return prompt
+
+        # -----------------------------
+        # Split protected sections
+        # -----------------------------
+
+        bible = ""
+        safety = ""
+        scene = prompt
+
+        if "Character bible:" in prompt:
+            before, after = prompt.split("Character bible:", 1)
+            bible = "Character bible:" + after.split("\n\n", 1)[0]
+            scene = after.split("\n\n", 1)[1] if "\n\n" in after else ""
+
+        if "GLOBAL SAFETY" in scene:
+            before, after = scene.split("GLOBAL SAFETY", 1)
+            safety = "GLOBAL SAFETY" + after.split("\n\n", 1)[0]
+            scene = after.split("\n\n", 1)[1] if "\n\n" in after else ""
+
+        scene = scene.strip()
+
+        user = scene
+        if page_title:
+            user = f"Page title: {page_title}\n\n{scene}"
 
         system = self.system_prompt
         if kind == "cover":
@@ -172,8 +200,23 @@ class PromptOptimizer:
         )
 
         data = self._extract_json(resp)
-        out = (data.get("optimized_prompt") or "").strip()
-        return out if out else prompt
+        optimized_scene = (data.get("optimized_prompt") or scene).strip()
+
+        # -----------------------------
+        # Reassemble final prompt
+        # -----------------------------
+
+        parts = []
+
+        if bible:
+            parts.append(bible)
+
+        if safety:
+            parts.append(safety)
+
+        parts.append(optimized_scene)
+
+        return "\n\n".join(parts)
 
     def _extract_json(self, resp: Any) -> dict[str, Any]:
         """
