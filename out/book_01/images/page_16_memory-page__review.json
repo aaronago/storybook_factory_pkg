@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 16,
+  "title": "Memory Page",
+  "prompt": "Black-and-white line art children's coloring-book page with clean, medium consistent outlines and no shading or gray. Vertical balanced composition with generous negative space. At the top, simple outlined lettering reading \"Elliott & Colette's Dragon Realm Memories\" in clear, classic style (no filled black). Below the title, a large open rectangular drawing space occupying 60\u201370% of the page height with a thin decorative border of small stars and dragon-scale motifs around it. In the lower-left corner, a small full-body portrait of Elliott (age 4\u20135, short straight light-brown hair, big gray-blue eyes, round cheeks, friendly adventurous expression, wearing medieval tunic with belt and boots) and Colette (age 2\u20133, wavy brown hair in a top knot, large gray-blue eyes, soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs) standing side by side, fully visible, natural child proportions, classic children\u2019s storybook style, no dragons present. No object intersections or impossible overlaps; clean occlusion; no extra limbs or merged features. Background minimal and calm, no clutter, no dragons, no shading, no filled black areas, clear outlines suitable for coloring.\n\nUse the attached character sheet reference images as the canonical identity and style.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_16_memory-page__cand00.png"
+  ]
+}

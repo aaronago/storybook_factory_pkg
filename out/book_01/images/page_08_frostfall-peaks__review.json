@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 8,
+  "title": "Frostfall Peaks",
+  "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair; big gray-blue eyes; round cheeks; friendly adventurous expression, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, wavy brown hair in a top knot; large gray-blue eyes; soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.\n\nBlack-and-white line art children's coloring-book page with clean black outlines on white, no shading, gray, gradients, or shadows, and no large filled-black areas; classic illustration style with natural child proportions and clear facial expressions. Full-page vertical composition with Elliott, Colette, and Winnie filling most of the lower two-thirds, extending upward toward the top edge. Scene set high in snowy mountains showing Elliott and Colette climbing a gentle icy slope accompanied by Winnie. A majestic ice dragon with crystalline horns and jagged frost-covered wings perches on a snowy ridge above them. Large snowdrifts and angular ice formations frame the lower and side edges of the page. Shapes are bold and clean with no tiny snowflake details, ensuring clear foreground, midground, and background separation using outlines only.\n\nUse the attached character sheet reference images as the canonical identity and style.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_08_frostfall-peaks__cand00.png"
+  ]
+}

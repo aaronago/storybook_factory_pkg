@@ -1,0 +1,11 @@
+{
+  "kind": "cover",
+  "key": "back",
+  "title": "Back Cover Art",
+  "prompt": "Full-color premium children's fantasy book back cover illustration in a whimsical magical dragon-realm landscape. Scene features rolling hills, a distant castle silhouette, glowing stars, subtle magical particles in the air, and a gentle twilight sky with cool twilight blues, indigo, and soft violet tones. Background has soft atmospheric depth and rich color, creating a calm and balanced composition with a moderately open central area for potential text. Lighting includes cinematic global illumination with cool moonlight or sky fill balanced by subtle warm golden portal glow softly falling off, producing strong warm-cool contrast without flooding the scene with orange. Painterly but polished rendering with smooth gradients, volumetric glow, no heavy black outlines, edges defined by light and color transitions. Scene is free of characters, pets, text, placeholder boxes, or frames, maintaining full color depth and dynamic lighting in a modern animated-feature aesthetic, Pixar-style fantasy cool lighting.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "cover_back__cand00.png"
+  ]
+}

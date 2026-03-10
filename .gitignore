@@ -39,9 +39,8 @@ ENV/
 Thumbs.db
 
 # Output files
-outputs/
-out/book_*/
-out/*.pdf
+
+
 assets/
 *.pdf
 *.zip

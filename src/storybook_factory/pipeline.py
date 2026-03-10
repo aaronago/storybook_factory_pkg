@@ -88,7 +88,21 @@ def _load_reference_sheets(images_dir: Path) -> list[Path]:
     refs_dir = images_dir / "refs"
     if not refs_dir.exists():
         return []
-    return sorted([p for p in refs_dir.glob("*.png") if p.is_file()])
+
+    style_dir = refs_dir / "style"
+    characters_dir = refs_dir / "characters"
+
+    style_refs: list[Path] = []
+    character_refs: list[Path] = []
+
+    if style_dir.exists():
+        style_refs = sorted(p for p in style_dir.glob("*.png") if p.is_file())
+
+    if characters_dir.exists():
+        character_refs = sorted(p for p in characters_dir.glob("*.png") if p.is_file())
+
+    # IMPORTANT: style first, then characters
+    return style_refs + character_refs
 
 
 # -----------------------------

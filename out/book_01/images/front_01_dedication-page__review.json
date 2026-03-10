@@ -1,0 +1,11 @@
+{
+  "kind": "front-matter",
+  "page": 1,
+  "title": "Dedication Page",
+  "prompt": "Black-and-white line art coloring-book page with clean, medium line weight outlines only, no shading or filled areas. Design a simple thin border around the page composed of delicate vines and small stars. Leave a very large blank center area completely empty for dedication text, with no letters, words, or symbols. The border should frame the page without dominating, maintaining clear separation between border and blank center. Full-page composition with balanced, clear outlines suitable for coloring, classic children's storybook style, no clutter or additional elements.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "front_01_dedication-page__cand00.png"
+  ]
+}

@@ -8,49 +8,62 @@ from typing import Any
 from openai import OpenAI
 
 DEFAULT_SYSTEM = """
-You are a production prompt optimizer for a children's line-art image generator.
+You are a production prompt optimizer for a children's black-and-white line-art image generator.
 
-Your job is to rewrite the user's prompt into a SINGLE strong natural-sounding illustration prompt
-that works well for image generation.
+Your job is to rewrite the user's material into a SINGLE strong illustration prompt
+that sounds like a natural human-written art brief and works well for image generation.
 
 GOAL:
-Produce a prompt that reads like a clear descriptive illustration brief, not a technical spec sheet.
+Produce a prompt that reads like a polished descriptive illustration brief,
+similar to a successful children's storybook coloring-book prompt,
+not like a technical spec sheet or rule document.
 
 STRICT RULES:
 - Do NOT add new characters, animals, props, scenery, or story elements.
 - Do NOT remove any characters, animals, props, scenery, or story elements mentioned by the user.
 - Preserve all factual details exactly.
 - Output MUST be a SINGLE optimized prompt string.
-- Do NOT include explanations, commentary, markdown, lists, bullets, or questions.
+- Do NOT include explanations, commentary, markdown, lists, bullets, labels, or questions.
 - Do NOT mention these rules.
 
 IDENTITY PRIORITY:
 - If the prompt describes specific real children or pets, preserve their identity.
+- Preserve recognizable facial structure, hair shape, and overall likeness.
 - Do NOT idealize, beautify, or genericize their faces.
 - Do NOT turn them into generic animated, doll-like, or storybook-template characters.
-- Avoid oversized eyes, exaggerated symmetry, or exaggerated cuteness.
+- Avoid oversized eyes, exaggerated symmetry, exaggerated cuteness, or simplified generic children's-book faces.
 - Personal likeness is more important than stylistic polish.
 
 STYLE RULES:
-- Black-and-white line art only
-- No color
-- No shading
-- No gray
-- No gradients
-- No shadows
-- No cross-hatching
-- No filled black areas
-- Clean, printable outlines suitable for coloring
+- Black-and-white line art only.
+- No color.
+- No shading.
+- No gray.
+- No gradients.
+- No shadows.
+- No cross-hatching.
+- No filled black areas.
+- Clean, printable outlines suitable for coloring.
 
 PROMPT SHAPE:
-- Write the final prompt as one natural descriptive paragraph or two.
-- Put the main scene early.
-- Keep the wording image-native and descriptive.
-- Integrate character details naturally into the scene when possible.
+- Write the final prompt as one natural descriptive paragraph, or at most two short paragraphs.
+- Start with a short line-art/style sentence.
+- Then describe the scene naturally, with the character details embedded directly into the scene when possible.
 - Keep composition guidance simple and descriptive, not mathematical.
-- Keep the prompt concise and avoid repetition.
+- Keep the wording image-native, visual, and concise.
+- The prompt should feel like a polished art brief written by a human, not a production checklist.
+- Do NOT preserve section labels such as CHARACTER BIBLE, GLOBAL SAFETY, STYLE, FULL-PAGE COMPOSITION, or SCENE.
+- Do NOT output a spec sheet.
+
+SUCCESSFUL PATTERN TO IMITATE:
+- A short opening sentence describing black-and-white line-art coloring-book style.
+- A natural scene sentence that includes the children, pet, and key visual details inline.
+- A short sentence describing composition or environmental framing.
+- A brief cleanup sentence at the end if needed.
+- A final short sentence about using the attached character sheet reference images.
 
 AVOID THESE PHRASES OR IDEAS:
+- "cute, friendly proportions"
 - "classic children's coloring-book illustration"
 - "clear facial expressions"
 - "natural child proportions"
@@ -58,15 +71,16 @@ AVOID THESE PHRASES OR IDEAS:
 - precise page-fill percentages unless absolutely necessary
 - repeated reminders about readability or recognizability
 - anything that pushes the model toward generic children's-book faces
+- overly technical safety-rule phrasing unless briefly summarized at the end
 
 REFERENCE RULE:
-- If references are mentioned, treat them as identity references, not style references.
-- Do NOT say the references define the style.
-- Identity only.
+- If references are mentioned, treat them as canonical identity references.
+- It is acceptable to say: "Use the attached character sheet reference images as the canonical identity and style."
+- Keep the reference sentence short and place it at the end.
 
 TECHNICAL CLEANUP:
-- A small amount of cleanup language at the end is okay, such as avoiding extra limbs, impossible overlaps, or clutter.
-- Keep this brief.
+- A small amount of cleanup language at the end is okay, such as avoiding object intersections, impossible overlaps, extra limbs, duplicated faces, or clutter.
+- Keep this brief and natural.
 
 OUTPUT FORMAT:
 Return valid JSON exactly in this shape and nothing else:
@@ -170,7 +184,6 @@ class PromptOptimizer:
             )
             data = self._extract_json(resp)
             out = (data.get("optimized_prompt") or "").strip()
-
             return out if out else prompt
 
         # -----------------------------
@@ -203,7 +216,40 @@ class PromptOptimizer:
         remainder = remainder.strip()
 
         # -----------------------------
-        # Ask optimizer for natural scene prompt
+        # Build compact inline cast summary from bible
+        # -----------------------------
+        child_lines = []
+        pet_lines = []
+
+        for line in bible.splitlines():
+            line = line.strip()
+            if line.startswith("- "):
+                text = line[2:].strip()
+                if ", age " in text:
+                    child_lines.append(text)
+                else:
+                    pet_lines.append(text)
+
+        cast_parts = []
+        if child_lines:
+            cast_parts.append("Children: " + "; ".join(child_lines))
+        if pet_lines:
+            cast_parts.append("Pet: " + "; ".join(pet_lines))
+
+        cast_summary = " ".join(cast_parts).strip()
+
+        # -----------------------------
+        # Build short natural safety clause
+        # -----------------------------
+        safety_clause = ""
+        if safety:
+            safety_clause = (
+                "Avoid object intersections, impossible overlaps, extra limbs, duplicated faces, "
+                "merged hands or feet, and unreadable clutter."
+            )
+
+        # -----------------------------
+        # Ask optimizer for one natural prompt
         # -----------------------------
         user_parts = []
 
@@ -211,12 +257,26 @@ class PromptOptimizer:
             user_parts.append(f"Page title: {page_title}")
 
         user_parts.append(
-            "Rewrite the following into one natural descriptive illustration prompt. "
-            "Do not use section labels. Keep it concise, visual, and image-native."
+            "Rewrite the material below into one natural descriptive illustration prompt "
+            "in the style of a strong children's storybook coloring-book brief. "
+            "Do not use section labels. "
+            "Embed the character descriptions naturally into the scene. "
+            "Do not output a spec sheet."
         )
 
+        if cast_summary:
+            user_parts.append(f"Character details: {cast_summary}")
+
         if remainder:
-            user_parts.append(remainder)
+            user_parts.append(f"Scene and art direction: {remainder}")
+
+        if safety_clause:
+            user_parts.append(f"Technical cleanup: {safety_clause}")
+
+        user_parts.append(
+            "End with a short sentence saying: "
+            "'Use the attached character sheet reference images as the canonical identity and style.'"
+        )
 
         user = "\n\n".join(user_parts).strip()
 
@@ -231,39 +291,28 @@ class PromptOptimizer:
         )
 
         data = self._extract_json(resp)
-        optimized_scene = (data.get("optimized_prompt") or remainder).strip()
+        optimized = (data.get("optimized_prompt") or "").strip()
 
-        # -----------------------------
-        # Build short natural add-ons
-        # -----------------------------
-        identity_clause = ""
-        if bible:
-            identity_clause = (
-                "Use the attached character sheet reference images as the identity reference "
-                "for the children and dog, and preserve their recognizable facial structure."
-            )
+        if optimized:
+            return optimized
 
-        safety_clause = ""
-        if safety:
-            safety_clause = (
-                "Avoid object intersections, impossible overlaps, extra limbs, duplicated faces, "
-                "merged hands or feet, and unreadable clutter."
-            )
+        # Fallback: simpler natural prompt if optimizer fails
+        fallback_parts = []
 
-        # -----------------------------
-        # Reassemble naturally
-        # -----------------------------
-        parts = [optimized_scene]
+        if cast_summary:
+            fallback_parts.append(cast_summary)
 
-        if identity_clause:
-            parts.append(identity_clause)
+        if remainder:
+            fallback_parts.append(remainder)
 
         if safety_clause:
-            parts.append(safety_clause)
+            fallback_parts.append(safety_clause)
 
-        print("OPOIUOIUPIOUPIOU", "\n\n".join(p for p in parts if p).strip())
+        fallback_parts.append(
+            "Use the attached character sheet reference images as the canonical identity and style."
+        )
 
-        return "\n\n".join(p for p in parts if p).strip()
+        return "\n\n".join(p for p in fallback_parts if p).strip()
 
     def _extract_json(self, resp: Any) -> dict[str, Any]:
         """
