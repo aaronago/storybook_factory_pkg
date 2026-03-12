@@ -2,7 +2,7 @@
   "kind": "interior",
   "page": 3,
   "title": "Dragon Hatchlings",
-  "prompt": "Clean black-and-white children\u2019s coloring-book line art with bold ink outlines on white, no shading or gray. Elliott and Colette must match the attached reference children in facial structure and proportions only\u2014do not copy the reference clothing. Dress them in simple fantasy-adventure outfits. Keep their faces natural and recognizable with smaller realistic eyes and no generic cartoon features. Winnie, a small Chihuahua\u2013Pug mix with upright ears and a curled tail, watches nearby. Scene: the children kneel beside a large nest of dragon eggs as one reptilian baby dragon hatches from a cracked shell; it should have a small scaled snout, little horns, tiny wings, and clawed feet, and must not look furry, mammalian, or puppy-like.\n\nUse the attached character sheet reference images as the canonical identity and style.",
+  "prompt": "Children\u2019s coloring book illustration matching the style reference. Elliott and Colette kneel beside a nest of dragon eggs as a small hatchling emerges. Winnie the small Chihuahua-Pug stands beside them. Minimal background.\n\nUse the attached character sheet reference images as the canonical identity and style.",
   "selected": "first",
   "num_candidates": 1,
   "candidates": [
