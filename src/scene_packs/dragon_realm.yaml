@@ -115,29 +115,40 @@ globals:
     STYLE: Preserve the real facial proportions from the reference images.
     gentle action energy, but keep shapes simple and readable.
 
+  style_emotional: |
+    STYLE: Children should show clear emotion and movement.
+    Avoid stiff standing poses.
+    Use expressive body language such as pointing,
+    leaning, running, kneeling, reaching, or reacting.
+
   base_scene_header: |
     {{ globals.style_line_art }}
     {{ globals.style_classic }}
+    {{ globals.style_emotional }}
     {{ globals.comp_medium_close }}
 
   base_scene_header_vertical: |
     {{ globals.style_line_art }}
     {{ globals.style_classic }}
+    {{ globals.style_emotional }}
     {{ globals.comp_vertical_dynamic }}
 
   base_scene_header_action: |
     {{ globals.style_line_art }}
     {{ globals.style_action }}
+    {{ globals.style_emotional }}
     {{ globals.comp_vertical_dynamic }}
 
   base_scene_header_epic: |
     {{ globals.style_line_art }}
     {{ globals.style_classic }}
+    {{ globals.style_emotional }}
     {{ globals.comp_epic_upward }}
 
   base_scene_header_flight: |
     {{ globals.style_line_art }}
     {{ globals.style_action }}
+    {{ globals.style_emotional }}
     {{ globals.comp_flight_diagonal }}
 
 covers:
@@ -246,6 +257,21 @@ front_matter:
 
 scenes:
   - page: 2
+    title: 'Forest Adventure'
+    prompt: |
+      {{ globals.style_line_art }}
+      {{ globals.style_classic }}
+
+      SCENE:
+      In a peaceful forest clearing, {{ child_names|join(' & ') }}
+      explore the woods with {{ pet_names|join(' & ') }}.
+
+      Tall trees frame the scene.
+      Mushrooms, ferns, and smooth stones decorate the ground.
+
+      The children look curious and adventurous.
+
+  - page: 3
     title: 'Portal Discovery'
     prompt: |
       {{ globals.style_line_art }}
@@ -253,280 +279,225 @@ scenes:
       SCENE:
       In a forest clearing, {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
       discover a swirling magical portal behind them.
+
       The portal is large and reaches toward the top edge.
-      Inside the portal, outline-only silhouettes of two friendly winged dragons are visible.
+
+      Inside the portal,
+      outline silhouettes of two flying dragons can be seen.
+
       Tall trees and hanging vines frame the upper area.
 
-  - page: 3
-    title: 'Dragon Hatchlings'
+  - page: 4
+    title: 'Entering the Dragon Realm'
+    prompt: |
+      {{ globals.base_scene_header_vertical }}
+
+      SCENE:
+      {{ child_names|join(' & ') }} step through the glowing portal.
+
+      Magical energy swirls around them.
+
+      On the other side lies a new land
+      with strange plants and distant mountains.
+
+      {{ pet_names|join(' & ') }} eagerly follows them.
+
+  - page: 5
+    title: 'Dragon Hatchling'
     prompt: |
       {{ globals.base_scene_header }}
 
       SCENE:
       {{ child_names|join(' & ') }} kneel beside a large nest of dragon eggs.
-      A baby dragon peeks from a cracked shell. The other eggs are whole and unhatched.
-      {{ pet_names|join(' & ') }} watches nearby.
 
-  - page: 4
+      One baby dragon peeks out from a cracked shell.
+
+      The hatchling looks curious and friendly.
+
+      {{ pet_names|join(' & ') }} watches closely.
+
+  - page: 6
+    title: 'The Grateful Hatchling'
+    prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      The baby dragon has just been freed from tangled forest vines.
+
+      {{ child_names|join(' & ') }} kneel beside the dragon.
+
+      The dragon happily nuzzles against them
+      as the children gently hug the small dragon.
+
+      One child laughs while the other pets the dragon's head.
+
+      {{ pet_names|join(' & ') }} stands nearby wagging excitedly.
+
+      Broken vines lie on the ground.
+
+      The moment should feel joyful and affectionate.
+      Avoid stiff standing poses.
+
+  - page: 7
+    title: 'The Forest Guardian'
+    prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      A majestic forest dragon emerges from behind tall trees.
+
+      Its wings resemble leaves and branches.
+
+      The baby dragon stands between
+      {{ child_names|join(' & ') }} and the guardian dragon.
+
+      The large dragon watches calmly.
+
+  - page: 8
+    title: 'The Journey Begins'
+    prompt: |
+      {{ globals.base_scene_header_vertical }}
+
+      SCENE:
+      {{ child_names|join(' & ') }} walk along a winding forest path.
+
+      The young dragon walks beside them.
+
+      Strange dragon-realm plants and mushrooms
+      line the path.
+
+      {{ pet_names|join(' & ') }} trots happily ahead.
+
+  - page: 9
     title: 'The Sky Bridge'
     prompt: |
       {{ globals.base_scene_header_vertical }}
 
       SCENE:
-      {{ child_names|join(' & ') }} walk across a floating stone bridge.
-      Above them coils a long cloud-serpent dragon with whiskers and flowing mane.
-      Puffy clouds frame the top portion of the page.
+      {{ child_names|join(' & ') }} carefully cross a floating stone bridge.
 
-  - page: 5
-    title: 'Forest Dragons'
-    prompt: |
-      {{ globals.base_scene_header }}
+      Clouds swirl below them.
 
-      SCENE:
-      In a magical grove, {{ child_names|join(' & ') }} meet a forest dragon
-      with leaf-shaped wings and branch-like antlers.
-      {{ pet_names|join(' & ') }} sits near the foreground grass.
+      The young dragon glides above the bridge,
+      guiding the way.
 
-  - page: 6
-    title: 'Dragon Training Grounds'
-    prompt: |
-      {{ globals.base_scene_header }}
-
-      SCENE:
-      {{ child_names }} and {{ pet_names }} stand a few steps in front of one strong young dragon.
-
-      The dragon is slightly taller than the children,
-      standing upright with wings partially open.
-      It looks focused and alert, not babyish and not aggressive.
-
-      {{ child_names }} are interacting confidently:
-      - One child reaches a hand toward the dragon’s shoulder.
-      - The other stands ready, watching closely.
-
-      {{ pet_names }} stands beside them on the ground,
-      looking up at the dragon.
-
-      In the background:
-      Simple stone walls and a few training targets.
-      Large open sky above.
-      Keep shapes bold and readable.
-
-  - page: 7
+  - page: 10
     title: 'The Thunder Dragon'
     prompt: |
       {{ globals.base_scene_header }}
 
       SCENE:
-      On a rocky hill beneath large rolling storm clouds,
-      {{ child_names|join(' & ') }} stand side by side,
-      steady and brave in the wind.
-      {{ pet_names|join(' & ') }} stands at their feet.
+      Storm clouds gather above a rocky hill.
 
-      Above them, a powerful thunder dragon sweeps across the sky
-      in a strong diagonal arc.
+      {{ child_names|join(' & ') }} stand bravely beside their dragon friend.
 
-      The thunder dragon has lightning-shaped horns
-      and broad angular wings.
-      Its expression is intense but noble.
+      A powerful thunder dragon sweeps across the sky,
+      lightning crackling around its wings.
 
-      A bold bolt of lightning bursts from the dragon’s mouth,
-      branching naturally in thick, flowing lines.
+  - page: 11
+    title: 'The Ancient Dragon'
+    prompt: |
+      {{ globals.base_scene_header_epic }}
 
-      Keep cloud shapes large and dramatic.
-      Emphasize strong diagonal movement.
-      Avoid small repeated textures.
-      Keep silhouettes clean and bold for coloring.
-  - page: 8
+      SCENE:
+      An enormous ancient dragon rests upon a towering cliff.
+
+      Its wings stretch across most of the sky.
+
+      {{ child_names|join(' & ') }} stand below,
+      looking up in awe.
+
+      {{ pet_names|join(' & ') }} sits beside them.
+
+  - page: 12
     title: 'Frostfall Peaks'
     prompt: |
       {{ globals.base_scene_header_vertical }}
 
       SCENE:
-      High in the snowy mountains, {{ child_names|join(' & ') }}
-      climb a gentle icy slope.
+      High in snowy mountains,
+      {{ child_names|join(' & ') }} climb a gentle icy slope.
 
-      A majestic ice dragon with crystalline horns
-      and jagged frost-covered wings perches on a snowy ridge.
+      A majestic ice dragon perches on a frozen ridge above them.
 
-      Large snowdrifts and angular ice formations
-      frame the lower and side edges of the page.
+      Snowdrifts and ice formations surround the scene.
 
-      Keep shapes bold and clean.
-      Avoid tiny snowflake details.
-  - page: 9
+  - page: 13
     title: 'The Ocean Dragon'
     prompt: |
       {{ globals.base_scene_header_vertical }}
 
       SCENE:
-      On a wide sandy shore, {{ child_names|join(' & ') }} stand at the water’s edge.
-      Gentle ocean waves roll toward them.
+      On a wide sandy shore,
+      {{ child_names|join(' & ') }} stand beside rolling waves.
 
-      A majestic ocean dragon rises gracefully from the sea.
-      The dragon has fin-like wings, a long flowing body,
-      and coral-shaped horns.
+      A graceful ocean dragon rises from the water,
+      its body long and flowing like the sea.
 
-      Keep the shoreline calm and spacious.
-      Use broad, smooth wave lines with minimal internal detail.
-      Do NOT create face-like shapes in the water.
-      Avoid eye-like or mouth-like foam patterns.
-      Keep wave crests abstract and flowing.
+      {{ pet_names|join(' & ') }} stands at the shoreline.
 
-      The horizon line stays simple and clean.
-
-  - page: 10
-    title: 'The Moonlight Dragon'
+  - page: 14
+    title: 'Moonlight Guidance'
     prompt: |
       {{ globals.base_scene_header_vertical }}
 
       SCENE:
-      In a glowing moonlit meadow,
-      {{ child_names|join(' & ') }} look up at a graceful moonlight dragon.
-      {{ pet_names|join(' & ') }} sits calmly beside them in the foreground.
+      Under a glowing moon,
+      a graceful moonlight dragon glides overhead.
 
-      The dragon has long flowing wings
-      and crescent-shaped horns.
+      {{ child_names|join(' & ') }} watch the dragon
+      as it lights the path ahead.
 
-      Large rounded moon shapes and smooth rolling hills
-      frame the background.
-
-      Keep lines bold and avoid tiny star clutter.
-
-  - page: 11
-    title: 'Dragon Flight'
-    prompt: |
-      {{ base_scene_header_flight }}
-
-
-      FULL-PAGE COMPOSITION:
-      Strong diagonal flight composition.
-      One large flame dragon flies from lower-left toward upper-right.
-      Keep the sky open and spacious.
-      Avoid crowding the dragon.
-
-      SCENE:
-      {{ child_names|join(' & ') }}
-      ride together on one majestic flame dragon high above a wide valley.
-
-      The children lean slightly with the motion of flight.
-      Hair and clothing stream gently backward in the wind.
-
-      The flame dragon looks powerful and noble.
-      Wings fully extended.
-      Head forward in confident motion.
-
-      Far below, {{ pet_names|join(' & ') }}
-      runs along a winding path beside the river,
-      looking up toward the flying dragon.
-
-      The valley below is simple:
-      rolling hills, a winding river, distant mountains.
-
-  - page: 12
-    title: 'The Lost Flame Dragon'
-    prompt: |
-      {{ globals.base_scene_header }}
-
-
-      FULL-PAGE COMPOSITION:
-      Vertical composition.
-      The dragon stands in the center of the page.
-      Leave open space around the characters for clarity.
-
-      SCENE:
-      A flame dragon stands alone in a forest clearing,
-      looking uncertain and slightly worried.
-
-      {{ child_names|join(' & ') }} approach the dragon gently.
-      One child reaches out a hand in reassurance.
-      {{ pet_names|join(' & ') }} stands beside them.
-
-      Keep the background minimal with a few trees and rocks.
-      Maintain clean, readable shapes for coloring.
-
-  - page: 13
-    title: 'Grateful Flame Dragon'
-    prompt: |
-      {{ globals.base_scene_header }}
-
-      SCENE:
-      {{ child_names|join(' & ') }} stand beside a majestic flame dragon.
-
-      {{ pet_names|join(' & ') }} stands between them.
-
-      Include exactly one {{ pet_names|join(' & ') }}.
-      Do NOT duplicate the pet.
-
-      The dragon lowers its head in a gesture of gratitude.
-      Keep the pose calm and grounded.
-
-  - page: 14
-    title: 'The Dragon Alliance'
-    prompt: |
-      {{ globals.base_scene_header }}
-
-      SCENE:
-      A large flame dragon stands proudly at the center,
-      wings raised in a wide V shape.
-
-      {{ child_names|join(' & ') }} stand confidently in front of the dragon,
-      one slightly ahead of the other.
-      {{ pet_names|join(' & ') }} stands between them.
-
-      In the distant background,
-      two other dragons perch far apart on tall rock spires.
-
-      Keep the background dragons small and secondary.
-      The central dragon and the children remain the primary focus.
+      {{ pet_names|join(' & ') }} sits quietly beside them.
 
   - page: 15
-    title: 'Goodbye, Dragon Realm'
+    title: 'Dragon Flight'
+    prompt: |
+      {{ globals.base_scene_header_flight }}
+
+      SCENE:
+      {{ child_names|join(' & ') }} ride together on their dragon friend.
+
+      The dragon soars high above valleys and rivers.
+
+      Hair and clothing flow in the wind.
+
+      Far below,
+      {{ pet_names|join(' & ') }} runs along a winding path.
+
+  - page: 16
+    title: 'The Dragon Festival'
     prompt: |
       {{ globals.base_scene_header }}
 
-      FULL-PAGE COMPOSITION:
-      Gentle centered composition with soft framing trees.
+      SCENE:
+      In a wide dragon-realm valley,
+      dragons of many shapes gather for a joyful festival.
+
+      {{ child_names|join(' & ') }} stand in the center beside their dragon friend.
+
+      Several dragons circle overhead in graceful arcs.
+
+      Smaller dragons perch on rocks and cliffs nearby.
+
+      Colorful banners and lanterns hang between tall stone pillars.
+
+      {{ pet_names|join(' & ') }} runs happily between the children.
+
+      Keep the composition lively and celebratory.
+      Avoid crowding the central characters.
+
+  - page: 17
+    title: 'Goodbye Dragon Realm'
+    prompt: |
+      {{ globals.base_scene_header }}
 
       SCENE:
-      Back in the forest clearing,
-      {{ child_names|join(' & ') }} stand side by side,
-      holding hands.
+      Back at the glowing portal,
+      {{ child_names|join(' & ') }} stand holding hands.
+
+      Their dragon friend bows its head in farewell.
 
       {{ pet_names|join(' & ') }} sits between them.
 
-      Inside the glowing portal,
-      a majestic flame dragon stands in silhouette,
-      wings partially open.
-
-      The dragon lowers its head in a final gesture of respect.
-
-      The portal light softly illuminates the children's faces.
-
-      Keep the scene calm and uncluttered.
-      Emphasize emotion over action.
-
-  - page: 16
-    title: 'Memory Page'
-    prompt: |
-      {{ globals.style_line_art }}
-      {{ globals.style_classic }}
-
-      PERSONAL MEMORY PAGE – calm and sentimental.
-
-      LAYOUT:
-      Balanced vertical composition with generous negative space.
-
-      At the top, include simple outlined lettering:
-      "{{ child_names|join(' & ') }}'s Dragon Realm Memories"
-
-      Below the title, create a large open rectangular drawing space
-      occupying 60–70% of the page height.
-
-      Add a thin decorative border of small stars and dragon-scale motifs.
-
-      In the lower-left corner,
-      include a small full-body portrait of {{ child_names|join(' & ') }}
-      in their medieval outfits.
-
-      Do NOT include any dragons on this page.
-      Keep the design minimal and calm.
+      The portal glows softly behind them.

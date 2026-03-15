@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 15,
+  "title": "Dragon Flight",
+  "prompt": "Character bible:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair; big gray-blue eyes; round cheeks; friendly adventurous expression, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, wavy brown hair in a top knot; large gray-blue eyes; soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\nKeep these characters consistent. They represent specific real children. Do NOT replace them with generic children or idealized animated characters. Preserve their recognizable facial structure.\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nSTYLE: Preserve the real facial proportions from the reference images.\ngentle action energy, but keep shapes simple and readable.\n\nFULL-PAGE COMPOSITION: dynamic diagonal composition.\nOne MAIN dragon fills ~80\u201385% of page height.\nWings extend near the top margin (partial crop OK).\n\n\n\nSCENE:\nElliott & Colette ride together on their dragon friend.\n\nThe dragon soars high above valleys and rivers.\n\nHair and clothing flow in the wind.\n\nFar below,\nWinnie runs along a winding path.\n\nGLOBAL SAFETY (IMPORTANT):\n- No object intersections or impossible overlaps.\n- Clean occlusion: if objects overlap, the front object clearly covers the back object.\n- No extra limbs, no duplicated faces, no merged hands/feet.\n- Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.\n- Keep shapes simple and readable for coloring.\n\nUse the attached character sheet reference images as the canonical identity and style.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_15_dragon-flight__cand00.png"
+  ]
+}

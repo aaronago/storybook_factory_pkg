@@ -52,7 +52,7 @@ def _ensure_refs_for_build(
     output_dir: Path,
     assets_dir: Path,
     image_provider: str,
-    openai_interior_model: str,
+    interior_model: str,
     image_quality: str,
     config_dir: Path | None,
     dry_run: bool,
@@ -95,8 +95,8 @@ def _ensure_refs_for_build(
             3375,
         ),  # unused since we're only generating refs, but set to actual cover size just in case
         mode=image_provider,
-        openai_interior_model=openai_interior_model,
-        openai_cover_model=None,
+        interior_model=interior_model,
+        cover_model=None,
         assets_dir=assets_dir,
         dry_run=dry_run,
         image_quality=image_quality,
@@ -182,14 +182,14 @@ def main():
         help="Image generation backend",
     )
     p2.add_argument(
-        "--openai-interior-model",
+        "--interior-model",
         default="dall-e-2",
-        help="OpenAI model for interior pages + character sheets (default: dall-e-2)",
+        help="Model for interior pages + character sheets (default: dall-e-2)",
     )
     p2.add_argument(
-        "--openai-cover-model",
+        "--cover-model",
         default=None,
-        help="OpenAI model for cover pages (default: same as --openai-interior-model)",
+        help="Model for cover pages (default: same as --interior-model)",
     )
     p2.add_argument(
         "--image-quality",
@@ -234,9 +234,9 @@ def main():
         help="Image generation backend",
     )
     p3.add_argument(
-        "--openai-interior-model",
+        "--interior-model",
         default="dall-e-2",
-        help="OpenAI model for front-matter pages (default: dall-e-2)",
+        help="Model for front-matter pages (default: dall-e-2)",
     )
 
     # -----------------------
@@ -263,9 +263,9 @@ def main():
         help="Image generation backend",
     )
     p0.add_argument(
-        "--openai-interior-model",
+        "--interior-model",
         default="gpt-image-1",
-        help="OpenAI model for character sheets",
+        help="Model for character sheets",
     )
     p0.add_argument(
         "--config-dir",
@@ -311,8 +311,8 @@ def main():
                 3375,
             ),  # unused since we're only generating refs, but set to actual cover size just in case
             mode=args.image_provider,
-            openai_interior_model=args.openai_interior_model,
-            openai_cover_model=None,
+            interior_model=args.interior_model,
+            cover_model=None,
             assets_dir=assets_dir,
             dry_run=False,
         )
@@ -360,7 +360,7 @@ def main():
             output_dir=output_dir,
             assets_dir=assets_dir,
             image_provider=args.image_provider,
-            openai_interior_model=args.openai_interior_model,
+            interior_model=args.interior_model,
             image_quality=args.image_quality,
             config_dir=config_dir,
             dry_run=args.dry_run,
@@ -372,8 +372,8 @@ def main():
             output_dir=output_dir,
             assets_dir=assets_dir,
             image_provider_mode=args.image_provider,
-            openai_interior_model=args.openai_interior_model,
-            openai_cover_model=args.openai_cover_model,
+            interior_model=args.interior_model,
+            cover_model=args.cover_model,
             dry_run=args.dry_run,
             image_quality=args.image_quality,
         )
@@ -386,7 +386,7 @@ def main():
             output_dir=Path(args.output_dir),
             assets_dir=Path(args.assets_dir),
             image_provider_mode=args.image_provider,
-            openai_interior_model=args.openai_interior_model,
+            interior_model=args.interior_model,
             dry_run=False,
         )
         print(result)

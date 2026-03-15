@@ -406,8 +406,8 @@ def run_pipeline(
     assets_dir: Path,
     image_provider_mode: str = "mock",
     openai_model: str | None = None,
-    openai_interior_model: str | None = None,
-    openai_cover_model: str | None = None,
+    interior_model: str | None = None,
+    cover_model: str | None = None,
     dry_run: bool = False,
     image_quality: str = "standard",
 ) -> dict[str, Any]:
@@ -418,8 +418,8 @@ def run_pipeline(
     Optional:
       - pipeline_config.json (if you add it later, it will be merged over defaults)
     """
-    interior_model = openai_interior_model or openai_model
-    cover_model = openai_cover_model or openai_model
+    interior_model = interior_model or openai_model
+    cover_model = cover_model or openai_model
 
     config_dir = config_dir.resolve()
     output_dir = output_dir.resolve()
@@ -447,8 +447,8 @@ def run_pipeline(
         interior_px=interior_px,
         cover_px=cover_px,
         mode=image_provider_mode,
-        openai_cover_model=cover_model,
-        openai_interior_model=interior_model,
+        cover_model=cover_model,
+        interior_model=interior_model,
         assets_dir=assets_dir,
         dry_run=dry_run,
         image_quality=image_quality,
