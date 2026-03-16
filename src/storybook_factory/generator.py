@@ -162,8 +162,8 @@ class PromptOut(TypedDict, total=False):
 class PromptBuildDefaults:
     prefix: str
     pixels: Pixels
-    include_bible: bool = True
-    include_safety: bool = True
+    include_bible: bool = False
+    include_safety: bool = False
 
 
 def _validate_pixels(p: Any, default_px: Pixels) -> Pixels:
@@ -220,17 +220,31 @@ def _build_prompt_item(
     prefix = str(item.get("prefix") or defaults.prefix)
     pixels = _validate_pixels(item.get("pixels"), defaults.pixels)
 
-    include_bible = bool(item.get("include_bible", defaults.include_bible))
     include_safety = bool(item.get("include_safety", defaults.include_safety))
 
     # Render the scene template (which can reference {{ globals.* }}) with multi-pass support
     rendered = _render_template_multipass(str(prompt_t), ctx, passes=3)
     rendered = _strip_leading_scene_label(rendered).strip()
 
+    # Support for explicit prompt blocks (REFERENCES, TASK, STYLE, COMPOSITION, SCENE)
+    ref_desc = str(ctx.get("ref_description_string") or "").strip()
+
     parts: list[str] = []
 
-    if include_bible:
-        parts.append("Character bible:\n" + str(ctx["character_bible"]).strip())
+    if ref_desc and kind != "front_matter":
+        parts.append(f"REFERENCES: {ref_desc}")
+
+    if kind != "front_matter":
+        char_names_str = ", ".join(ctx.get("character_names", []))
+        style_rules = (
+            "STYLE: A whimsical, high-fidelity storybook coloring page. \n"
+            "ARTISTRY: Use professional, varied line weights with elegant, tapered outlines. \n"
+            f"LIKENESS: Prioritize expressive facial structures and recognizable features of {char_names_str} to ensure "
+            "characters feel lifelike and full of personality. \n\n"
+            "FORMAT: High-contrast black ink on a pure white background. Keep all interior "
+            "shapes open and empty for coloring. Strictly no shading or gray tones."
+        )
+        parts.append(style_rules)
 
     parts.append(rendered)
 
@@ -368,7 +382,9 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         "overlay_styles": overlay_styles,
         # injected blocks
         "character_bible": character_bible,
+        "character_names": child_names + pet_names,
         "global_safety_rules": global_safety_rules,
+        "ref_description_string": brief.get("ref_description_string", ""),
         # optional
         "mythic_elements": theme.get("mythic_elements", {}),
     }
@@ -408,20 +424,36 @@ def generate_from_brief(
     brief_path: Path,
     theme_path: Path,
     out_dir: Path,
+    ref_description_string: str = "",
 ) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     brief = load_yaml(brief_path)
     theme = load_yaml(theme_path)
 
+    # Inject ref string into brief if provided via arg (e.g. from CLI build)
+    if ref_description_string:
+        brief["ref_description_string"] = ref_description_string
+
     children = cast(list[dict[str, Any]], brief.get("children", []) or [])
     pets = cast(list[dict[str, Any]], brief.get("pets", []) or [])
+
+    # Collect character names for the pipeline to use later
+    character_names = []
+    for c in children:
+        if c.get("name"):
+            character_names.append(c["name"])
+    for p in pets:
+        if p.get("name"):
+            character_names.append(p["name"])
 
     ctx = _build_context(brief, theme)
 
     visual_bible = {
         "visual_bible_version": VISUAL_BIBLE_VERSION,
         "project": brief.get("project_title", "Custom Storybook"),
+        "character_names": character_names,
+        "ref_description_string": ref_description_string,
         "page_format": {
             "trim_in": DEFAULT_TRIM,
             "bleed_in": 0.125,
@@ -530,6 +562,8 @@ def generate_from_brief(
         "interior_prompts": interior_prompts,
         "back_matter_prompts": back_matter_prompts,
         "covers": covers,
+        "character_names": character_names,
+        "ref_description_string": ref_description_string,
     }
     page_prompts["overlay_styles"] = ctx.get("overlay_styles", {})
 

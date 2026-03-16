@@ -259,8 +259,6 @@ scenes:
   - page: 2
     title: 'Forest Adventure'
     prompt: |
-      {{ globals.style_line_art }}
-      {{ globals.style_classic }}
 
       SCENE:
       In a peaceful forest clearing, {{ child_names|join(' & ') }}
@@ -274,7 +272,6 @@ scenes:
   - page: 3
     title: 'Portal Discovery'
     prompt: |
-      {{ globals.style_line_art }}
 
       SCENE:
       In a forest clearing, {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
@@ -290,7 +287,6 @@ scenes:
   - page: 4
     title: 'Entering the Dragon Realm'
     prompt: |
-      {{ globals.base_scene_header_vertical }}
 
       SCENE:
       {{ child_names|join(' & ') }} step through the glowing portal.
@@ -305,10 +301,10 @@ scenes:
   - page: 5
     title: 'Dragon Hatchling'
     prompt: |
-      {{ globals.base_scene_header }}
+
 
       SCENE:
-      {{ child_names|join(' & ') }} kneel beside a large nest of dragon eggs.
+
 
       One baby dragon peeks out from a cracked shell.
 
@@ -319,12 +315,11 @@ scenes:
   - page: 6
     title: 'The Grateful Hatchling'
     prompt: |
-      {{ globals.base_scene_header }}
+
 
       SCENE:
       The baby dragon has just been freed from tangled forest vines.
 
-      {{ child_names|join(' & ') }} kneel beside the dragon.
 
       The dragon happily nuzzles against them
       as the children gently hug the small dragon.
@@ -341,7 +336,7 @@ scenes:
   - page: 7
     title: 'The Forest Guardian'
     prompt: |
-      {{ globals.base_scene_header }}
+
 
       SCENE:
       A majestic forest dragon emerges from behind tall trees.
@@ -356,7 +351,7 @@ scenes:
   - page: 8
     title: 'The Journey Begins'
     prompt: |
-      {{ globals.base_scene_header_vertical }}
+
 
       SCENE:
       {{ child_names|join(' & ') }} walk along a winding forest path.
@@ -371,7 +366,7 @@ scenes:
   - page: 9
     title: 'The Sky Bridge'
     prompt: |
-      {{ globals.base_scene_header_vertical }}
+
 
       SCENE:
       {{ child_names|join(' & ') }} carefully cross a floating stone bridge.
@@ -384,7 +379,7 @@ scenes:
   - page: 10
     title: 'The Thunder Dragon'
     prompt: |
-      {{ globals.base_scene_header }}
+
 
       SCENE:
       Storm clouds gather above a rocky hill.
@@ -397,7 +392,7 @@ scenes:
   - page: 11
     title: 'The Ancient Dragon'
     prompt: |
-      {{ globals.base_scene_header_epic }}
+
 
       SCENE:
       An enormous ancient dragon rests upon a towering cliff.
@@ -412,7 +407,7 @@ scenes:
   - page: 12
     title: 'Frostfall Peaks'
     prompt: |
-      {{ globals.base_scene_header_vertical }}
+
 
       SCENE:
       High in snowy mountains,
@@ -425,7 +420,7 @@ scenes:
   - page: 13
     title: 'The Ocean Dragon'
     prompt: |
-      {{ globals.base_scene_header_vertical }}
+
 
       SCENE:
       On a wide sandy shore,
@@ -439,7 +434,7 @@ scenes:
   - page: 14
     title: 'Moonlight Guidance'
     prompt: |
-      {{ globals.base_scene_header_vertical }}
+
 
       SCENE:
       Under a glowing moon,
@@ -453,7 +448,7 @@ scenes:
   - page: 15
     title: 'Dragon Flight'
     prompt: |
-      {{ globals.base_scene_header_flight }}
+
 
       SCENE:
       {{ child_names|join(' & ') }} ride together on their dragon friend.
@@ -468,7 +463,7 @@ scenes:
   - page: 16
     title: 'The Dragon Festival'
     prompt: |
-      {{ globals.base_scene_header }}
+
 
       SCENE:
       In a wide dragon-realm valley,
