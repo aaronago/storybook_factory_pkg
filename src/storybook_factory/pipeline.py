@@ -520,17 +520,17 @@ def run_pipeline(
 
             try:
                 sorter = GeminiImageSorter()
-                print(
-                    f"[pipeline] Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
-                )
+                # print(
+                #     f"[pipeline] Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
+                # )
                 res_string, res_sheets = sorter.get_reference_mapping(
-                    all_refs, char_names
+                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
                 )
                 ref_description_string = res_string
                 ref_sheets = res_sheets
-                print(
-                    f"[pipeline] Sort complete. Found {len(ref_sheets)} identified images."
-                )
+                # print(
+                #     f"[pipeline] Sort complete. Found {len(ref_sheets)} identified images."
+                # )
             except Exception as e:
                 print(
                     f"[pipeline] Warning: Gemini sorter failed: {e}. No references attached."
@@ -559,11 +559,13 @@ def run_pipeline(
 
             try:
                 sorter = GeminiImageSorter()
-                print(
-                    f"[pipeline] Re-sorting {len(all_refs)} reference images to match existing indices for: {', '.join(char_names)}..."
-                )
+                # print(
+                #     f"[pipeline] Re-sorting {len(all_refs)} reference images to match existing indices for: {', '.join(char_names)}..."
+                # )
                 # Use the sorter to get the correct path order matching the index-based prompt
-                _, ref_sheets = sorter.get_reference_mapping(all_refs, char_names)
+                _, ref_sheets = sorter.get_reference_mapping(
+                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
+                )
                 print(
                     f"[pipeline] Re-sort complete. Found {len(ref_sheets)} identified images."
                 )

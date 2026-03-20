@@ -1,5 +1,9 @@
 # ============================================================
 # DRAGON REALM SCENE PACK (DRY + MACRO VERSION)
+# Requires: 1–2 children, 0–1 pets
+# Scenes are written for 2 children + 1 pet.
+# With 1 child, child_2 falls back to child_1 (same name used twice — scene still renders).
+# With 0 pets, pet_1 falls back to "their pet" — omit pet lines manually if needed.
 # ============================================================
 
 globals:
@@ -7,11 +11,7 @@ globals:
   # Global safety (auto-injected by generator)
   # ------------------------------------------------------------
   global_safety_rules: |
-    - No object intersections or impossible overlaps.
-    - Clean occlusion: if objects overlap, the front object clearly covers the back object.
-    - No extra limbs, no duplicated faces, no merged hands/feet.
-    - Keep dragons anatomically clean: one head, two wings (if winged), four limbs, one tail.
-    - Keep shapes simple and readable for coloring.
+    - No words, letters, symbols, or text of any kind anywhere in the image.
 
   # ------------------------------------------------------------
   # Style fragments
@@ -257,242 +257,199 @@ front_matter:
 
 scenes:
   - page: 2
-    title: 'Forest Adventure'
-    prompt: |
-
-      SCENE:
-      In a peaceful forest clearing, {{ child_names|join(' & ') }}
-      explore the woods with {{ pet_names|join(' & ') }}.
-
-      Tall trees frame the scene.
-      Mushrooms, ferns, and smooth stones decorate the ground.
-
-      The children look curious and adventurous.
-
-  - page: 3
-    title: 'Portal Discovery'
-    prompt: |
-
-      SCENE:
-      In a forest clearing, {{ child_names|join(' & ') }} and {{ pet_names|join(' & ') }}
-      discover a swirling magical portal behind them.
-
-      The portal is large and reaches toward the top edge.
-
-      Inside the portal,
-      outline silhouettes of two flying dragons can be seen.
-
-      Tall trees and hanging vines frame the upper area.
-
-  - page: 4
     title: 'Entering the Dragon Realm'
     prompt: |
 
       SCENE:
-      {{ child_names|join(' & ') }} step through the glowing portal.
+      {{ child_2 }} has both feet planted through the portal and is hauling
+      {{ child_1 }} forward by the hand, leaning back with all her weight.
+      {{ child_1 }}'s free arm trails behind, fingers splayed wide, heels dragging.
+      {{ pet_1 }} launches through the portal between their legs,
+      ears pinned back, all four paws off the ground.
+      Strange plants and distant mountains glow on the other side.
 
-      Magical energy swirls around them.
+    single_child_prompt: |
 
-      On the other side lies a new land
-      with strange plants and distant mountains.
+      SCENE:
+      {{ child_1 }} stands at the swirling portal, one foot already through,
+      leaning back to grab {{ pet_1 }}'s collar with both hands.
+      {{ pet_1 }} strains forward eagerly into the portal, all four paws scrabbling,
+      ears pinned back, tail a blur.
+      Strange plants and distant mountains glow on the other side.
 
-      {{ pet_names|join(' & ') }} eagerly follows them.
-
-  - page: 5
+  - page: 3
     title: 'Dragon Hatchling'
     prompt: |
 
-
       SCENE:
-
-
       One baby dragon peeks out from a cracked shell.
-
       The hatchling looks curious and friendly.
+      {{ child_names|join(' & ') }} kneel down to get a closer look,
+      while {{ pet_1 }} watches closely.
 
-      {{ pet_names|join(' & ') }} watches closely.
-
-  - page: 6
+  - page: 4
     title: 'The Grateful Hatchling'
     prompt: |
 
-
       SCENE:
       The baby dragon has just been freed from tangled forest vines.
-
-
       The dragon happily nuzzles against them
       as the children gently hug the small dragon.
-
       One child laughs while the other pets the dragon's head.
-
-      {{ pet_names|join(' & ') }} stands nearby wagging excitedly.
-
+      {{ pet_1 }} stands nearby wagging excitedly.
       Broken vines lie on the ground.
+  - page: 5
+    title: 'Dragon Training'
+    prompt: |
 
-      The moment should feel joyful and affectionate.
-      Avoid stiff standing poses.
+      SCENE:
+      {{ child_1 }} stands a few feet away with both arms raised,
+      coaxing the baby dragon to fly over.
+      The hatchling launches off a mossy log, wings pumping hard,
+      wobbling through the air toward {{ child_1 }}.
+      {{ child_2 }} crouches behind the log cheering with fists raised.
+      {{ pet_1 }} sprints in a circle beneath the dragon, barking upward.
 
-  - page: 7
+  - page: 6
     title: 'The Forest Guardian'
     prompt: |
 
+      SCENE:
+      A majestic forest dragon emerges from behind tall trees,
+      its leaf-like wings spreading wide as it steps forward.
+      The baby dragon scurries between {{ child_names|join(' & ') }} and the guardian,
+      pressing itself against their legs.
+      {{ child_1 }} steps forward with one hand outstretched toward the great dragon
+      while {{ child_2 }} grabs {{ child_1 }}'s sleeve, pulling back slightly.
+      {{ pet_1 }} presses close to {{ child_2 }}'s feet, ears flat, tail tucked.
+
+  - page: 7
+    title: 'Dragon Nap'
+    prompt: |
 
       SCENE:
-      A majestic forest dragon emerges from behind tall trees.
+      The young dragon has fallen deeply asleep draped across {{ child_1 }}'s lap,
+      pinning them completely to the ground.
+      {{ child_1 }} looks helplessly at {{ child_2 }}, arms out to the sides, unable to move.
+      {{ child_2 }} crouches beside them, hands under the dragon's middle,
+      trying to lift it with a strained expression — the dragon doesn't budge.
+      {{ pet_1 }} sits next to the dragon's tail, watching {{ child_2 }} struggle,
+      head tilted sideways.
 
-      Its wings resemble leaves and branches.
+    single_child_prompt: |
 
-      The baby dragon stands between
-      {{ child_names|join(' & ') }} and the guardian dragon.
-
-      The large dragon watches calmly.
+      SCENE:
+      The young dragon has fallen deeply asleep draped across {{ child_1 }}'s lap,
+      pinning them completely to the ground.
+      {{ child_1 }} looks down at the dragon, arms out to the sides, completely stuck,
+      expression a mix of helpless and fond.
+      {{ pet_1 }} sits next to the dragon's tail, head tilted sideways,
+      making no effort whatsoever to help.
 
   - page: 8
-    title: 'The Journey Begins'
-    prompt: |
-
-
-      SCENE:
-      {{ child_names|join(' & ') }} walk along a winding forest path.
-
-      The young dragon walks beside them.
-
-      Strange dragon-realm plants and mushrooms
-      line the path.
-
-      {{ pet_names|join(' & ') }} trots happily ahead.
-
-  - page: 9
     title: 'The Sky Bridge'
     prompt: |
-
-
       SCENE:
-      {{ child_names|join(' & ') }} carefully cross a floating stone bridge.
+      {{ child_1 }} edges across a floating stone bridge,
+      arms out for balance, one foot testing each stone.
+      {{ child_2 }} crouches behind, peering through the gaps at the clouds swirling far below.
+      {{ pet_1 }} scrambles forward on the bridge, claws scrabbling on the stone, nose to the edge.
+      The young dragon swoops low overhead, neck craning back to check on them.
 
-      Clouds swirl below them.
-
-      The young dragon glides above the bridge,
-      guiding the way.
-
-  - page: 10
+  - page: 9
     title: 'The Thunder Dragon'
     prompt: |
 
-
       SCENE:
-      Storm clouds gather above a rocky hill.
-
-      {{ child_names|join(' & ') }} stand bravely beside their dragon friend.
-
-      A powerful thunder dragon sweeps across the sky,
+      Storm clouds churn above a rocky hill.
+      {{ child_1 }} plants both feet wide and throws both arms up toward the sky,
+      shouting into the wind.
+      {{ child_2 }} crouches low behind the young dragon, hands on its side, peeking around its shoulder.
+      {{ pet_1 }} barks up at the storm, front paws raised off the ground.
+      A powerful thunder dragon banks hard across the sky above,
       lightning crackling around its wings.
 
-  - page: 11
+  - page: 10
     title: 'The Ancient Dragon'
     prompt: |
 
-
       SCENE:
-      An enormous ancient dragon rests upon a towering cliff.
+      Before a massive ancient stone gate covered in carved dragon runes,
+      an enormous ancient dragon rests with its wings folded,
+      head lowered slowly toward the ground as if greeting them.
+      The dragon is so large its head alone fills most of the frame above the children.
+      {{ child_1 }} stands completely still, head tilted all the way back, mouth open in awe.
+      {{ child_2 }} grabs {{ child_1 }}'s arm with both hands, leaning into them,
+      equally stunned and amazed.
+      {{ pet_1 }} sits frozen between their feet, staring straight up, ears perked forward.
 
-      Its wings stretch across most of the sky.
-
-      {{ child_names|join(' & ') }} stand below,
-      looking up in awe.
-
-      {{ pet_names|join(' & ') }} sits beside them.
-
-  - page: 12
+  - page: 11
     title: 'Frostfall Peaks'
     prompt: |
-
 
       SCENE:
       High in snowy mountains,
       {{ child_names|join(' & ') }} climb a gentle icy slope.
-
       A majestic ice dragon perches on a frozen ridge above them.
-
       Snowdrifts and ice formations surround the scene.
 
-  - page: 13
+  - page: 12
     title: 'The Ocean Dragon'
     prompt: |
 
-
       SCENE:
-      On a wide sandy shore,
-      {{ child_names|join(' & ') }} stand beside rolling waves.
+      A wave crashes onto the shore, spraying foam around {{ child_1 }}'s feet
+      as {{ child_1 }} leaps back laughing, arms thrown wide.
+      {{ child_2 }} kneels at the water's edge, reaching one hand toward
+      the ocean dragon as it surges up from the surf, neck arching forward.
+      {{ pet_1 }} bolts away from the wave, kicking up wet sand.
 
-      A graceful ocean dragon rises from the water,
-      its body long and flowing like the sea.
-
-      {{ pet_names|join(' & ') }} stands at the shoreline.
-
-  - page: 14
-    title: 'Moonlight Guidance'
+  - page: 13
+    title: 'Dragon BBQ'
     prompt: |
 
-
       SCENE:
-      Under a glowing moon,
-      a graceful moonlight dragon glides overhead.
+      A friendly dragon wearing a comically oversized chef's hat breathes a small flame
+      onto skewered food balanced on a flat rock grill.
+      {{ child_1 }} holds a plate up eagerly, mouth open.
+      {{ child_2 }} sneaks a piece off the rock with a sideways grin.
+      {{ pet_1 }} sits directly beneath the grill, drooling, staring up.
+      Bright daylight, open sky behind them.
 
-      {{ child_names|join(' & ') }} watch the dragon
-      as it lights the path ahead.
-
-      {{ pet_names|join(' & ') }} sits quietly beside them.
-
-  - page: 15
+  - page: 14
     title: 'Dragon Flight'
     prompt: |
 
-
       SCENE:
       {{ child_names|join(' & ') }} ride together on their dragon friend.
-
       The dragon soars high above valleys and rivers.
-
       Hair and clothing flow in the wind.
-
       Far below,
-      {{ pet_names|join(' & ') }} runs along a winding path.
+      {{ pet_1 }} runs along a winding path.
 
-  - page: 16
+  - page: 15
     title: 'The Dragon Festival'
     prompt: |
 
-
       SCENE:
-      In a wide dragon-realm valley,
-      dragons of many shapes gather for a joyful festival.
-
-      {{ child_names|join(' & ') }} stand in the center beside their dragon friend.
-
-      Several dragons circle overhead in graceful arcs.
-
-      Smaller dragons perch on rocks and cliffs nearby.
-
+      In a wide dragon-realm valley where dragons of many shapes have gathered for a joyful festival,
+      {{ child_1 }} sprints toward a small dragon, arms wide open for a hug,
+      one foot leaving the ground mid-stride.
+      {{ child_2 }} stands with feet dangling off the ground, sitting on the flat top of a dragon's snout
+      as the dragon slowly raises its head upward — {{ child_2 }}'s arms spread wide, laughing with delight.
+      {{ pet_1 }} leaps into the air, all four paws off the ground, tail a blur.
       Colorful banners and lanterns hang between tall stone pillars.
-
-      {{ pet_names|join(' & ') }} runs happily between the children.
-
-      Keep the composition lively and celebratory.
       Avoid crowding the central characters.
 
-  - page: 17
+  - page: 16
     title: 'Goodbye Dragon Realm'
     prompt: |
       {{ globals.base_scene_header }}
 
       SCENE:
-      Back at the glowing portal,
-      {{ child_names|join(' & ') }} stand holding hands.
-
-      Their dragon friend bows its head in farewell.
-
-      {{ pet_names|join(' & ') }} sits between them.
-
-      The portal glows softly behind them.
+      Back at the glowing portal, the dragon lowers its head all the way to the ground,
+      pressing its snout gently against {{ child_1 }}'s cheek.
+      {{ child_1 }} wraps both arms around the dragon's nose, eyes shut tight.
+      {{ child_2 }} has one hand on the dragon's cheek and one foot already
+      stepping backward into the portal, not yet ready to let go.
+      {{ pet_1 }} sits pressed against the dragon's jaw, tail still.

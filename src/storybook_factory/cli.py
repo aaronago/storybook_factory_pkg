@@ -285,9 +285,9 @@ def main():
             print(f"No images found in {source_path}")
             return
 
-        print(
-            f"Sorting {len(image_paths)} images for characters: {', '.join(args.character)}..."
-        )
+        # print(
+        #     f"Sorting {len(image_paths)} images for characters: {', '.join(args.character)}..."
+        # )
         results = sorter.sort_user_uploads(image_paths, args.character)
 
         # Process results and move files
@@ -369,14 +369,14 @@ def main():
 
             try:
                 sorter = GeminiImageSorter()
-                print(
-                    f"Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
-                )
+                # print(
+                #     f"Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
+                # )
                 ref_description_string, sorted_paths = sorter.get_reference_mapping(
-                    all_refs, char_names
+                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
                 )
                 if sorted_paths:
-                    print("\n--- Sorted Reference Paths Mapping ---")
+                    # print("\n--- Sorted Reference Paths Mapping ---")
                     for i, p in enumerate(sorted_paths):
                         print(f"[{i+1}] {p}")
                     # Note: sorted_paths isn't stored in page_prompts.json but the indices match it.
@@ -394,9 +394,9 @@ def main():
             out_dir,
             ref_description_string=ref_description_string,
         )
-        print(f"Generated JSON config in: {out_dir}")
-        if ref_description_string:
-            print(f"Baked references: {ref_description_string}")
+        # print(f"Generated JSON config in: {out_dir}")
+        # if ref_description_string:
+        #     print(f"Baked references: {ref_description_string}")
         return
 
     if args.command == "refs":

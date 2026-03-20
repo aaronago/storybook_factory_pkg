@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 10,
+  "title": "The Ancient Dragon",
+  "prompt": "REFERENCES: style_reference: [1]\nColette: [5], [6]\nElliott: [2], [3], [4]\nWinnie: [7], [8]\n\nCHARACTER BIBLE:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair; big gray-blue eyes, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, brown hair in a top knot; large gray-blue eyes; soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\n\nBefore a massive ancient stone gate covered in carved dragon runes,\nan enormous ancient dragon rests with its wings folded,\nhead lowered slowly toward the ground as if greeting them.\nThe dragon is so large its head alone fills most of the frame above the children.\nElliott stands completely still, head tilted all the way back, mouth open in awe.\nColette grabs Elliott's arm with both hands, leaning into them,\nequally stunned and amazed.\nWinnie sits frozen between their feet, staring straight up, ears perked forward.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_10_the-ancient-dragon__cand00.png"
+  ]
+}

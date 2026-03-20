@@ -41,61 +41,119 @@ class GeminiImageSorter:
         image_paths: list[Path],
         character_names: list[str],
         model: str = "gemini-3.1-flash-lite-preview",
+        style_ref_dir: Path | None = None,
     ) -> tuple[str, list[Path]]:
         """
         Groups the input image_paths by character and produces:
           1. A formatted REFERENCES string for the prompt.
           2. A re-ordered list of Path objects that matches those indices.
 
+        The returned path list always starts with the style reference image(s)
+        so that [1] is always the master style reference as required by the prompt.
+
         Args:
-            image_paths: List of local paths to reference images.
+            image_paths: List of local paths to reference images (characters only).
             character_names: Names of characters to look for.
+            style_ref_dir: Optional directory to load style reference images from.
+                           If None, falls back to detecting paths containing
+                           'assets/style_reference' in their absolute path.
 
         Returns:
             tuple: (ref_description_string, sorted_image_paths)
         """
-        if not image_paths:
+        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+
+        # 1. Collect style reference images.
+        #    Resolution order:
+        #      a) explicit style_ref_dir argument
+        #      b) inferred from image_paths: characters live in <assets>/characters/,
+        #         so <assets>/style_reference/ is two levels up from any character image
+        #      c) fall back to detecting paths already containing 'assets/style_reference'
+        resolved_style_dir: Path | None = None
+        if style_ref_dir is not None:
+            resolved_style_dir = Path(style_ref_dir)
+        elif image_paths:
+            # image_paths[0] is e.g. .../assets/characters/foo.jpg
+            # parent       → .../assets/characters/
+            # parent.parent → .../assets/
+            candidate = Path(image_paths[0]).parent.parent / "style_reference"
+            if candidate.exists():
+                resolved_style_dir = candidate
+
+        if resolved_style_dir is not None and resolved_style_dir.exists():
+            style_ref_paths = sorted(
+                p
+                for p in resolved_style_dir.iterdir()
+                if p.is_file() and p.suffix.lower() in image_extensions
+            )
+        else:
+            style_ref_paths = [
+                p for p in image_paths if "assets/style_reference" in str(p.absolute())
+            ]
+
+        # Character images = everything that isn't a style reference
+        other_paths = [p for p in image_paths if p not in style_ref_paths]
+
+        if not style_ref_paths and not other_paths:
             return "", []
 
-        # 1. Use the existing sorting logic to get indices
-        results = self.sort_user_uploads(image_paths, character_names, model=model)
+        # 2. Use the existing sorting logic for character images only
+        results = (
+            self.sort_user_uploads(other_paths, character_names, model=model)
+            if other_paths
+            else {}
+        )
 
-        # 2. Build the re-ordered list and the label string
+        # 3. Build the re-ordered list and the label string
         from collections import defaultdict
 
         sorted_paths: list[Path] = []
         char_to_ids = defaultdict(list)
         current_idx = 1
 
-        # We iterate in the order of character_names for deterministic grouping
+        # 3a. Add style references first (from assets/style_reference)
+        for path in style_ref_paths:
+            sorted_paths.append(path)
+            char_to_ids["style_reference"].append(f"[{current_idx}]")
+            current_idx += 1
+
+        # 3b. Add 'unknown' from the Gemini sorting to the same bucket
+        if "unknown" in results:
+            for idx in results["unknown"]:
+                if 0 <= idx < len(other_paths):
+                    sorted_paths.append(other_paths[idx])
+                    char_to_ids["style_reference"].append(f"[{current_idx}]")
+                    current_idx += 1
+
+        # 3c. We iterate in the order of character_names for deterministic grouping
         for name in character_names:
             indices = results.get(name) or results.get(name.lower())
             if not indices:
                 continue
 
             for idx in indices:
-                if 0 <= idx < len(image_paths):
-                    sorted_paths.append(image_paths[idx])
+                if 0 <= idx < len(other_paths):
+                    sorted_paths.append(other_paths[idx])
                     char_to_ids[name.capitalize()].append(f"[{current_idx}]")
                     current_idx += 1
 
-        # Handle 'unknown' or any leftovers if they exist in the Gemini response
-        if "unknown" in results:
-            for idx in results["unknown"]:
-                if 0 <= idx < len(image_paths):
-                    sorted_paths.append(image_paths[idx])
-                    char_to_ids["Style/Context"].append(f"[{current_idx}]")
-                    current_idx += 1
+        # 4. Format the final string
+        # Build the per-character index lines
+        char_lines: list[str] = []
 
-        # 3. Format the final string
-        ref_lines = []
+        # Ensure style_reference is always first in the text output if it exists
+        if "style_reference" in char_to_ids:
+            ids_str = ", ".join(char_to_ids["style_reference"])
+            char_lines.append(f"style_reference: {ids_str}")
+
         for char_name in sorted(char_to_ids.keys()):
-            # Important: If it's a character from the list, we want it first usually,
-            # but sorted keys is fine for the description block.
+            if char_name == "style_reference":
+                continue
             ids_str = ", ".join(char_to_ids[char_name])
-            ref_lines.append(f"{char_name}: {ids_str}")
+            char_lines.append(f"{char_name}: {ids_str}")
 
-        ref_description_string = "\n".join(ref_lines)
+        # Compose final string
+        ref_description_string = "REFERENCES: " + "\n".join(char_lines)
         return ref_description_string, sorted_paths
 
     def sort_user_uploads(

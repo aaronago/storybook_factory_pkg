@@ -162,7 +162,7 @@ class PromptOut(TypedDict, total=False):
 class PromptBuildDefaults:
     prefix: str
     pixels: Pixels
-    include_bible: bool = False
+    include_bible: bool = True
     include_safety: bool = False
 
 
@@ -201,7 +201,20 @@ def _build_prompt_item(
     kind: str,
 ) -> PromptOut:
     title = item.get("title")
-    prompt_t = item.get("prompt")
+
+    # Select the right prompt variant based on cast size.
+    # single_child_prompt is used when the brief has exactly 1 child.
+    # no_pet_prompt is used when the brief has no pets.
+    # Fall back to the standard prompt if the alternate isn't defined.
+    child_count = len(ctx.get("child_names", []))
+    pet_count = len(ctx.get("pet_names", []))
+
+    if child_count <= 1 and item.get("single_child_prompt"):
+        prompt_t = item.get("single_child_prompt")
+    elif pet_count == 0 and item.get("no_pet_prompt"):
+        prompt_t = item.get("no_pet_prompt")
+    else:
+        prompt_t = item.get("prompt")
 
     if not isinstance(title, str) or not title.strip():
         raise ValueError(f"{kind} item missing non-empty 'title': {item}")
@@ -232,19 +245,12 @@ def _build_prompt_item(
     parts: list[str] = []
 
     if ref_desc and kind != "front_matter":
-        parts.append(f"REFERENCES: {ref_desc}")
+        parts.append(ref_desc)
 
     if kind != "front_matter":
-        char_names_str = ", ".join(ctx.get("character_names", []))
-        style_rules = (
-            "STYLE: A whimsical, high-fidelity storybook coloring page. \n"
-            "ARTISTRY: Use professional, varied line weights with elegant, tapered outlines. \n"
-            f"LIKENESS: Prioritize expressive facial structures and recognizable features of {char_names_str} to ensure "
-            "characters feel lifelike and full of personality. \n\n"
-            "FORMAT: High-contrast black ink on a pure white background. Keep all interior "
-            "shapes open and empty for coloring. Strictly no shading or gray tones."
-        )
-        parts.append(style_rules)
+        character_bible = ctx.get("character_bible", "").strip()
+        if character_bible:
+            parts.append("CHARACTER BIBLE:\n" + character_bible)
 
     parts.append(rendered)
 
@@ -322,10 +328,10 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         )
         for desc in child_descs:
             character_bible_lines.append(f"- {desc}")
-    else:
-        character_bible_lines.append(
-            "Children: use the same specific kids as described in the brief."
-        )
+    # else:
+    #     character_bible_lines.append(
+    #         "Children: use the same specific kids as described in the brief."
+    #     )
 
     if pet_descs:
         character_bible_lines.append("Pets (draw these the same way on every page):")
@@ -336,11 +342,11 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
             "Pets: use the same specific pets as described in the brief."
         )
 
-    character_bible_lines.append(
-        "Keep these characters consistent. They represent specific real children. "
-        "Do NOT replace them with generic children or idealized animated characters. "
-        "Preserve their recognizable facial structure."
-    )
+    # character_bible_lines.append(
+    #     "Keep these characters consistent. They represent specific real children. "
+    #     "Do NOT replace them with generic children or idealized animated characters. "
+    #     "Preserve their recognizable facial structure."
+    # )
     character_bible = "\n".join(character_bible_lines)
 
     # -------------------------------------------------
@@ -369,13 +375,30 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         cast_summary_parts.append("Pets: " + ", ".join(pet_names))
     cast_summary = " | ".join(cast_summary_parts) if cast_summary_parts else ""
 
+    # -------------------------------------------------
+    # Safe cast accessors for YAML templates.
+    # Use these instead of child_names[0] / child_names[1] / pet_names[0]
+    # so the pack degrades gracefully when fewer characters are provided.
+    #
+    #   child_1  — first child name, or "the child" if none
+    #   child_2  — second child name; falls back to child_1 if only 1 child
+    #   pet_1    — first pet name, or "their pet" if no pets
+    # -------------------------------------------------
+    child_1 = child_names[0] if len(child_names) >= 1 else "the child"
+    child_2 = child_names[1] if len(child_names) >= 2 else child_1
+    pet_1 = pet_names[0] if len(pet_names) >= 1 else "their pet"
+
     ctx: dict[str, Any] = {
-        # for templates
+        # raw lists (keep for join/loop usage)
         "child_names": child_names,
         "pet_names": pet_names,
         "children": children,
         "pets": pets,
         "cast_summary": cast_summary,
+        # safe scalar accessors — always a non-empty string, never an index error
+        "child_1": child_1,
+        "child_2": child_2,
+        "pet_1": pet_1,
         # reusable prompt fragments live here (YAML "globals")
         "globals": merged_globals,
         # convenience: styles for overlays (pipeline reads from JSON, but templates may use too)
@@ -475,7 +498,9 @@ def generate_from_brief(
     back_matter_items = _select_items(brief, theme, "back_matter")
 
     front_defaults = PromptBuildDefaults(prefix="front_matter", pixels=INTERIOR_PX)
-    interior_defaults = PromptBuildDefaults(prefix="page", pixels=INTERIOR_PX)
+    interior_defaults = PromptBuildDefaults(
+        prefix="page", pixels=INTERIOR_PX, include_safety=True
+    )
     back_defaults = PromptBuildDefaults(prefix="back_matter", pixels=INTERIOR_PX)
 
     front_matter_prompts: list[PromptOut] = []

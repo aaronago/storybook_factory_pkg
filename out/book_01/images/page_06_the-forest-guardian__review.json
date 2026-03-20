@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 6,
+  "title": "The Forest Guardian",
+  "prompt": "REFERENCES: style_reference: [1], [2], [3]\nColette: [7], [8]\nElliott: [4], [5], [6]\n\nCHARACTER BIBLE:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair; big gray-blue eyes, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, brown hair in a top knot; large gray-blue eyes; soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\n\nA majestic forest dragon emerges from behind tall trees,\nits leaf-like wings spreading wide as it steps forward.\nThe baby dragon scurries between Elliott & Colette and the guardian,\npressing itself against their legs.\nElliott steps forward with one hand outstretched toward the great dragon\nwhile Colette grabs Elliott's sleeve, pulling back slightly.\nWinnie presses close to Colette's feet, ears flat, tail tucked.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_06_the-forest-guardian__cand00.png"
+  ]
+}
