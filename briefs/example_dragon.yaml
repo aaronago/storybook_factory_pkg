@@ -23,3 +23,5 @@ pets:
     photo_urls: []
 
 theme: 'dragon_realm'
+
+outfit_hint: 'simple medieval fantasy adventure clothing, not modern clothing.'

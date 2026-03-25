@@ -303,48 +303,35 @@ scenes:
     prompt: |
 
       SCENE:
-      {{ child_1 }} stands a few feet away with both arms raised,
-      coaxing the baby dragon to fly over.
-      The hatchling launches off a mossy log, wings pumping hard,
-      wobbling through the air toward {{ child_1 }}.
-      {{ child_2 }} crouches behind the log cheering with fists raised.
-      {{ pet_1 }} sprints in a circle beneath the dragon, barking upward.
+      {{ child_1 }} stands with arms raised as the baby dragon flies toward them.
+      {{ child_2 }} crouches nearby watching.
+      {{ pet_1 }} runs beneath the dragon.
 
   - page: 6
     title: 'The Forest Guardian'
     prompt: |
 
       SCENE:
-      A majestic forest dragon emerges from behind tall trees,
-      its leaf-like wings spreading wide as it steps forward.
-      The baby dragon scurries between {{ child_names|join(' & ') }} and the guardian,
-      pressing itself against their legs.
-      {{ child_1 }} steps forward with one hand outstretched toward the great dragon
-      while {{ child_2 }} grabs {{ child_1 }}'s sleeve, pulling back slightly.
-      {{ pet_1 }} presses close to {{ child_2 }}'s feet, ears flat, tail tucked.
+      A large forest dragon stands between tall trees watching them.
+      {{ child_1 }} reaches one hand out toward the dragon.
+      The baby dragon stands beside them.
+      {{ child_2 }} stays just behind {{ child_1 }}.
+      {{ pet_1 }} stands close at their feet.
 
   - page: 7
-    title: 'Dragon Nap'
+    title: 'Preparing for Adventure'
     prompt: |
 
       SCENE:
-      The young dragon has fallen deeply asleep draped across {{ child_1 }}'s lap,
-      pinning them completely to the ground.
-      {{ child_1 }} looks helplessly at {{ child_2 }}, arms out to the sides, unable to move.
-      {{ child_2 }} crouches beside them, hands under the dragon's middle,
-      trying to lift it with a strained expression — the dragon doesn't budge.
-      {{ pet_1 }} sits next to the dragon's tail, watching {{ child_2 }} struggle,
-      head tilted sideways.
+      {{ child_1 }} fastens a simple piece of armor while standing beside the baby dragon.
+      {{ child_2 }} holds a small pack of supplies.
+      {{ pet_1 }} stands at their feet.
 
     single_child_prompt: |
 
       SCENE:
-      The young dragon has fallen deeply asleep draped across {{ child_1 }}'s lap,
-      pinning them completely to the ground.
-      {{ child_1 }} looks down at the dragon, arms out to the sides, completely stuck,
-      expression a mix of helpless and fond.
-      {{ pet_1 }} sits next to the dragon's tail, head tilted sideways,
-      making no effort whatsoever to help.
+      {{ child_1 }} fastens a simple piece of armor while the baby dragon stands beside them.
+      {{ pet_1 }} stands at their feet.
 
   - page: 8
     title: 'The Sky Bridge'
@@ -388,58 +375,46 @@ scenes:
     prompt: |
 
       SCENE:
-      High in snowy mountains,
-      {{ child_names|join(' & ') }} climb a gentle icy slope.
-      A majestic ice dragon perches on a frozen ridge above them.
-      Snowdrifts and ice formations surround the scene.
+      A majestic ice dragon stands on a frozen ridge above.
+      {{ child_2 }} steps up onto an icy ledge reaching a hand toward it.
+      {{ child_1 }} stands just behind.
+      {{ pet_1 }} stands at their feet.
 
   - page: 12
     title: 'The Ocean Dragon'
     prompt: |
 
       SCENE:
-      A wave crashes onto the shore, spraying foam around {{ child_1 }}'s feet
-      as {{ child_1 }} leaps back laughing, arms thrown wide.
-      {{ child_2 }} kneels at the water's edge, reaching one hand toward
-      the ocean dragon as it surges up from the surf, neck arching forward.
-      {{ pet_1 }} bolts away from the wave, kicking up wet sand.
+      A wave crashes onto the shore as {{ child_1 }} leaps back laughing.
+      {{ child_2 }} kneels at the water's edge reaching toward an ocean dragon rising from the surf.
+      {{ pet_1 }} runs away from the wave.
 
   - page: 13
-    title: 'Dragon BBQ'
+    title: 'Rest and Recuperate'
     prompt: |
 
       SCENE:
-      A friendly dragon wearing a comically oversized chef's hat breathes a small flame
-      onto skewered food balanced on a flat rock grill.
-      {{ child_1 }} holds a plate up eagerly, mouth open.
-      {{ child_2 }} sneaks a piece off the rock with a sideways grin.
-      {{ pet_1 }} sits directly beneath the grill, drooling, staring up.
-      Bright daylight, open sky behind them.
+      {{ child_names|join(' & ') }} sit beside their dragon friend in an open clearing.
+      The baby dragon rests close beside them.
+      {{ pet_1 }} lies nearby.
 
   - page: 14
     title: 'Dragon Flight'
     prompt: |
 
       SCENE:
-      {{ child_names|join(' & ') }} ride together on their dragon friend.
-      The dragon soars high above valleys and rivers.
-      Hair and clothing flow in the wind.
-      Far below,
-      {{ pet_1 }} runs along a winding path.
+      {{ child_names|join(' & ') }} ride together on their dragon friend high in the sky.
+      {{ pet_1 }} runs far below.
 
   - page: 15
     title: 'The Dragon Festival'
     prompt: |
 
       SCENE:
-      In a wide dragon-realm valley where dragons of many shapes have gathered for a joyful festival,
-      {{ child_1 }} sprints toward a small dragon, arms wide open for a hug,
-      one foot leaving the ground mid-stride.
-      {{ child_2 }} stands with feet dangling off the ground, sitting on the flat top of a dragon's snout
-      as the dragon slowly raises its head upward — {{ child_2 }}'s arms spread wide, laughing with delight.
-      {{ pet_1 }} leaps into the air, all four paws off the ground, tail a blur.
-      Colorful banners and lanterns hang between tall stone pillars.
-      Avoid crowding the central characters.
+      In a wide valley, {{ child_1 }} runs toward a small dragon with arms open.
+      {{ child_2 }} stands nearby watching.
+      {{ pet_1 }} runs beside them.
+      A few dragons gather in the background.
 
   - page: 16
     title: 'Goodbye Dragon Realm'

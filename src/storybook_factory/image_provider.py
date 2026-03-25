@@ -305,7 +305,7 @@ class ImageProvider:
                         response_modalities=["TEXT", "IMAGE"],
                         image_config=_google_types.ImageConfig(aspect_ratio="3:4"),
                         candidate_count=n,
-                        temperature=(0.3),
+                        temperature=(0.9),
                         thinking_config=_google_types.ThinkingConfig(
                             include_thoughts=True, thinking_level="high"
                         ),

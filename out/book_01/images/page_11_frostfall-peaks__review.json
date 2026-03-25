@@ -2,7 +2,7 @@
   "kind": "interior",
   "page": 11,
   "title": "Frostfall Peaks",
-  "prompt": "REFERENCES: style_reference: [1], [2], [3]\nColette: [7], [8]\nElliott: [4], [5], [6]\n\nCHARACTER BIBLE:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair; big gray-blue eyes, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, brown hair in a top knot; large gray-blue eyes; soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\n\nHigh in snowy mountains,\nElliott & Colette climb a gentle icy slope.\nA majestic ice dragon perches on a frozen ridge above them.\nSnowdrifts and ice formations surround the scene.",
+  "prompt": "REFERENCES: style_reference: [1]\nColette: [5], [6]\nElliott: [2], [3], [4]\nWinnie: [7], [8]\n\nOutfit: simple medieval fantasy adventure clothing, not modern clothing.\n\nA majestic ice dragon stands on a frozen ridge above.\nColette steps up onto an icy ledge reaching a hand toward it.\nElliott stands just behind.\nWinnie stands at their feet.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
   "selected": "first",
   "num_candidates": 1,
   "candidates": [

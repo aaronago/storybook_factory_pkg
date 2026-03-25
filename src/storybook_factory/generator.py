@@ -70,14 +70,11 @@ def _describe_child(c: dict[str, Any]) -> str:
     name = c.get("name", "Child")
     age = c.get("age")
     appearance = c.get("appearance_desc") or c.get("appearance") or ""
-    outfit = c.get("outfit_desc") or c.get("outfits") or ""
     bits: list[str] = [str(name)]
     if age:
         bits.append(f"age {age}")
     if appearance:
         bits.append(str(appearance))
-    if outfit:
-        bits.append(f"wearing {outfit}")
     return ", ".join(bits)
 
 
@@ -250,7 +247,16 @@ def _build_prompt_item(
     if kind != "front_matter":
         character_bible = ctx.get("character_bible", "").strip()
         if character_bible:
-            parts.append("CHARACTER BIBLE:\n" + character_bible)
+            # Use the full "CHARACTER BIBLE:" header only when there are actual
+            # character description lines (text-appearance build).  For reference
+            # builds the bible is just an outfit hint — no header needed.
+            has_char_lines = character_bible.startswith(
+                "Children"
+            ) or character_bible.startswith("Pets")
+            if has_char_lines:
+                parts.append("CHARACTER BIBLE:\n" + character_bible)
+            else:
+                parts.append(character_bible)
 
     parts.append(rendered)
 
@@ -317,37 +323,43 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
     child_descs = [_describe_child(c) for c in children]
     pet_descs = [_describe_pet(p) for p in pets]
 
+    # If reference images are present, suppress text appearance descriptions —
+    # the photos are authoritative and text descriptions may conflict with them.
+    has_refs = bool(brief.get("ref_description_string", ""))
+
     # -------------------------------------------------
     # Character bible (injected by pipeline unless disabled)
     # -------------------------------------------------
-    character_bible_lines: list[str] = []
+    # When reference sheets are attached, the images are the authoritative
+    # character source — text descriptions would only conflict.  Emit only
+    # the outfit_hint (if provided) so the model knows how to dress them.
+    outfit_hint = str(brief.get("outfit_hint", "")).strip()
 
-    if child_descs:
-        character_bible_lines.append(
-            "Children (draw these the same way on every page):"
-        )
-        for desc in child_descs:
-            character_bible_lines.append(f"- {desc}")
-    # else:
-    #     character_bible_lines.append(
-    #         "Children: use the same specific kids as described in the brief."
-    #     )
-
-    if pet_descs:
-        character_bible_lines.append("Pets (draw these the same way on every page):")
-        for desc in pet_descs:
-            character_bible_lines.append(f"- {desc}")
+    if has_refs:
+        # Reference build: no text appearance lines; outfit hint only if set
+        character_bible = f"Outfit: {outfit_hint}" if outfit_hint else ""
     else:
-        character_bible_lines.append(
-            "Pets: use the same specific pets as described in the brief."
-        )
+        character_bible_lines: list[str] = []
 
-    # character_bible_lines.append(
-    #     "Keep these characters consistent. They represent specific real children. "
-    #     "Do NOT replace them with generic children or idealized animated characters. "
-    #     "Preserve their recognizable facial structure."
-    # )
-    character_bible = "\n".join(character_bible_lines)
+        if child_descs:
+            character_bible_lines.append(
+                "Children (draw these the same way on every page):"
+            )
+            for desc in child_descs:
+                character_bible_lines.append(f"- {desc}")
+
+        if pet_descs:
+            character_bible_lines.append(
+                "Pets (draw these the same way on every page):"
+            )
+            for desc in pet_descs:
+                character_bible_lines.append(f"- {desc}")
+        else:
+            character_bible_lines.append(
+                "Pets: use the same specific pets as described in the brief."
+            )
+
+        character_bible = "\n".join(character_bible_lines)
 
     # -------------------------------------------------
     # Globals (YAML-owned reusable prompt fragments & settings)
