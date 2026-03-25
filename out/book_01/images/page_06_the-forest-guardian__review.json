@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 6,
+  "title": "The Forest Guardian",
+  "prompt": "REFERENCES: style_reference: [1]\nColette: [5], [6]\nElliott: [2], [3], [4]\nWinnie: [7], [8]\n\nOutfit: simple medieval fantasy adventure clothing, not modern clothing.\n\nA large forest dragon stands between tall trees watching them.\nElliott reaches one hand out toward the dragon.\nThe baby dragon stands beside them.\nColette stays just behind Elliott.\nWinnie stands close at their feet.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_06_the-forest-guardian__cand00.png"
+  ]
+}

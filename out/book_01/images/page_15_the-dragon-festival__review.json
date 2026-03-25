@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 15,
+  "title": "The Dragon Festival",
+  "prompt": "REFERENCES: style_reference: [1]\nColette: [5], [6]\nElliott: [2], [3], [4]\nWinnie: [7], [8]\n\nCHARACTER BIBLE:\nChildren (draw these the same way on every page):\n- Elliott (see reference sheet)\n- Colette (see reference sheet)\nPets (draw these the same way on every page):\n- Winnie (see reference sheet)\nOutfit: simple medieval fantasy adventure clothing, not modern clothing.\n\nIn a wide valley, Elliott runs toward a small dragon with arms open.\nColette stands nearby watching.\nWinnie runs beside them.\nA few dragons gather in the background.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_15_the-dragon-festival__cand00.png"
+  ]
+}

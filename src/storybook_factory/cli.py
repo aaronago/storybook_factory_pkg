@@ -86,51 +86,11 @@ def _ensure_refs_for_build(
         )
         return
 
-    # 3) Generate refs into this build output
-    provider = ImageProvider(
-        out_dir=images_dir,
-        interior_px=(1024, 1536),
-        cover_px=(
-            2588,
-            3375,
-        ),  # unused since we're only generating refs, but set to actual cover size just in case
-        mode=image_provider,
-        interior_model=interior_model,
-        cover_model=None,
-        assets_dir=assets_dir,
-        dry_run=dry_run,
-        image_quality=image_quality,
-    )
-
-    subjects = discover_character_refs_from_assets(assets_dir)
-
-    # Optional: filter by IDs listed in page_prompts.json (NO PATHS)
-    if config_dir is not None:
-        try:
-            pp = config_dir / "page_prompts.json"
-            if pp.exists():
-                page_prompts = json.loads(pp.read_text())
-                ids = parse_character_ids(page_prompts)
-                if ids:
-                    allow = {s.lower() for s in ids}
-                    subjects = [s for s in subjects if s.id.lower() in allow]
-        except Exception:
-            pass
-
-    if not subjects:
-        print("[build] WARNING: no subjects discovered; continuing without refs")
-        return
-
-    out_map = make_reference_sheets(
-        provider=provider,
-        subjects=subjects,
-        refs_dir=refs_dir,
-        force=False,
-    )
-
-    print("[build] generated character sheets:")
-    for k, v in out_map.items():
-        print(f"  {k}: {v}")
+    # 3) Generate refs into this build output (REMOVED)
+    # The user requested to no longer generate character sheets as a pipeline step.
+    # We will only use them if they are already in the output directory or copied via --refs-source.
+    print("[build] skipping character sheet generation; continuing...")
+    return
 
 
 def main():
@@ -157,6 +117,11 @@ def main():
         "--out",
         required=True,
         help="Output directory for generated JSON",
+    )
+    p1.add_argument(
+        "--assets-dir",
+        default="assets",
+        help="Folder with static assets (expects assets/characters/<name>/reference/... for refs)",
     )
 
     # -----------------------
@@ -273,13 +238,81 @@ def main():
         help="Optional config dir containing page_prompts.json (for character ID filtering only)",
     )
 
+    # -----------------------
+    # sort-refs command
+    # -----------------------
+    p_sort = subparsers.add_parser(
+        "sort-refs",
+        help="Use Gemini to sort reference images into character buckets",
+    )
+    p_sort.add_argument(
+        "--source-dir",
+        required=True,
+        help="Directory containing the images to sort (e.g. downloads/)",
+    )
+    p_sort.add_argument(
+        "--character",
+        action="append",
+        required=True,
+        help="One or more character names to look for (e.g. --character Alice --character Bob)",
+    )
+    p_sort.add_argument(
+        "--assets-dir",
+        default="assets",
+        help="Base assets directory (default: assets/)",
+    )
+
     args = parser.parse_args()
 
     # -----------------------
     # Handle commands
     # -----------------------
+    if args.command == "sort-refs":
+        import shutil
+
+        from .image_sorter import GeminiImageSorter
+
+        sorter = GeminiImageSorter()
+        source_path = Path(args.source_dir)
+
+        # Get all images from source dir
+        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+        image_paths = sorted(
+            [p for p in source_path.iterdir() if p.suffix.lower() in image_extensions]
+        )
+
+        if not image_paths:
+            print(f"No images found in {source_path}")
+            return
+
+        # print(
+        #     f"Sorting {len(image_paths)} images for characters: {', '.join(args.character)}..."
+        # )
+        results = sorter.sort_user_uploads(image_paths, args.character)
+
+        # Process results and move files
+        for character_name, indices in results.items():
+            if not indices:
+                continue
+
+            # Ensure lower-case bucket for folder name
+            bucket_name = character_name.lower().strip()
+            # Reference folder: assets/characters/<id>/reference/
+            target_dir = (
+                Path(args.assets_dir) / "characters" / bucket_name / "reference"
+            )
+            target_dir.mkdir(parents=True, exist_ok=True)
+
+            for idx in indices:
+                if 0 <= idx < len(image_paths):
+                    src = image_paths[idx]
+                    dest = target_dir / src.name
+                    print(f"Moving {src.name} -> {dest}")
+                    shutil.move(str(src), str(dest))
+        return
+
     if args.command == "brief2json":
-        brief = Path(args.brief)
+        brief_path = Path(args.brief)
         theme_name = args.theme
         theme_path = (
             Path(__file__).resolve().parent.parent
@@ -292,8 +325,78 @@ def main():
             sys.exit(1)
 
         out_dir = Path(args.out)
-        generate_from_brief(brief, theme_path, out_dir)
-        print(f"Generated JSON config in: {out_dir}")
+        # Use assets_dir from args if available, otherwise default to "assets"
+        assets_dir = Path(getattr(args, "assets_dir", "assets")).resolve()
+
+        # Build ref description string & discover reference paths by sorting the assets/characters folder
+        ref_description_string = ""
+
+        # We need to discover names from the brief to tell the sorter what to look for
+        import yaml
+
+        with open(brief_path) as f:
+            brief_data = yaml.safe_load(f)
+
+        char_names = []
+        for c in brief_data.get("children", []) or []:
+            char_names.append(c.get("name"))
+        for p in brief_data.get("pets", []) or []:
+            char_names.append(p.get("name"))
+
+        # Also include subfolder names as hints just in case
+        chars_root = assets_dir / "characters"
+        if chars_root.exists():
+            for d in chars_root.iterdir():
+                if d.is_dir() and d.name.capitalize() not in char_names:
+                    char_names.append(d.name.capitalize())
+
+        # Collect all images from assets/characters/ (non-recursive to avoid processed ones, or recursive)
+        # The user wants them from assets/characters primarily.
+        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+        all_refs = []
+        if chars_root.exists():
+            # Get all images in characters/ top level or subfolders if not sorted yet
+            all_refs = sorted(
+                [
+                    p
+                    for p in chars_root.rglob("*")
+                    if p.suffix.lower() in image_extensions
+                ]
+            )
+
+        if all_refs and char_names:
+            from .image_sorter import GeminiImageSorter
+
+            try:
+                sorter = GeminiImageSorter()
+                # print(
+                #     f"Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
+                # )
+                ref_description_string, sorted_paths = sorter.get_reference_mapping(
+                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
+                )
+                if sorted_paths:
+                    # print("\n--- Sorted Reference Paths Mapping ---")
+                    for i, p in enumerate(sorted_paths):
+                        print(f"[{i+1}] {p}")
+                    # Note: sorted_paths isn't stored in page_prompts.json but the indices match it.
+                    print("---------------------------------------\n")
+            except Exception as e:
+                print(
+                    f"Warning: Gemini sorter failed: {e}. Falling back to folder-based naming."
+                )
+                # Fallback logic if sorter fails...
+                ref_description_string = ""
+
+        generate_from_brief(
+            brief_path,
+            theme_path,
+            out_dir,
+            ref_description_string=ref_description_string,
+        )
+        # print(f"Generated JSON config in: {out_dir}")
+        # if ref_description_string:
+        #     print(f"Baked references: {ref_description_string}")
         return
 
     if args.command == "refs":
@@ -367,6 +470,37 @@ def main():
             refs_source=refs_source,
         )
 
+        # Build ref description string from the final refs directory
+        images_dir = output_dir / "images"
+        refs_dir = images_dir / "refs"
+        ref_description_string = ""
+        if refs_dir.exists():
+            from .pipeline import _load_reference_sheets
+
+            ref_sheets = _load_reference_sheets(images_dir)
+            if ref_sheets:
+                ref_descriptions = []
+                for i, ref_path in enumerate(ref_sheets):
+                    char_name = None
+                    parts = ref_path.parts
+                    if "characters" in parts:
+                        idx_char = parts.index("characters")
+                        if idx_char + 1 < len(parts):
+                            char_name = parts[idx_char + 1].capitalize()
+
+                    if char_name:
+                        ref_descriptions.append(f"Reference [{i+1}] is {char_name}.")
+                    else:
+                        ref_descriptions.append(
+                            f"Reference [{i+1}] is a style/context reference."
+                        )
+                ref_description_string = " ".join(ref_descriptions)
+
+        # Inject the ref_description_string into the brief before generation
+        # We need to load/save the page_prompts.json with this new info
+        # But run_pipeline handles generation if needed.
+        # Actually, let's pass it to run_pipeline.
+
         result = run_pipeline(
             config_dir=config_dir,
             output_dir=output_dir,
@@ -376,6 +510,7 @@ def main():
             cover_model=args.cover_model,
             dry_run=args.dry_run,
             image_quality=args.image_quality,
+            ref_description_string=ref_description_string,
         )
         print(result)
         return

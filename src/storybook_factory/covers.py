@@ -90,6 +90,7 @@ def _ensure_cover_image(
     provider: ImageProvider,
     optimizer: PromptOptimizer | None,
     ref_sheets: list[Path],
+    ref_description_string: str = "",
     overlay_styles: dict[str, TextStyle],
     cand_n: int,
     image_provider_mode: str,
@@ -149,7 +150,10 @@ def _ensure_cover_image(
     # Use refs only for front cover (keeps back generic)
     use_refs = key.lower() == "front"
     if use_refs and ref_sheets:
-        optimized += "\n\nUse the attached character sheet reference images as the canonical identity and style."
+        ref_msg = "\n\nUse the attached character sheet reference images as the canonical identity and style."
+        if ref_description_string:
+            ref_msg += f" {ref_description_string}"
+        optimized += ref_msg
 
     print(f"[covers] generating candidates for cover-{key}: {fname} ({title})")
     cands = provider.generate_candidates(
@@ -240,6 +244,7 @@ def build_cover_pdf(
     provider: ImageProvider,
     optimizer: PromptOptimizer | None,
     ref_sheets: list[Path],
+    ref_description_string: str = "",
     overlay_styles: dict[str, TextStyle],
     image_provider_mode: str,
     cand_n: int,
@@ -290,6 +295,7 @@ def build_cover_pdf(
         provider=provider,
         optimizer=optimizer,
         ref_sheets=ref_sheets,
+        ref_description_string=ref_description_string,
         overlay_styles=overlay_styles,
         cand_n=cand_n,
         image_provider_mode=image_provider_mode,
@@ -302,6 +308,7 @@ def build_cover_pdf(
         provider=provider,
         optimizer=optimizer,
         ref_sheets=ref_sheets,
+        ref_description_string=ref_description_string,
         overlay_styles=overlay_styles,
         cand_n=cand_n,
         image_provider_mode=image_provider_mode,

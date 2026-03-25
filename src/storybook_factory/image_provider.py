@@ -213,7 +213,7 @@ class ImageProvider:
         if self.dry_run:
             print(
                 f"[dry-run] would generate {n} candidates for {base_filename} "
-                f"model={model_name} size={api_size} refs={len(refs)}"
+                f"model={model_name} size={api_size} refs={[p.name for p in refs]}"
             )
             print(prompt)
             print("-" * 80)
@@ -271,6 +271,13 @@ class ImageProvider:
         # Use model name from args directly
         clean_model = model_name.removeprefix("models/")
 
+        _STYLE_ANCHOR = (
+            "STYLE ANCHOR: Use the first image ONLY for line quality and facial likeness.\n"
+            "IGNORE the pose, composition, and background of the reference image.\n"
+            "The characters MUST be placed in the new action described in the SCENE section below."
+        )
+        prompt = f"{_STYLE_ANCHOR}\n\n{prompt}"
+
         try:
             # If reference images are provided, use generate_content (multimodal)
             if refs:
@@ -289,20 +296,19 @@ class ImageProvider:
                         )
                     )
 
-                # Prepend a style instruction if refs are provided
-                full_prompt = (
-                    "Generate a new image in the same style, character design, and color palette as "
-                    "the provided reference images. " + prompt
-                )
-                contents.append(full_prompt)
+                contents.append(prompt)
 
                 response = self._google_client.models.generate_content(
                     model=clean_model,
                     contents=contents,
                     config=_google_types.GenerateContentConfig(
-                        response_modalities=["IMAGE"],
+                        response_modalities=["TEXT", "IMAGE"],
                         image_config=_google_types.ImageConfig(aspect_ratio="3:4"),
                         candidate_count=n,
+                        temperature=(0.9),
+                        thinking_config=_google_types.ThinkingConfig(
+                            include_thoughts=True, thinking_level="high"
+                        ),
                     ),
                 )
 
@@ -356,9 +362,12 @@ class ImageProvider:
                     model=clean_model,
                     contents=prompt,
                     config=_google_types.GenerateContentConfig(
-                        response_modalities=["IMAGE"],
+                        response_modalities=["TEXT", "IMAGE"],
                         image_config=_google_types.ImageConfig(aspect_ratio="3:4"),
                         candidate_count=n,
+                        temperature=(
+                            0.7 if not cover else 0.3
+                        ),  # more creativity for interiors, less for covers
                     ),
                 )
 
@@ -584,6 +593,7 @@ class ImageProvider:
                         )
 
                     # Prepend a style/edit instruction
+                    # Note: prompt already has ref descriptions if called from pipeline
                     full_prompt = (
                         "Generate a new image in the same style, character design, and color palette as "
                         "the provided reference images. " + prompt
@@ -594,9 +604,12 @@ class ImageProvider:
                         model=clean_model,
                         contents=contents,
                         config=_google_types.GenerateContentConfig(
-                            response_modalities=["IMAGE"],
+                            response_modalities=["TEXT", "IMAGE"],
                             image_config=_google_types.ImageConfig(aspect_ratio="3:4"),
                             candidate_count=1,
+                            temperature=(
+                                0.7 if not cover else 0.3
+                            ),  # more creativity for interiors, less for covers
                         ),
                     )
 

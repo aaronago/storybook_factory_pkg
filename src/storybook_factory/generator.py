@@ -70,14 +70,11 @@ def _describe_child(c: dict[str, Any]) -> str:
     name = c.get("name", "Child")
     age = c.get("age")
     appearance = c.get("appearance_desc") or c.get("appearance") or ""
-    outfit = c.get("outfit_desc") or c.get("outfits") or ""
     bits: list[str] = [str(name)]
     if age:
         bits.append(f"age {age}")
     if appearance:
         bits.append(str(appearance))
-    if outfit:
-        bits.append(f"wearing {outfit}")
     return ", ".join(bits)
 
 
@@ -163,7 +160,7 @@ class PromptBuildDefaults:
     prefix: str
     pixels: Pixels
     include_bible: bool = True
-    include_safety: bool = True
+    include_safety: bool = False
 
 
 def _validate_pixels(p: Any, default_px: Pixels) -> Pixels:
@@ -201,7 +198,20 @@ def _build_prompt_item(
     kind: str,
 ) -> PromptOut:
     title = item.get("title")
-    prompt_t = item.get("prompt")
+
+    # Select the right prompt variant based on cast size.
+    # single_child_prompt is used when the brief has exactly 1 child.
+    # no_pet_prompt is used when the brief has no pets.
+    # Fall back to the standard prompt if the alternate isn't defined.
+    child_count = len(ctx.get("child_names", []))
+    pet_count = len(ctx.get("pet_names", []))
+
+    if child_count <= 1 and item.get("single_child_prompt"):
+        prompt_t = item.get("single_child_prompt")
+    elif pet_count == 0 and item.get("no_pet_prompt"):
+        prompt_t = item.get("no_pet_prompt")
+    else:
+        prompt_t = item.get("prompt")
 
     if not isinstance(title, str) or not title.strip():
         raise ValueError(f"{kind} item missing non-empty 'title': {item}")
@@ -220,17 +230,33 @@ def _build_prompt_item(
     prefix = str(item.get("prefix") or defaults.prefix)
     pixels = _validate_pixels(item.get("pixels"), defaults.pixels)
 
-    include_bible = bool(item.get("include_bible", defaults.include_bible))
     include_safety = bool(item.get("include_safety", defaults.include_safety))
 
     # Render the scene template (which can reference {{ globals.* }}) with multi-pass support
     rendered = _render_template_multipass(str(prompt_t), ctx, passes=3)
     rendered = _strip_leading_scene_label(rendered).strip()
 
+    # Support for explicit prompt blocks (REFERENCES, TASK, STYLE, COMPOSITION, SCENE)
+    ref_desc = str(ctx.get("ref_description_string") or "").strip()
+
     parts: list[str] = []
 
-    if include_bible:
-        parts.append("Character bible:\n" + str(ctx["character_bible"]).strip())
+    if ref_desc and kind != "front_matter":
+        parts.append(ref_desc)
+
+    if kind != "front_matter":
+        character_bible = ctx.get("character_bible", "").strip()
+        if character_bible:
+            # Use the full "CHARACTER BIBLE:" header only when there are actual
+            # character description lines (text-appearance build).  For reference
+            # builds the bible is just an outfit hint — no header needed.
+            has_char_lines = character_bible.startswith(
+                "Children"
+            ) or character_bible.startswith("Pets")
+            if has_char_lines:
+                parts.append("CHARACTER BIBLE:\n" + character_bible)
+            else:
+                parts.append(character_bible)
 
     parts.append(rendered)
 
@@ -297,37 +323,43 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
     child_descs = [_describe_child(c) for c in children]
     pet_descs = [_describe_pet(p) for p in pets]
 
+    # If reference images are present, suppress text appearance descriptions —
+    # the photos are authoritative and text descriptions may conflict with them.
+    has_refs = bool(brief.get("ref_description_string", ""))
+
     # -------------------------------------------------
     # Character bible (injected by pipeline unless disabled)
     # -------------------------------------------------
-    character_bible_lines: list[str] = []
+    # When reference sheets are attached, the images are the authoritative
+    # character source — text descriptions would only conflict.  Emit only
+    # the outfit_hint (if provided) so the model knows how to dress them.
+    outfit_hint = str(brief.get("outfit_hint", "")).strip()
 
-    if child_descs:
-        character_bible_lines.append(
-            "Children (draw these the same way on every page):"
-        )
-        for desc in child_descs:
-            character_bible_lines.append(f"- {desc}")
+    if has_refs:
+        # Reference build: no text appearance lines; outfit hint only if set
+        character_bible = f"Outfit: {outfit_hint}" if outfit_hint else ""
     else:
-        character_bible_lines.append(
-            "Children: use the same specific kids as described in the brief."
-        )
+        character_bible_lines: list[str] = []
 
-    if pet_descs:
-        character_bible_lines.append("Pets (draw these the same way on every page):")
-        for desc in pet_descs:
-            character_bible_lines.append(f"- {desc}")
-    else:
-        character_bible_lines.append(
-            "Pets: use the same specific pets as described in the brief."
-        )
+        if child_descs:
+            character_bible_lines.append(
+                "Children (draw these the same way on every page):"
+            )
+            for desc in child_descs:
+                character_bible_lines.append(f"- {desc}")
 
-    character_bible_lines.append(
-        "Keep these characters consistent. They represent specific real children. "
-        "Do NOT replace them with generic children or idealized animated characters. "
-        "Preserve their recognizable facial structure."
-    )
-    character_bible = "\n".join(character_bible_lines)
+        if pet_descs:
+            character_bible_lines.append(
+                "Pets (draw these the same way on every page):"
+            )
+            for desc in pet_descs:
+                character_bible_lines.append(f"- {desc}")
+        else:
+            character_bible_lines.append(
+                "Pets: use the same specific pets as described in the brief."
+            )
+
+        character_bible = "\n".join(character_bible_lines)
 
     # -------------------------------------------------
     # Globals (YAML-owned reusable prompt fragments & settings)
@@ -355,20 +387,39 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         cast_summary_parts.append("Pets: " + ", ".join(pet_names))
     cast_summary = " | ".join(cast_summary_parts) if cast_summary_parts else ""
 
+    # -------------------------------------------------
+    # Safe cast accessors for YAML templates.
+    # Use these instead of child_names[0] / child_names[1] / pet_names[0]
+    # so the pack degrades gracefully when fewer characters are provided.
+    #
+    #   child_1  — first child name, or "the child" if none
+    #   child_2  — second child name; falls back to child_1 if only 1 child
+    #   pet_1    — first pet name, or "their pet" if no pets
+    # -------------------------------------------------
+    child_1 = child_names[0] if len(child_names) >= 1 else "the child"
+    child_2 = child_names[1] if len(child_names) >= 2 else child_1
+    pet_1 = pet_names[0] if len(pet_names) >= 1 else "their pet"
+
     ctx: dict[str, Any] = {
-        # for templates
+        # raw lists (keep for join/loop usage)
         "child_names": child_names,
         "pet_names": pet_names,
         "children": children,
         "pets": pets,
         "cast_summary": cast_summary,
+        # safe scalar accessors — always a non-empty string, never an index error
+        "child_1": child_1,
+        "child_2": child_2,
+        "pet_1": pet_1,
         # reusable prompt fragments live here (YAML "globals")
         "globals": merged_globals,
         # convenience: styles for overlays (pipeline reads from JSON, but templates may use too)
         "overlay_styles": overlay_styles,
         # injected blocks
         "character_bible": character_bible,
+        "character_names": child_names + pet_names,
         "global_safety_rules": global_safety_rules,
+        "ref_description_string": brief.get("ref_description_string", ""),
         # optional
         "mythic_elements": theme.get("mythic_elements", {}),
     }
@@ -408,20 +459,36 @@ def generate_from_brief(
     brief_path: Path,
     theme_path: Path,
     out_dir: Path,
+    ref_description_string: str = "",
 ) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     brief = load_yaml(brief_path)
     theme = load_yaml(theme_path)
 
+    # Inject ref string into brief if provided via arg (e.g. from CLI build)
+    if ref_description_string:
+        brief["ref_description_string"] = ref_description_string
+
     children = cast(list[dict[str, Any]], brief.get("children", []) or [])
     pets = cast(list[dict[str, Any]], brief.get("pets", []) or [])
+
+    # Collect character names for the pipeline to use later
+    character_names = []
+    for c in children:
+        if c.get("name"):
+            character_names.append(c["name"])
+    for p in pets:
+        if p.get("name"):
+            character_names.append(p["name"])
 
     ctx = _build_context(brief, theme)
 
     visual_bible = {
         "visual_bible_version": VISUAL_BIBLE_VERSION,
         "project": brief.get("project_title", "Custom Storybook"),
+        "character_names": character_names,
+        "ref_description_string": ref_description_string,
         "page_format": {
             "trim_in": DEFAULT_TRIM,
             "bleed_in": 0.125,
@@ -443,7 +510,9 @@ def generate_from_brief(
     back_matter_items = _select_items(brief, theme, "back_matter")
 
     front_defaults = PromptBuildDefaults(prefix="front_matter", pixels=INTERIOR_PX)
-    interior_defaults = PromptBuildDefaults(prefix="page", pixels=INTERIOR_PX)
+    interior_defaults = PromptBuildDefaults(
+        prefix="page", pixels=INTERIOR_PX, include_safety=True
+    )
     back_defaults = PromptBuildDefaults(prefix="back_matter", pixels=INTERIOR_PX)
 
     front_matter_prompts: list[PromptOut] = []
@@ -530,6 +599,8 @@ def generate_from_brief(
         "interior_prompts": interior_prompts,
         "back_matter_prompts": back_matter_prompts,
         "covers": covers,
+        "character_names": character_names,
+        "ref_description_string": ref_description_string,
     }
     page_prompts["overlay_styles"] = ctx.get("overlay_styles", {})
 

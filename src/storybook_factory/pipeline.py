@@ -282,6 +282,7 @@ def _ensure_prompt_images(
     provider: ImageProvider,
     optimizer: PromptOptimizer | None,
     ref_sheets: list[Path],
+    ref_description_string: str = "",
     overlay_styles: dict[str, TextStyle],
     overlays_enabled: bool,
     cand_n: int,
@@ -350,8 +351,12 @@ def _ensure_prompt_images(
 
         optimized = optimizer.optimize(raw_prompt, page_title=page_title)
 
-        if use_refs and ref_sheets:
-            optimized += "\n\nUse the attached character sheet reference images as the canonical identity and style."
+        # Checking if raw_prompt already contains REFERENCES to avoid double-injection
+        if use_refs and ref_sheets and "REFERENCES:" not in raw_prompt:
+            ref_msg = "\n\nUse the attached character sheet reference images as the canonical identity and style."
+            if ref_description_string:
+                ref_msg += f" {ref_description_string}"
+            optimized += ref_msg
 
         print(
             f"[pipeline] generating candidates for {kind_label}: {fname} ({page_title})"
@@ -410,6 +415,7 @@ def run_pipeline(
     cover_model: str | None = None,
     dry_run: bool = False,
     image_quality: str = "standard",
+    ref_description_string: str = "",
 ) -> dict[str, Any]:
     """
     Pipeline expects config_dir contains:
@@ -425,6 +431,10 @@ def run_pipeline(
     output_dir = output_dir.resolve()
     assets_dir = assets_dir.resolve()
     ensure_dir(output_dir)
+
+    # RE-GENERATE page_prompts.json if ref_description_string is provided or changed
+    # In 'gpt-image' mode, we often regenerate prompts on the fly during build
+    # if the YAMLs are newer than the JSONs.
 
     images_dir = output_dir / "images"
     ensure_dir(images_dir)
@@ -465,7 +475,103 @@ def run_pipeline(
         "yes",
     }
 
-    ref_sheets = _load_reference_sheets(images_dir)
+    ref_description_string = ref_description_string or page_prompts.get(
+        "ref_description_string", ""
+    )
+
+    ref_sheets: list[Path] = []
+    # Create the character reference string once for the whole build
+    # Load character names from the page_prompts (which come from the brief)
+    char_names = page_prompts.get("character_names", [])
+
+    if not char_names:
+        print("[pipeline] Warning: No character_names found in page_prompts.json")
+        # Fallback to subdirs if for some reason character_names isn't in JSON
+        chars_root = assets_dir / "characters"
+        if chars_root.exists():
+            subdirs = [d.name for d in chars_root.iterdir() if d.is_dir()]
+            if subdirs:
+                char_names = [d.capitalize() for d in subdirs]
+
+    if not char_names:
+        print("[pipeline] Error: No character names could be found. Sorting will fail.")
+
+    if not ref_description_string:
+        print("[pipeline] ref_description_string is empty, initiating sort...")
+        # Load the brief data to get character names
+        chars_root = assets_dir / "characters"
+
+        # Collect all images from assets/characters/
+        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+        all_refs = []
+        if chars_root.exists():
+            all_refs = sorted(
+                [
+                    p
+                    for p in chars_root.rglob("*")
+                    if p.suffix.lower() in image_extensions
+                ]
+            )
+
+        print(f"[pipeline] Found {len(all_refs)} reference images in {chars_root}")
+
+        if all_refs and char_names:
+            from .image_sorter import GeminiImageSorter
+
+            try:
+                sorter = GeminiImageSorter()
+                # print(
+                #     f"[pipeline] Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
+                # )
+                res_string, res_sheets = sorter.get_reference_mapping(
+                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
+                )
+                ref_description_string = res_string
+                ref_sheets = res_sheets
+                # print(
+                #     f"[pipeline] Sort complete. Found {len(ref_sheets)} identified images."
+                # )
+            except Exception as e:
+                print(
+                    f"[pipeline] Warning: Gemini sorter failed: {e}. No references attached."
+                )
+                ref_sheets = []
+    else:
+        print(
+            f"[pipeline] ref_description_string already exists: {ref_description_string[:50]}..."
+        )
+        # If we already have a string (from JSON), we still need the actual Path objects in the right order!
+        chars_root = assets_dir / "characters"
+
+        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+        all_refs = []
+        if chars_root.exists():
+            all_refs = sorted(
+                [
+                    p
+                    for p in chars_root.rglob("*")
+                    if p.suffix.lower() in image_extensions
+                ]
+            )
+
+        if all_refs and char_names:
+            from .image_sorter import GeminiImageSorter
+
+            try:
+                sorter = GeminiImageSorter()
+                # print(
+                #     f"[pipeline] Re-sorting {len(all_refs)} reference images to match existing indices for: {', '.join(char_names)}..."
+                # )
+                # Use the sorter to get the correct path order matching the index-based prompt
+                _, ref_sheets = sorter.get_reference_mapping(
+                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
+                )
+                print(
+                    f"[pipeline] Re-sort complete. Found {len(ref_sheets)} identified images."
+                )
+            except Exception as e:
+                print(f"[pipeline] Warning: Gemini sorter failed: {e}.")
+                ref_sheets = []
 
     overlay_styles = _build_overlay_styles(page_prompts)
     overlays_enabled = not bool(pipeline_cfg.get("disable_overlays", True))
@@ -485,6 +591,7 @@ def run_pipeline(
             provider=provider,
             optimizer=optimizer,
             ref_sheets=ref_sheets,
+            ref_description_string=ref_description_string,
             overlay_styles=overlay_styles,
             overlays_enabled=overlays_enabled,
             cand_n=cand_n,
@@ -499,6 +606,7 @@ def run_pipeline(
         provider=provider,
         optimizer=optimizer,
         ref_sheets=ref_sheets,
+        ref_description_string=ref_description_string,
         overlay_styles=overlay_styles,
         overlays_enabled=overlays_enabled,
         cand_n=cand_n,
@@ -514,6 +622,7 @@ def run_pipeline(
             provider=provider,
             optimizer=optimizer,
             ref_sheets=ref_sheets,
+            ref_description_string=ref_description_string,
             overlay_styles=overlay_styles,
             overlays_enabled=overlays_enabled,
             cand_n=cand_n,
@@ -534,6 +643,7 @@ def run_pipeline(
         provider=provider,
         optimizer=optimizer,
         ref_sheets=ref_sheets,
+        ref_description_string=ref_description_string,
         overlay_styles=overlay_styles,
         image_provider_mode=image_provider_mode,
         cand_n=cand_n,

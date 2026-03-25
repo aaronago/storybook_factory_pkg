@@ -1,6 +1,12 @@
 {
   "visual_bible_version": "1.5",
   "project": "Elliott & Colette: The Dragon Realm Adventure",
+  "character_names": [
+    "Elliott",
+    "Colette",
+    "Winnie"
+  ],
+  "ref_description_string": "REFERENCES: style_reference: [1]\nColette: [5], [6]\nElliott: [2], [3], [4]\nWinnie: [7], [8]",
   "page_format": {
     "trim_in": {
       "w": 8.5,
@@ -19,7 +25,7 @@
       {
         "name": "Elliott",
         "age": "4\u20135",
-        "appearance_desc": "short straight light-brown hair; big gray-blue eyes; round cheeks; friendly adventurous expression",
+        "appearance_desc": "short straight light-brown hair; big gray-blue eyes",
         "outfit_desc": "medieval tunic with belt and boots or casual explorer outfit",
         "personality": "brave, gentle, curious",
         "photo_urls": []
@@ -27,7 +33,7 @@
       {
         "name": "Colette",
         "age": "2\u20133",
-        "appearance_desc": "wavy brown hair in a top knot; large gray-blue eyes; soft cheeks",
+        "appearance_desc": "brown hair in a top knot; large gray-blue eyes; soft cheeks",
         "outfit_desc": "whimsical princess-meets-adventurer dress with floral or heart motifs",
         "personality": "joyful, mischievous, fascinated by magic and animals",
         "photo_urls": []
