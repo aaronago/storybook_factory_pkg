@@ -175,6 +175,17 @@ def main():
             "Those refs will be copied into this build output before generating pages."
         ),
     )
+    p2.add_argument(
+        "--output-format",
+        choices=["print", "download"],
+        default="download",
+        help=(
+            "Output format profile. "
+            "'print' → 300 dpi, one-sided with blank verso pages, padded to multiple of 4 (press-ready). "
+            "'download' → 150 dpi, no blank pages, no padding (smaller file for screens/e-readers). "
+            "(default: download)"
+        ),
+    )
 
     # -----------------------
     # frontmatter command (NO COVERS)
@@ -511,6 +522,7 @@ def main():
             dry_run=args.dry_run,
             image_quality=args.image_quality,
             ref_description_string=ref_description_string,
+            output_format=args.output_format,
         )
         print(result)
         return

@@ -401,6 +401,132 @@ def _ensure_prompt_images(
 
 
 # -----------------------------
+# Download PDF assembly (front cover + interior pages + back cover, single PDF)
+# -----------------------------
+
+
+def build_download_pdf(
+    images_dir: Path,
+    page_prompts: dict[str, Any],
+    pipeline_cfg: dict[str, Any],
+    out_pdf: Path,
+    *,
+    provider: ImageProvider,
+    optimizer: PromptOptimizer | None,
+    ref_sheets: list[Path],
+    ref_description_string: str,
+    overlay_styles: dict[str, TextStyle],
+    image_provider_mode: str,
+    cand_n: int,
+    keep_candidates: bool,
+    repo_root: Path | None = None,
+) -> Path:
+    """
+    Download format: single PDF where:
+      page 1  = front cover (RGB, full colour)
+      pages 2…N = interior pages (grayscale)
+      page N+1 = back cover (RGB, full colour)
+
+    No Lulu spread is produced.
+    """
+    from .covers import _ensure_cover_image, _resolve_font_paths
+
+    covers = page_prompts.get("covers") or {}
+    front_item = covers.get("front")
+    back_item = covers.get("back")
+
+    dpi = int(pipeline_cfg.get("dpi", 150))
+
+    # Resolve font paths for overlays
+    root = repo_root or Path.cwd()
+    resolved_styles = _resolve_font_paths(overlay_styles, repo_root=root)
+
+    pages: list[Image.Image] = []
+
+    # --- Front cover ---
+    if isinstance(front_item, dict):
+        front_path = _ensure_cover_image(
+            key="front",
+            item=front_item,
+            images_dir=images_dir,
+            provider=provider,
+            optimizer=optimizer,
+            ref_sheets=ref_sheets,
+            ref_description_string=ref_description_string,
+            overlay_styles=resolved_styles,
+            cand_n=cand_n,
+            image_provider_mode=image_provider_mode,
+            keep_candidates=keep_candidates,
+        )
+        pages.append(Image.open(front_path).convert("RGB"))
+    else:
+        print("[pipeline] download: no front cover found in page_prompts; skipping")
+
+    # --- Interior pages (grayscale) ---
+    def _load_grayscale(p: Path) -> Image.Image:
+        return Image.open(p).convert("L")
+
+    front_matter = _as_list_of_dicts(
+        page_prompts.get("front_matter_prompts"), "front_matter_prompts"
+    )
+    interior = _sorted_interior_prompts(page_prompts)
+    back_matter = _as_list_of_dicts(
+        page_prompts.get("back_matter_prompts"), "back_matter_prompts"
+    )
+
+    for item in [*front_matter, *interior, *back_matter]:
+        fname = item.get("file")
+        if not fname:
+            continue
+        p = images_dir / fname
+        if not p.exists():
+            raise FileNotFoundError(f"Missing image for download PDF: {p}")
+        pages.append(_load_grayscale(p))
+
+    # --- Back cover ---
+    if isinstance(back_item, dict):
+        # Apply optional back overlays before loading
+        from .covers import _apply_cover_overlays_in_place
+
+        back_ov = covers.get("back_overlays")
+        if isinstance(back_ov, dict) and back_ov.get("enabled"):
+            overlays = back_ov.get("overlays") or []
+            if overlays:
+                _apply_cover_overlays_in_place(
+                    images_dir=images_dir,
+                    item={"file": back_item["file"], "overlays": overlays},
+                    overlay_styles=resolved_styles,
+                )
+
+        back_path = _ensure_cover_image(
+            key="back",
+            item=back_item,
+            images_dir=images_dir,
+            provider=provider,
+            optimizer=optimizer,
+            ref_sheets=ref_sheets,
+            ref_description_string=ref_description_string,
+            overlay_styles=resolved_styles,
+            cand_n=cand_n,
+            image_provider_mode=image_provider_mode,
+            keep_candidates=keep_candidates,
+        )
+        pages.append(Image.open(back_path).convert("RGB"))
+    else:
+        print("[pipeline] download: no back cover found in page_prompts; skipping")
+
+    if not pages:
+        raise RuntimeError("No pages to assemble for download PDF.")
+
+    out_pdf.parent.mkdir(parents=True, exist_ok=True)
+    # PIL requires all pages after the first to be in append_images
+    first, *rest = pages
+    first.save(out_pdf, "PDF", resolution=dpi, save_all=True, append_images=rest)
+    print(f"[pipeline] wrote download PDF ({len(pages)} pages): {out_pdf}")
+    return out_pdf
+
+
+# -----------------------------
 # Main entry
 # -----------------------------
 
@@ -416,6 +542,7 @@ def run_pipeline(
     dry_run: bool = False,
     image_quality: str = "standard",
     ref_description_string: str = "",
+    output_format: str = "download",
 ) -> dict[str, Any]:
     """
     Pipeline expects config_dir contains:
@@ -423,6 +550,10 @@ def run_pipeline(
 
     Optional:
       - pipeline_config.json (if you add it later, it will be merged over defaults)
+
+    output_format:
+      'print'    → 300 dpi, one-sided blank pages, padded to multiple-of-4 (press-ready)
+      'download' → 150 dpi, no blank pages, no padding (compact file for screens/e-readers)
     """
     interior_model = interior_model or openai_model
     cover_model = cover_model or openai_model
@@ -444,6 +575,32 @@ def run_pipeline(
     # If you add pipeline_config.json later, it overrides defaults.
     cfg_overrides = _load_optional_json(config_dir / "pipeline_config.json")
     pipeline_cfg = _merge_cfg(DEFAULT_PIPELINE_CFG, cfg_overrides)
+
+    # Apply output-format profile on top of everything else.
+    # These are the last word — they cannot be overridden by pipeline_config.json.
+    _FORMAT_PROFILES: dict[str, dict[str, Any]] = {
+        "print": {
+            "dpi": 300,
+            "one_sided": True,
+            "blank_after_interior": True,
+            "blank_after_front_matter": False,
+            "blank_after_back_matter": False,
+            "pad_to_multiple_of_4": True,
+        },
+        "download": {
+            "dpi": 150,
+            "one_sided": False,
+            "blank_after_interior": False,
+            "blank_after_front_matter": False,
+            "blank_after_back_matter": False,
+            "pad_to_multiple_of_4": False,
+        },
+    }
+    format_profile = _FORMAT_PROFILES.get(output_format, _FORMAT_PROFILES["download"])
+    pipeline_cfg = _merge_cfg(pipeline_cfg, format_profile)
+    print(
+        f"[pipeline] output_format={output_format!r} → dpi={pipeline_cfg['dpi']}, one_sided={pipeline_cfg['one_sided']}, pad_to_4={pipeline_cfg['pad_to_multiple_of_4']}"
+    )
 
     # Size defaults (used by ImageProvider if your generator didn’t set per-page pixels)
     ip = pipeline_cfg.get("interior_pixels", {"w": 2550, "h": 3300})
@@ -632,28 +789,52 @@ def run_pipeline(
         )
 
     interior_pdf = output_dir / "book" / "interior.pdf"
-    build_interior_pdf(images_dir, page_prompts, pipeline_cfg, interior_pdf)
-
     cover_pdf = output_dir / "book" / "cover.pdf"
-    build_cover_pdf(
-        page_prompts=page_prompts,
-        pipeline_cfg=pipeline_cfg,
-        images_dir=images_dir,
-        out_pdf=cover_pdf,
-        provider=provider,
-        optimizer=optimizer,
-        ref_sheets=ref_sheets,
-        ref_description_string=ref_description_string,
-        overlay_styles=overlay_styles,
-        image_provider_mode=image_provider_mode,
-        cand_n=cand_n,
-        keep_candidates=keep_candidates,
-        repo_root=config_dir.parent,
-    )
+    download_pdf = output_dir / "book" / "download.pdf"
+
+    if output_format == "download":
+        # Download: one combined PDF — front cover, interior pages, back cover.
+        # No Lulu spread is produced.
+        build_interior_pdf(images_dir, page_prompts, pipeline_cfg, interior_pdf)
+        build_download_pdf(
+            images_dir=images_dir,
+            page_prompts=page_prompts,
+            pipeline_cfg=pipeline_cfg,
+            out_pdf=download_pdf,
+            provider=provider,
+            optimizer=optimizer,
+            ref_sheets=ref_sheets,
+            ref_description_string=ref_description_string,
+            overlay_styles=overlay_styles,
+            image_provider_mode=image_provider_mode,
+            cand_n=cand_n,
+            keep_candidates=keep_candidates,
+            repo_root=config_dir.parent,
+        )
+    else:
+        # Print: separate interior PDF + Lulu full-wrap cover PDF.
+        build_interior_pdf(images_dir, page_prompts, pipeline_cfg, interior_pdf)
+        build_cover_pdf(
+            page_prompts=page_prompts,
+            pipeline_cfg=pipeline_cfg,
+            images_dir=images_dir,
+            out_pdf=cover_pdf,
+            provider=provider,
+            optimizer=optimizer,
+            ref_sheets=ref_sheets,
+            ref_description_string=ref_description_string,
+            overlay_styles=overlay_styles,
+            image_provider_mode=image_provider_mode,
+            cand_n=cand_n,
+            keep_candidates=keep_candidates,
+            repo_root=config_dir.parent,
+        )
 
     return {
+        "output_format": output_format,
         "interior_pdf": str(interior_pdf),
-        "cover_pdf": str(cover_pdf),
+        "cover_pdf": str(cover_pdf) if output_format == "print" else None,
+        "download_pdf": str(download_pdf) if output_format == "download" else None,
         "images_dir": str(images_dir),
         "refs_used": [p.name for p in ref_sheets],
         "front_matter_count": len(front_list),
