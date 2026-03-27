@@ -236,22 +236,25 @@ def _build_prompt_item(
 
     parts: list[str] = []
 
-    if ref_desc and kind != "front_matter":
-        parts.append(ref_desc)
-
     if kind != "front_matter":
         character_bible = ctx.get("character_bible", "").strip()
-        if character_bible:
-            # Use the full "CHARACTER BIBLE:" header only when there are actual
-            # character description lines (text-appearance build).  For reference
-            # builds the bible is just an outfit hint — no header needed.
-            has_char_lines = character_bible.startswith(
-                "Children"
-            ) or character_bible.startswith("Pets")
-            if has_char_lines:
-                parts.append("CHARACTER BIBLE:\n" + character_bible)
+        has_char_lines = character_bible.startswith(
+            "Children"
+        ) or character_bible.startswith("Pets")
+
+        if ref_desc:
+            # Reference build: append outfit hint directly onto the REFERENCES block
+            # so the whole header (refs + outfit) opens every prompt as one unit.
+            if character_bible and not has_char_lines:
+                parts.append(ref_desc + "\n" + character_bible)
             else:
-                parts.append(character_bible)
+                parts.append(ref_desc)
+
+        if character_bible and has_char_lines:
+            parts.append("CHARACTER BIBLE:\n" + character_bible)
+    elif ref_desc:
+        # front_matter: skip ref block (already handled by kind guard above)
+        pass
 
     parts.append(rendered)
 
@@ -363,9 +366,19 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         cast_summary_parts.append(f"{pet_count} companion(s)")
     cast_summary = " | ".join(cast_summary_parts) if cast_summary_parts else ""
 
-    human_01 = child_descs[0] if child_count >= 1 else "the child"
-    human_02 = child_descs[1] if child_count >= 2 else human_01
-    companion = pet_descs[0] if pet_count >= 1 else "their companion"
+    human_01 = (
+        "human_01"
+        if has_refs
+        else (child_descs[0] if child_count >= 1 else "the child")
+    )
+    human_02 = (
+        "human_02" if has_refs else (child_descs[1] if child_count >= 2 else human_01)
+    )
+    companion = (
+        "companion"
+        if has_refs
+        else (pet_descs[0] if pet_count >= 1 else "their companion")
+    )
 
     ctx: dict[str, Any] = {
         "child_descs": child_descs,

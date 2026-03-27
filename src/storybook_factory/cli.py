@@ -339,45 +339,48 @@ def main():
         # Use assets_dir from args if available, otherwise default to "assets"
         assets_dir = Path(getattr(args, "assets_dir", "assets")).resolve()
 
-        # Build ref description string & discover reference paths by sorting the assets/characters folder
+        # Build ref description string by running Gemini sorter on assets/characters/
         ref_description_string = ""
 
-        # Flat brief has no real names — character_roles is empty.
-        # The sorter will use role labels (human_01, companion) directly.
-        char_names: list[str] = []
-        character_roles: dict[str, str] = {}
+        # Derive role labels and descriptions directly from the brief's desc keys.
+        # No real names ever — roles are always human_01, human_02, companion.
+        import yaml as _yaml
 
-        # Also include subfolder names as hints just in case
-        chars_root = assets_dir / "characters"
-        if chars_root.exists():
-            for d in chars_root.iterdir():
-                if d.is_dir() and d.name.capitalize() not in char_names:
-                    char_names.append(d.name.capitalize())
+        _brief_raw = _yaml.safe_load(brief_path.read_text()) or {}
+        char_roles: list[str] = []
+        char_descs: dict[str, str] = {}
+        for role in ("human_01", "human_02"):
+            desc = _brief_raw.get(f"{role}_desc", "").strip()
+            if desc:
+                char_roles.append(role)
+                char_descs[role] = desc
+        companion_desc = _brief_raw.get("companion_desc", "").strip()
+        if companion_desc:
+            char_roles.append("companion")
+            char_descs["companion"] = companion_desc
 
-        # Collect all images from assets/characters/ (non-recursive to avoid processed ones, or recursive)
-        # The user wants them from assets/characters primarily.
         image_extensions = (".png", ".jpg", ".jpeg", ".webp")
-        all_refs = []
+        chars_root = assets_dir / "characters"
+
+        # Collect all images directly inside assets/characters/ (top-level only)
+        all_refs: list[Path] = []
         if chars_root.exists():
-            # Get all images in characters/ top level or subfolders if not sorted yet
             all_refs = sorted(
-                [
-                    p
-                    for p in chars_root.rglob("*")
-                    if p.suffix.lower() in image_extensions
-                ]
+                p
+                for p in chars_root.iterdir()
+                if p.is_file() and p.suffix.lower() in image_extensions
             )
 
-        if all_refs and char_names:
+        if all_refs and char_roles:
             from .image_sorter import GeminiImageSorter
 
             try:
                 sorter = GeminiImageSorter()
                 ref_description_string, sorted_paths = sorter.get_reference_mapping(
                     all_refs,
-                    char_names,
+                    char_roles,
                     style_ref_dir=assets_dir / "style_reference",
-                    character_roles=character_roles,
+                    character_descs=char_descs,
                 )
                 if sorted_paths:
                     for i, p in enumerate(sorted_paths):
@@ -385,7 +388,7 @@ def main():
                     print("---------------------------------------\n")
             except Exception as e:
                 print(
-                    f"Warning: Gemini sorter failed: {e}. Falling back to folder-based naming."
+                    f"Warning: Gemini sorter failed: {e}. Falling back to no references."
                 )
                 ref_description_string = ""
 
