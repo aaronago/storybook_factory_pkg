@@ -8,7 +8,7 @@ from typing import Any
 
 from PIL import Image
 
-from .covers import build_cover_pdf
+from .covers import _ensure_cover_image, _resolve_font_paths, build_cover_pdf
 from .image_provider import ImageProvider, ensure_dir
 from .overlay_renderer import TextStyle, apply_overlays
 from .prompt_optimizer import PromptOptimizer
@@ -857,13 +857,38 @@ def run_pipeline(
     download_pdf = output_dir / "book" / "download.pdf"
 
     if output_format == "download":
-        # Stamp branding on scene (interior) pages only — not dedication or covers.
+        # Stamp branding on scene (interior) pages only — not dedication or front cover.
         _stamp_branding(
             images_dir=images_dir,
             prompts=interior_list,
             text="wonderquillbooks.com",
             font_path="assets/fonts/Cinzel-VariableFont_wght.ttf",
         )
+
+        # Stamp branding on the back cover too (must happen before PDF assembly).
+        # Ensure the back cover image exists first, then stamp it.
+        _cover_styles = _resolve_font_paths(overlay_styles, repo_root=config_dir.parent)
+        back_item = (page_prompts.get("covers") or {}).get("back")
+        if isinstance(back_item, dict):
+            _ensure_cover_image(
+                key="back",
+                item=back_item,
+                images_dir=images_dir,
+                provider=provider,
+                optimizer=optimizer,
+                ref_sheets=ref_sheets,
+                ref_description_string=ref_description_string,
+                overlay_styles=_cover_styles,
+                cand_n=cand_n,
+                image_provider_mode=image_provider_mode,
+                keep_candidates=keep_candidates,
+            )
+            _stamp_branding(
+                images_dir=images_dir,
+                prompts=[back_item],
+                text="wonderquillbooks.com",
+                font_path="assets/fonts/Cinzel-VariableFont_wght.ttf",
+            )
 
         # Download: one combined PDF — front cover, interior pages, back cover.
         # No Lulu spread is produced.
