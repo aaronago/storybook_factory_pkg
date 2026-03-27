@@ -42,6 +42,7 @@ class GeminiImageSorter:
         character_names: list[str],
         model: str = "gemini-3.1-flash-lite-preview",
         style_ref_dir: Path | None = None,
+        character_roles: dict[str, str] | None = None,
     ) -> tuple[str, list[Path]]:
         """
         Groups the input image_paths by character and produces:
@@ -53,10 +54,11 @@ class GeminiImageSorter:
 
         Args:
             image_paths: List of local paths to reference images (characters only).
-            character_names: Names of characters to look for.
+            character_names: Real names of characters — used by Gemini to identify images.
             style_ref_dir: Optional directory to load style reference images from.
-                           If None, falls back to detecting paths containing
-                           'assets/style_reference' in their absolute path.
+            character_roles: Optional mapping of real name → role label
+                             (e.g. {"Elliott": "human_01", "Colette": "human_02", "Winnie": "companion"}).
+                             When provided, the REFERENCES string uses role labels instead of real names.
 
         Returns:
             tuple: (ref_description_string, sorted_image_paths)
@@ -131,10 +133,13 @@ class GeminiImageSorter:
             if not indices:
                 continue
 
+            # Use role label if provided, otherwise fall back to capitalized real name
+            label = (character_roles or {}).get(name) or name.capitalize()
+
             for idx in indices:
                 if 0 <= idx < len(other_paths):
                     sorted_paths.append(other_paths[idx])
-                    char_to_ids[name.capitalize()].append(f"[{current_idx}]")
+                    char_to_ids[label].append(f"[{current_idx}]")
                     current_idx += 1
 
         # 4. Format the final string
@@ -146,11 +151,12 @@ class GeminiImageSorter:
             ids_str = ", ".join(char_to_ids["style_reference"])
             char_lines.append(f"style_reference: {ids_str}")
 
-        for char_name in sorted(char_to_ids.keys()):
-            if char_name == "style_reference":
+        # Preserve insertion order for role labels (not alpha-sorted)
+        for label in char_to_ids:
+            if label == "style_reference":
                 continue
-            ids_str = ", ".join(char_to_ids[char_name])
-            char_lines.append(f"{char_name}: {ids_str}")
+            ids_str = ", ".join(char_to_ids[label])
+            char_lines.append(f"{label}: {ids_str}")
 
         # Compose final string
         ref_description_string = "REFERENCES: " + "\n".join(char_lines)
