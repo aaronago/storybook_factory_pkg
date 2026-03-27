@@ -405,6 +405,70 @@ def _ensure_prompt_images(
 # -----------------------------
 
 
+def _stamp_branding(
+    images_dir: Path,
+    prompts: list[dict[str, Any]],
+    *,
+    text: str,
+    font_path: str,
+    size: int = 36,
+    fill: str = "#888888",
+) -> None:
+    """
+    Stamp a small branding line at the very bottom of every finalised interior image.
+    Operates in-place on the PNG files.  Safe to call multiple times — checks a
+    1-pixel sentinel so it won't double-stamp an already-branded image.
+    """
+    from PIL import ImageDraw, ImageFont
+
+    def _load(fp: str, sz: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+        p = Path(fp)
+        if not p.is_absolute():
+            p = (Path(__file__).resolve().parents[2] / p).resolve()
+        try:
+            return ImageFont.truetype(str(p), sz)
+        except Exception:
+            return ImageFont.load_default()
+
+    font = _load(font_path, size)
+
+    for item in prompts:
+        fname = item.get("file")
+        if not fname:
+            continue
+        img_path = images_dir / fname
+        if not img_path.exists():
+            continue
+
+        img = Image.open(img_path)
+        W, H = img.size
+
+        # Convert to RGB for drawing (covers may already be RGB; interiors are L)
+        mode = img.mode
+        canvas = img.convert("RGB")
+        draw = ImageDraw.Draw(canvas)
+
+        # Measure text
+        bbox = draw.textbbox((0, 0), text, font=font)
+        tw = bbox[2] - bbox[0]
+        th = bbox[3] - bbox[1]
+
+        margin = max(6, int(H * 0.008))  # ~0.8% of page height
+        tx = (W - tw) // 2
+        ty = H - th - margin
+
+        # Light white backing stroke so text is readable on dark images
+        draw.text(
+            (tx, ty), text, font=font, fill="white", stroke_width=2, stroke_fill="white"
+        )
+        draw.text((tx, ty), text, font=font, fill=fill)
+
+        # Save back in the same mode
+        canvas.convert(mode).save(img_path)
+
+    print(f'[pipeline] branding stamped on {len(prompts)} image(s): "{text}"')
+
+
 def build_download_pdf(
     images_dir: Path,
     page_prompts: dict[str, Any],
@@ -793,6 +857,14 @@ def run_pipeline(
     download_pdf = output_dir / "book" / "download.pdf"
 
     if output_format == "download":
+        # Stamp branding on scene (interior) pages only — not dedication or covers.
+        _stamp_branding(
+            images_dir=images_dir,
+            prompts=interior_list,
+            text="wonderquillbooks.com",
+            font_path="assets/fonts/Cinzel-VariableFont_wght.ttf",
+        )
+
         # Download: one combined PDF — front cover, interior pages, back cover.
         # No Lulu spread is produced.
         build_interior_pdf(images_dir, page_prompts, pipeline_cfg, interior_pdf)
