@@ -342,17 +342,10 @@ def main():
         # Build ref description string & discover reference paths by sorting the assets/characters folder
         ref_description_string = ""
 
-        # We need to discover names from the brief to tell the sorter what to look for
-        import yaml
-
-        with open(brief_path) as f:
-            brief_data = yaml.safe_load(f)
-
-        char_names = []
-        for c in brief_data.get("children", []) or []:
-            char_names.append(c.get("name"))
-        for p in brief_data.get("pets", []) or []:
-            char_names.append(p.get("name"))
+        # Flat brief has no real names — character_roles is empty.
+        # The sorter will use role labels (human_01, companion) directly.
+        char_names: list[str] = []
+        character_roles: dict[str, str] = {}
 
         # Also include subfolder names as hints just in case
         chars_root = assets_dir / "characters"
@@ -380,23 +373,20 @@ def main():
 
             try:
                 sorter = GeminiImageSorter()
-                # print(
-                #     f"Sorting {len(all_refs)} reference images for characters: {', '.join(char_names)}..."
-                # )
                 ref_description_string, sorted_paths = sorter.get_reference_mapping(
-                    all_refs, char_names, style_ref_dir=assets_dir / "style_reference"
+                    all_refs,
+                    char_names,
+                    style_ref_dir=assets_dir / "style_reference",
+                    character_roles=character_roles,
                 )
                 if sorted_paths:
-                    # print("\n--- Sorted Reference Paths Mapping ---")
                     for i, p in enumerate(sorted_paths):
                         print(f"[{i+1}] {p}")
-                    # Note: sorted_paths isn't stored in page_prompts.json but the indices match it.
                     print("---------------------------------------\n")
             except Exception as e:
                 print(
                     f"Warning: Gemini sorter failed: {e}. Falling back to folder-based naming."
                 )
-                # Fallback logic if sorter fails...
                 ref_description_string = ""
 
         generate_from_brief(

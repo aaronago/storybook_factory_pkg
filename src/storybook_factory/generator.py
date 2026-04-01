@@ -10,9 +10,8 @@ from typing import Any, Optional, TypedDict, cast
 import yaml
 from jinja2 import Template
 
-# -----------------------------
 # Defaults
-# -----------------------------
+
 
 DEFAULT_TRIM = {"w": 8.5, "h": 11.0}
 DEFAULT_DPI = 300
@@ -26,9 +25,7 @@ COVER_PX = {"w": 2588, "h": 3375}
 VISUAL_BIBLE_VERSION = "1.5"
 
 
-# -----------------------------
 # Utilities
-# -----------------------------
 
 
 def slug(s: str) -> str:
@@ -66,28 +63,28 @@ def _strip_leading_scene_label(text: str) -> str:
     return t
 
 
-def _describe_child(c: dict[str, Any]) -> str:
-    name = c.get("name", "Child")
-    age = c.get("age")
-    appearance = c.get("appearance_desc") or c.get("appearance") or ""
-    bits: list[str] = [str(name)]
-    if age:
-        bits.append(f"age {age}")
-    if appearance:
-        bits.append(str(appearance))
-    return ", ".join(bits)
+def _extract_cast(brief: dict[str, Any]) -> tuple[list[str], list[str]]:
+    """
+    Return (child_descs, pet_descs) from a brief.
 
+    Supports the flat order-form structure:
+        human_01_desc: '7yo boy, curly hair, leather tunic'
+        human_02_desc: '4yo girl, pigtails, star dress'
+        companion_desc: 'Small tan Chihuahua'
+    """
+    child_descs: list[str] = []
+    pet_descs: list[str] = []
 
-def _describe_pet(p: dict[str, Any]) -> str:
-    name = p.get("name", "Pet")
-    species = p.get("species")
-    appearance = p.get("appearance_desc") or p.get("appearance") or ""
-    bits: list[str] = [str(name)]
-    if species:
-        bits.append(f"a {species}")
-    if appearance:
-        bits.append(str(appearance))
-    return ", ".join(bits)
+    for key in ("human_01_desc", "human_02_desc"):
+        val = brief.get(key, "")
+        if val:
+            child_descs.append(str(val).strip())
+
+    companion = brief.get("companion_desc", "")
+    if companion:
+        pet_descs.append(str(companion).strip())
+
+    return child_descs, pet_descs
 
 
 def _join_human(names: list[str], fallback: str) -> str:
@@ -135,9 +132,7 @@ def _render_overlays(
     return rendered_overlays
 
 
-# -----------------------------
 # Prompt item schema
-# -----------------------------
 
 
 class Pixels(TypedDict):
@@ -285,9 +280,8 @@ def _build_prompt_item(
     if page is not None:
         out["page"] = page
 
-    # -----------------------------
     # Pass-through overlays (YAML -> JSON) + TEMPLATE RENDER
-    # -----------------------------
+
     overlays = item.get("overlays")
     if overlays is not None:
         out["overlays"] = _render_overlays(overlays, ctx, label=f"{kind}.overlays")
@@ -295,9 +289,7 @@ def _build_prompt_item(
     return out
 
 
-# -----------------------------
 # Context / bible (LEAN)
-# -----------------------------
 
 
 def _merge_globals(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, Any]:
@@ -314,25 +306,14 @@ def _merge_globals(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
 
 
 def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, Any]:
-    children = cast(list[dict[str, Any]], brief.get("children", []) or [])
-    pets = cast(list[dict[str, Any]], brief.get("pets", []) or [])
-
-    child_names = [str(c.get("name", "Child")) for c in children]
-    pet_names = [str(p.get("name", "Pet")) for p in pets]
-
-    child_descs = [_describe_child(c) for c in children]
-    pet_descs = [_describe_pet(p) for p in pets]
+    child_descs, pet_descs = _extract_cast(brief)
+    child_count = len(child_descs)
+    pet_count = len(pet_descs)
 
     # If reference images are present, suppress text appearance descriptions —
     # the photos are authoritative and text descriptions may conflict with them.
     has_refs = bool(brief.get("ref_description_string", ""))
 
-    # -------------------------------------------------
-    # Character bible (injected by pipeline unless disabled)
-    # -------------------------------------------------
-    # When reference sheets are attached, the images are the authoritative
-    # character source — text descriptions would only conflict.  Emit only
-    # the outfit_hint (if provided) so the model knows how to dress them.
     outfit_hint = str(brief.get("outfit_hint", "")).strip()
 
     if has_refs:
@@ -343,28 +324,23 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
 
         if child_descs:
             character_bible_lines.append(
-                "Children (draw these the same way on every page):"
+                "Characters (draw these the same way on every page):"
             )
             for desc in child_descs:
                 character_bible_lines.append(f"- {desc}")
 
         if pet_descs:
             character_bible_lines.append(
-                "Pets (draw these the same way on every page):"
+                "Companion (draw this the same way on every page):"
             )
             for desc in pet_descs:
                 character_bible_lines.append(f"- {desc}")
-        else:
-            character_bible_lines.append(
-                "Pets: use the same specific pets as described in the brief."
-            )
+
+        if outfit_hint:
+            character_bible_lines.append(f"Outfit style: {outfit_hint}")
 
         character_bible = "\n".join(character_bible_lines)
 
-    # -------------------------------------------------
-    # Globals (YAML-owned reusable prompt fragments & settings)
-    # brief.globals overrides theme.globals
-    # -------------------------------------------------
     merged_globals = _merge_globals(brief, theme)
 
     # Normalize overlay styles so downstream is predictable
@@ -381,54 +357,38 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
 
     # Optional: a convenient “cast summary” string for templates
     cast_summary_parts: list[str] = []
-    if child_names:
-        cast_summary_parts.append("Children: " + ", ".join(child_names))
-    if pet_names:
-        cast_summary_parts.append("Pets: " + ", ".join(pet_names))
+    if child_descs:
+        cast_summary_parts.append(f"{child_count} child(ren)")
+    if pet_descs:
+        cast_summary_parts.append(f"{pet_count} companion(s)")
     cast_summary = " | ".join(cast_summary_parts) if cast_summary_parts else ""
 
-    # -------------------------------------------------
-    # Safe cast accessors for YAML templates.
-    # Use these instead of child_names[0] / child_names[1] / pet_names[0]
-    # so the pack degrades gracefully when fewer characters are provided.
-    #
-    #   child_1  — first child name, or "the child" if none
-    #   child_2  — second child name; falls back to child_1 if only 1 child
-    #   pet_1    — first pet name, or "their pet" if no pets
-    # -------------------------------------------------
-    child_1 = child_names[0] if len(child_names) >= 1 else "the child"
-    child_2 = child_names[1] if len(child_names) >= 2 else child_1
-    pet_1 = pet_names[0] if len(pet_names) >= 1 else "their pet"
+    human_01 = child_descs[0] if child_count >= 1 else "the child"
+    human_02 = child_descs[1] if child_count >= 2 else human_01
+    companion = pet_descs[0] if pet_count >= 1 else "their companion"
 
     ctx: dict[str, Any] = {
-        # raw lists (keep for join/loop usage)
-        "child_names": child_names,
-        "pet_names": pet_names,
-        "children": children,
-        "pets": pets,
+        "child_descs": child_descs,
+        "pet_descs": pet_descs,
         "cast_summary": cast_summary,
-        # safe scalar accessors — always a non-empty string, never an index error
-        "child_1": child_1,
-        "child_2": child_2,
-        "pet_1": pet_1,
-        # reusable prompt fragments live here (YAML "globals")
+        "human_01": human_01,
+        "human_02": human_02,
+        "companion": companion,
+        "child_names": ["human_01"] * child_count,
+        "pet_names": ["companion"] * pet_count,
         "globals": merged_globals,
-        # convenience: styles for overlays (pipeline reads from JSON, but templates may use too)
         "overlay_styles": overlay_styles,
-        # injected blocks
         "character_bible": character_bible,
-        "character_names": child_names + pet_names,
+        "character_names": [f"human_0{i+1}" for i in range(child_count)]
+        + ["companion"] * pet_count,
         "global_safety_rules": global_safety_rules,
         "ref_description_string": brief.get("ref_description_string", ""),
-        # optional
         "mythic_elements": theme.get("mythic_elements", {}),
     }
     return ctx
 
 
-# -----------------------------
 # Selection logic (brief overrides theme)
-# -----------------------------
 
 
 def _select_items(
@@ -450,9 +410,7 @@ def _sort_by_page_then_title(items: Iterable[PromptOut]) -> list[PromptOut]:
     return sorted(list(items), key=k)
 
 
-# -----------------------------
 # Main generator
-# -----------------------------
 
 
 def generate_from_brief(
@@ -470,17 +428,12 @@ def generate_from_brief(
     if ref_description_string:
         brief["ref_description_string"] = ref_description_string
 
-    children = cast(list[dict[str, Any]], brief.get("children", []) or [])
-    pets = cast(list[dict[str, Any]], brief.get("pets", []) or [])
-
-    # Collect character names for the pipeline to use later
-    character_names = []
-    for c in children:
-        if c.get("name"):
-            character_names.append(c["name"])
-    for p in pets:
-        if p.get("name"):
-            character_names.append(p["name"])
+    child_descs, pet_descs = _extract_cast(brief)
+    child_count = len(child_descs)
+    pet_count = len(pet_descs)
+    character_names = [f"human_0{i+1}" for i in range(child_count)] + [
+        "companion"
+    ] * pet_count
 
     ctx = _build_context(brief, theme)
 
@@ -496,7 +449,7 @@ def generate_from_brief(
             "pixels": INTERIOR_PX,
             "orientation": "portrait",
         },
-        "cast": {"children": children, "pets": pets},
+        "cast": {"child_descs": child_descs, "pet_descs": pet_descs},
         "print_safety": {
             "interior_bleed_in": 0.125,
             "cover_bleed_in": 0.125,
@@ -594,12 +547,17 @@ def generate_from_brief(
             "overlays": rendered_cover_overlays,
         }
 
+    # No real names in the flat brief — character_roles is always empty.
+    # The pipeline sorter uses role labels (human_01, companion) directly.
+    character_roles: dict[str, str] = {}
+
     page_prompts = {
         "front_matter_prompts": front_matter_prompts,
         "interior_prompts": interior_prompts,
         "back_matter_prompts": back_matter_prompts,
         "covers": covers,
         "character_names": character_names,
+        "character_roles": character_roles,
         "ref_description_string": ref_description_string,
     }
     page_prompts["overlay_styles"] = ctx.get("overlay_styles", {})

@@ -1,27 +1,10 @@
-project_title: 'Elliott & Colette: The Dragon Realm Adventure'
-
-children:
-  - name: 'Elliott'
-    age: '4–5'
-    appearance_desc: 'short straight light-brown hair; big gray-blue eyes'
-    outfit_desc: 'medieval tunic with belt and boots or casual explorer outfit'
-    personality: 'brave, gentle, curious'
-    photo_urls: []
-
-  - name: 'Colette'
-    age: '2–3'
-    appearance_desc: 'brown hair in a top knot; large gray-blue eyes; soft cheeks'
-    outfit_desc: 'whimsical princess-meets-adventurer dress with floral or heart motifs'
-    personality: 'joyful, mischievous, fascinated by magic and animals'
-    photo_urls: []
-
-pets:
-  - name: 'Winnie'
-    species: 'Chihuahua–Pug mix'
-    appearance_desc: 'tan fur; upright ears; curled tail; small size'
-    personality: 'loyal, playful, slightly regal'
-    photo_urls: []
-
+order_id: '1027_DRG'
 theme: 'dragon_realm'
 
-outfit_hint: 'simple medieval fantasy adventure clothing, not modern clothing.'
+dedication_text: 'To Elliott & Colette — may your imaginations always soar.'
+
+human_01_desc: '7yo boy, curly hair, leather tunic'
+human_02_desc: '4yo girl, pigtails, star dress'
+companion_desc: 'Small tan Chihuahua'
+
+outfit_hint: 'simple medieval fantasy adventure clothing, not modern clothing'
