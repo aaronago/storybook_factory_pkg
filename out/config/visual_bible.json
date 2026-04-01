@@ -1,12 +1,12 @@
 {
   "visual_bible_version": "1.5",
-  "project": "Elliott & Colette: The Dragon Realm Adventure",
+  "project": "Custom Storybook",
   "character_names": [
     "human_01",
     "human_02",
     "companion"
   ],
-  "ref_description_string": "",
+  "ref_description_string": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\nhuman_02: [5], [6]\ncompanion: [7], [8]",
   "page_format": {
     "trim_in": {
       "w": 8.5,
@@ -21,32 +21,12 @@
     "orientation": "portrait"
   },
   "cast": {
-    "children": [
-      {
-        "name": "Elliott",
-        "age": "4\u20135",
-        "appearance_desc": "short straight light-brown hair; big gray-blue eyes",
-        "outfit_desc": "medieval tunic with belt and boots or casual explorer outfit",
-        "personality": "brave, gentle, curious",
-        "photo_urls": []
-      },
-      {
-        "name": "Colette",
-        "age": "2\u20133",
-        "appearance_desc": "brown hair in a top knot; large gray-blue eyes; soft cheeks",
-        "outfit_desc": "whimsical princess-meets-adventurer dress with floral or heart motifs",
-        "personality": "joyful, mischievous, fascinated by magic and animals",
-        "photo_urls": []
-      }
+    "child_descs": [
+      "4yo boy short straight light-brown hair; big gray-blue eyes",
+      "2yo girl brown hair in a top knot; large gray-blue eyes; soft cheeks"
     ],
-    "pets": [
-      {
-        "name": "Winnie",
-        "species": "Chihuahua\u2013Pug mix",
-        "appearance_desc": "tan fur; upright ears; curled tail; small size",
-        "personality": "loyal, playful, slightly regal",
-        "photo_urls": []
-      }
+    "pet_descs": [
+      "Chihuahua pug mix tan fur; upright ears; curled tail; small size"
     ]
   },
   "print_safety": {

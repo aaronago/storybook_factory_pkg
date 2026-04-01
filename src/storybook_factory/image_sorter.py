@@ -43,6 +43,7 @@ class GeminiImageSorter:
         model: str = "gemini-3.1-flash-lite-preview",
         style_ref_dir: Path | None = None,
         character_roles: dict[str, str] | None = None,
+        character_descs: dict[str, str] | None = None,
     ) -> tuple[str, list[Path]]:
         """
         Groups the input image_paths by character and produces:
@@ -54,11 +55,13 @@ class GeminiImageSorter:
 
         Args:
             image_paths: List of local paths to reference images (characters only).
-            character_names: Real names of characters — used by Gemini to identify images.
+            character_names: Role labels to classify images into
+                             (e.g. ["human_01", "human_02", "companion"]).
             style_ref_dir: Optional directory to load style reference images from.
-            character_roles: Optional mapping of real name → role label
-                             (e.g. {"Elliott": "human_01", "Colette": "human_02", "Winnie": "companion"}).
-                             When provided, the REFERENCES string uses role labels instead of real names.
+            character_roles: Unused — kept for backward compatibility.
+            character_descs: Optional mapping of role label → description string
+                             (e.g. {"human_01": "4yo boy, curly hair", "companion": "small tan Chihuahua"}).
+                             Passed to Gemini so it can match photos to roles by appearance.
 
         Returns:
             tuple: (ref_description_string, sorted_image_paths)
@@ -101,7 +104,12 @@ class GeminiImageSorter:
 
         # 2. Use the existing sorting logic for character images only
         results = (
-            self.sort_user_uploads(other_paths, character_names, model=model)
+            self.sort_user_uploads(
+                other_paths,
+                character_names,
+                model=model,
+                character_descs=character_descs,
+            )
             if other_paths
             else {}
         )
@@ -119,10 +127,15 @@ class GeminiImageSorter:
             char_to_ids["style_reference"].append(f"[{current_idx}]")
             current_idx += 1
 
+        # Track which other_paths indices have already been assigned so each photo
+        # appears under exactly one role, even if Gemini duplicates indices across roles.
+        used_indices: set[int] = set()
+
         # 3b. Add 'unknown' from the Gemini sorting to the same bucket
         if "unknown" in results:
             for idx in results["unknown"]:
-                if 0 <= idx < len(other_paths):
+                if 0 <= idx < len(other_paths) and idx not in used_indices:
+                    used_indices.add(idx)
                     sorted_paths.append(other_paths[idx])
                     char_to_ids["style_reference"].append(f"[{current_idx}]")
                     current_idx += 1
@@ -133,11 +146,12 @@ class GeminiImageSorter:
             if not indices:
                 continue
 
-            # Use role label if provided, otherwise fall back to capitalized real name
-            label = (character_roles or {}).get(name) or name.capitalize()
+            # Role labels ARE the labels — use them directly (no remapping needed)
+            label = name
 
             for idx in indices:
-                if 0 <= idx < len(other_paths):
+                if 0 <= idx < len(other_paths) and idx not in used_indices:
+                    used_indices.add(idx)
                     sorted_paths.append(other_paths[idx])
                     char_to_ids[label].append(f"[{current_idx}]")
                     current_idx += 1
@@ -167,10 +181,12 @@ class GeminiImageSorter:
         image_paths: list[Path],
         character_names: list[str],
         model: str = "gemini-3.1-flash-lite-preview",
+        character_descs: dict[str, str] | None = None,
     ) -> dict[str, list[int]]:
         """
-        Original sorting method (maintained for backward compatibility).
-        Note: The prompt is updated to explicitly map to the names providing.
+        Uses Gemini vision to classify each image into a role bucket.
+        character_descs maps role label → appearance description so Gemini
+        can match photos to roles (e.g. {"human_01": "4yo boy, curly hair"}).
         """
         if not image_paths:
             return {name: [] for name in character_names}
@@ -187,13 +203,28 @@ class GeminiImageSorter:
                     _google_types.Part.from_bytes(data=f.read(), mime_type=mime_type)
                 )
 
-        # Instructions for the model
-        sorting_prompt = (
-            f"Identify the people or pets in these images. "
-            f"Assign each image index (0-based) to one of these character names: {', '.join(character_names)}. "
-            "Return ONLY a JSON object where keys are CHARACTER NAMES and values are lists of integers (indices). "
-            "If an image is unclear or not one of characters, put it in 'unknown'."
-        )
+        # Build role descriptions for the prompt
+        if character_descs:
+            role_lines = "\n".join(
+                f"  {role}: {character_descs[role]}"
+                for role in character_names
+                if role in character_descs
+            )
+            sorting_prompt = (
+                f"You are sorting photos into character roles for a children's storybook.\n"
+                f"Roles and their descriptions:\n{role_lines}\n\n"
+                f"Assign each image index (0-based) to the role whose description best matches "
+                f"the person or pet shown. Roles: {', '.join(character_names)}.\n"
+                "Return ONLY a JSON object where keys are role labels and values are lists of "
+                "integer indices. If an image doesn't match any role, put it in 'unknown'."
+            )
+        else:
+            sorting_prompt = (
+                f"Identify the people or pets in these images. "
+                f"Assign each image index (0-based) to one of these roles: {', '.join(character_names)}. "
+                "Return ONLY a JSON object where keys are role labels and values are lists of integers (indices). "
+                "If an image is unclear or not one of the roles, put it in 'unknown'."
+            )
         contents.append(sorting_prompt)
 
         # Call the model with JSON response mode

@@ -1,0 +1,11 @@
+{
+  "kind": "cover",
+  "key": "back",
+  "title": "Back Cover Art",
+  "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nFull-color, premium children\u2019s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm\u2013cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nBACK COVER SCENE:\nA whimsical magical dragon-realm landscape suitable for the back cover.\nRolling hills, distant castle silhouette, glowing stars,\nsubtle magical particles in the air, and gentle twilight sky.\nInclude soft atmospheric depth and rich color, but keep composition calm and balanced.\n\nLeave the central area moderately open in case a small blurb is added later.\nDo NOT include the children or pets on the back cover.\nDo NOT draw any text.\nDo NOT draw placeholder boxes or frames.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "cover_back__cand00.png"
+  ]
+}

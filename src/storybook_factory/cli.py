@@ -273,11 +273,276 @@ def main():
         help="Base assets directory (default: assets/)",
     )
 
+    # -----------------------
+    # import-orders command
+    # -----------------------
+    p_import = subparsers.add_parser(
+        "import-orders",
+        help=(
+            "Read a CSV of orders and create a pending_orders/<order_id>/ folder "
+            "with a brief.yaml for each row."
+        ),
+    )
+    p_import.add_argument("--csv", required=True, help="Path to the orders CSV file")
+    p_import.add_argument(
+        "--theme",
+        required=True,
+        help="Theme name to embed in every brief (e.g. dragon_realm)",
+    )
+    p_import.add_argument(
+        "--outfit-hint",
+        default="simple medieval fantasy adventure clothing, not modern clothing",
+        help="Outfit hint to embed in every brief",
+    )
+    p_import.add_argument(
+        "--pending-dir",
+        default="pending_orders",
+        help="Root folder for pending order folders (default: pending_orders/)",
+    )
+
+    # -----------------------
+    # process-order command
+    # -----------------------
+    p_proc = subparsers.add_parser(
+        "process-order",
+        help=(
+            "Run the full pipeline for a single pending order: "
+            "sort character photos → brief2json → build."
+        ),
+    )
+    p_proc.add_argument(
+        "--order-id",
+        required=True,
+        help="The order ID folder name inside --pending-dir (e.g. 1024_DRA)",
+    )
+    p_proc.add_argument(
+        "--pending-dir",
+        default="pending_orders",
+        help="Root folder containing pending order folders (default: pending_orders/)",
+    )
+    p_proc.add_argument(
+        "--assets-dir",
+        default="assets",
+        help="Base assets folder — style_reference/ is read from here (default: assets/)",
+    )
+    p_proc.add_argument(
+        "--image-provider",
+        choices=["mock", "folder", "gpt-image"],
+        default="gpt-image",
+        help="Image generation backend (default: gpt-image)",
+    )
+    p_proc.add_argument(
+        "--interior-model",
+        default="gpt-image-1",
+        help="Model for interior pages (default: gpt-image-1)",
+    )
+    p_proc.add_argument(
+        "--cover-model",
+        default=None,
+        help="Model for cover pages (default: same as --interior-model)",
+    )
+    p_proc.add_argument(
+        "--image-quality",
+        choices=["low", "medium", "high", "auto"],
+        default="high",
+        help="Image quality (default: high)",
+    )
+    p_proc.add_argument(
+        "--output-format",
+        choices=["print", "download"],
+        default="download",
+        help="Output format profile (default: download)",
+    )
+    p_proc.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print prompts without generating images",
+    )
+
     args = parser.parse_args()
 
     # -----------------------
     # Handle commands
     # -----------------------
+    if args.command == "import-orders":
+        import csv
+
+        import yaml as _yaml
+
+        csv_path = Path(args.csv).resolve()
+        pending_dir = Path(args.pending_dir).resolve()
+
+        if not csv_path.exists():
+            print(f"CSV not found: {csv_path}")
+            sys.exit(1)
+
+        # Expected columns (case-insensitive match)
+        COL_MAP = {
+            "order_id": "order_id",
+            "human-01_desc": "human_01_desc",
+            "human-02_desc": "human_02_desc",
+            "companion_desc": "companion_desc",
+            "dedication_text": "dedication_text",
+        }
+
+        created = 0
+        skipped = 0
+
+        with csv_path.open(newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            # Normalise header keys: lowercase + strip whitespace
+            if reader.fieldnames is None:
+                print("CSV has no headers.")
+                sys.exit(1)
+
+            for raw_row in reader:
+                row = {k.strip().lower(): v.strip() for k, v in raw_row.items()}
+
+                order_id = row.get("order_id", "").strip()
+                if not order_id:
+                    print("  Skipping row with missing Order_ID")
+                    skipped += 1
+                    continue
+
+                order_dir = pending_dir / order_id
+                brief_path = order_dir / "brief.yaml"
+
+                if brief_path.exists():
+                    print(f"  [{order_id}] already exists — skipping")
+                    skipped += 1
+                    continue
+
+                order_dir.mkdir(parents=True, exist_ok=True)
+                (order_dir / "characters").mkdir(exist_ok=True)
+
+                brief: dict[str, str] = {"order_id": order_id, "theme": args.theme}
+
+                dedication = row.get("dedication_text", "").strip()
+                if dedication:
+                    brief["dedication_text"] = dedication
+
+                for csv_col, yaml_key in COL_MAP.items():
+                    if yaml_key in ("order_id", "dedication_text"):
+                        continue
+                    val = row.get(csv_col, "").strip()
+                    if val:
+                        brief[yaml_key] = val
+
+                brief["outfit_hint"] = args.outfit_hint
+
+                brief_path.write_text(
+                    _yaml.dump(brief, allow_unicode=True, sort_keys=False),
+                    encoding="utf-8",
+                )
+                print(f"  [{order_id}] created → {brief_path}")
+                created += 1
+
+        print(f"\nDone. {created} order(s) created, {skipped} skipped.")
+        return
+
+    if args.command == "process-order":
+        import yaml as _yaml
+
+        from .image_sorter import GeminiImageSorter
+
+        pending_dir = Path(args.pending_dir).resolve()
+        order_dir = pending_dir / args.order_id
+
+        brief_path = order_dir / "brief.yaml"
+        if not brief_path.exists():
+            print(f"No brief found at {brief_path}")
+            sys.exit(1)
+
+        chars_root = order_dir / "characters"
+        chars_root.mkdir(exist_ok=True)
+
+        config_dir = order_dir / "config"
+        output_dir = order_dir / "out"
+        assets_dir = Path(args.assets_dir).resolve()
+        theme_path = (
+            Path(__file__).resolve().parent.parent
+            / "scene_packs"
+            / f"{(_yaml.safe_load(brief_path.read_text()) or {}).get('theme', '')}.yaml"
+        )
+
+        if not theme_path.exists():
+            print(f"Scene pack not found: {theme_path}")
+            sys.exit(1)
+
+        # ── Step 1: sort character photos via Gemini ──────────────────────────
+        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+        all_refs = sorted(
+            p
+            for p in chars_root.iterdir()
+            if p.is_file() and p.suffix.lower() in image_extensions
+        )
+
+        _brief_raw = _yaml.safe_load(brief_path.read_text()) or {}
+        char_roles: list[str] = []
+        char_descs: dict[str, str] = {}
+        for role in ("human_01", "human_02"):
+            desc = _brief_raw.get(f"{role}_desc", "").strip()
+            if desc:
+                char_roles.append(role)
+                char_descs[role] = desc
+        companion_desc_val = _brief_raw.get("companion_desc", "").strip()
+        if companion_desc_val:
+            char_roles.append("companion")
+            char_descs["companion"] = companion_desc_val
+
+        ref_description_string = ""
+        sorted_ref_paths: list[Path] = []
+
+        if all_refs and char_roles:
+            print(f"[{args.order_id}] Sorting {len(all_refs)} photo(s) with Gemini...")
+            try:
+                sorter = GeminiImageSorter()
+                ref_description_string, sorted_ref_paths = sorter.get_reference_mapping(
+                    all_refs,
+                    char_roles,
+                    style_ref_dir=assets_dir / "style_reference",
+                    character_descs=char_descs,
+                )
+                for i, p in enumerate(sorted_ref_paths):
+                    print(f"  [{i+1}] {p.name}")
+                print()
+            except Exception as e:
+                print(f"  Warning: Gemini sorter failed: {e}. Continuing without refs.")
+                ref_description_string = ""
+                sorted_ref_paths = []
+        else:
+            if not all_refs:
+                print(
+                    f"[{args.order_id}] No photos in {chars_root} — generating without character refs."
+                )
+
+        # ── Step 2: brief2json ────────────────────────────────────────────────
+        print(f"[{args.order_id}] Generating page prompts...")
+        generate_from_brief(
+            brief_path,
+            theme_path,
+            config_dir,
+            ref_description_string=ref_description_string,
+        )
+
+        # ── Step 3: build ─────────────────────────────────────────────────────
+        print(f"[{args.order_id}] Building images...")
+        result = run_pipeline(
+            config_dir=config_dir,
+            output_dir=output_dir,
+            assets_dir=assets_dir,
+            image_provider_mode=args.image_provider,
+            interior_model=args.interior_model,
+            cover_model=args.cover_model,
+            dry_run=args.dry_run,
+            image_quality=args.image_quality,
+            ref_description_string=ref_description_string,
+            output_format=args.output_format,
+            sorted_ref_paths=sorted_ref_paths if sorted_ref_paths else None,
+        )
+        print(result)
+        return
+
     if args.command == "sort-refs":
         import shutil
 
@@ -339,45 +604,48 @@ def main():
         # Use assets_dir from args if available, otherwise default to "assets"
         assets_dir = Path(getattr(args, "assets_dir", "assets")).resolve()
 
-        # Build ref description string & discover reference paths by sorting the assets/characters folder
+        # Build ref description string by running Gemini sorter on assets/characters/
         ref_description_string = ""
 
-        # Flat brief has no real names — character_roles is empty.
-        # The sorter will use role labels (human_01, companion) directly.
-        char_names: list[str] = []
-        character_roles: dict[str, str] = {}
+        # Derive role labels and descriptions directly from the brief's desc keys.
+        # No real names ever — roles are always human_01, human_02, companion.
+        import yaml as _yaml
 
-        # Also include subfolder names as hints just in case
-        chars_root = assets_dir / "characters"
-        if chars_root.exists():
-            for d in chars_root.iterdir():
-                if d.is_dir() and d.name.capitalize() not in char_names:
-                    char_names.append(d.name.capitalize())
+        _brief_raw = _yaml.safe_load(brief_path.read_text()) or {}
+        char_roles: list[str] = []
+        char_descs: dict[str, str] = {}
+        for role in ("human_01", "human_02"):
+            desc = _brief_raw.get(f"{role}_desc", "").strip()
+            if desc:
+                char_roles.append(role)
+                char_descs[role] = desc
+        companion_desc = _brief_raw.get("companion_desc", "").strip()
+        if companion_desc:
+            char_roles.append("companion")
+            char_descs["companion"] = companion_desc
 
-        # Collect all images from assets/characters/ (non-recursive to avoid processed ones, or recursive)
-        # The user wants them from assets/characters primarily.
         image_extensions = (".png", ".jpg", ".jpeg", ".webp")
-        all_refs = []
+        chars_root = assets_dir / "characters"
+
+        # Collect all images directly inside assets/characters/ (top-level only)
+        all_refs: list[Path] = []
         if chars_root.exists():
-            # Get all images in characters/ top level or subfolders if not sorted yet
             all_refs = sorted(
-                [
-                    p
-                    for p in chars_root.rglob("*")
-                    if p.suffix.lower() in image_extensions
-                ]
+                p
+                for p in chars_root.iterdir()
+                if p.is_file() and p.suffix.lower() in image_extensions
             )
 
-        if all_refs and char_names:
+        if all_refs and char_roles:
             from .image_sorter import GeminiImageSorter
 
             try:
                 sorter = GeminiImageSorter()
                 ref_description_string, sorted_paths = sorter.get_reference_mapping(
                     all_refs,
-                    char_names,
+                    char_roles,
                     style_ref_dir=assets_dir / "style_reference",
-                    character_roles=character_roles,
+                    character_descs=char_descs,
                 )
                 if sorted_paths:
                     for i, p in enumerate(sorted_paths):
@@ -385,7 +653,7 @@ def main():
                     print("---------------------------------------\n")
             except Exception as e:
                 print(
-                    f"Warning: Gemini sorter failed: {e}. Falling back to folder-based naming."
+                    f"Warning: Gemini sorter failed: {e}. Falling back to no references."
                 )
                 ref_description_string = ""
 

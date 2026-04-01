@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 5,
+  "title": "Dragon Training",
+  "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 stands with arms raised as the baby dragon flies toward them.\ncompanion runs beneath the dragon.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_05_dragon-training__cand00.png"
+  ]
+}
