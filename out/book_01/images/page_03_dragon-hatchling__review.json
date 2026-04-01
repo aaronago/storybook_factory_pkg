@@ -2,7 +2,7 @@
   "kind": "interior",
   "page": 3,
   "title": "Dragon Hatchling",
-  "prompt": "REFERENCES: style_reference: [1], [2], [3]\nColette: [7], [8]\nElliott: [4], [5], [6]\n\nCHARACTER BIBLE:\nChildren (draw these the same way on every page):\n- Elliott, age 4\u20135, short straight light-brown hair; big gray-blue eyes, wearing medieval tunic with belt and boots or casual explorer outfit\n- Colette, age 2\u20133, brown hair in a top knot; large gray-blue eyes; soft cheeks, wearing whimsical princess-meets-adventurer dress with floral or heart motifs\nPets (draw these the same way on every page):\n- Winnie, a Chihuahua\u2013Pug mix, tan fur; upright ears; curled tail; small size\n\nOne baby dragon peeks out from a cracked shell.\nThe hatchling looks curious and friendly.\nElliott & Colette kneel down to get a closer look,\nwhile Winnie watches closely.",
+  "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\nhuman_02: [5], [6]\ncompanion: [7], [8]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nFollow the 'soft' line art style, varied line weights, and organic hand-drawn aesthetic of the first provided image. High-contrast black ink, white background, and open shapes. Scene: One baby dragon peeks from a cracked shell, curious and friendly. Two children kneel nearby, observing closely with observational portrait accuracy: natural eye-to-face proportions, realistic facial geometry, no oversized eyes or button noses. A companion watches attentively. Avoid object intersections, impossible overlaps, extra limbs, duplicated faces, merged hands or feet, and clutter.",
   "selected": "first",
   "num_candidates": 1,
   "candidates": [

@@ -1,0 +1,236 @@
+{
+  "front_matter_prompts": [
+    {
+      "title": "Dedication Page",
+      "file": "front_01_dedication-page.png",
+      "prompt": "Black-and-white coloring-book line art. Clean outlines only. No shading.\nLeave a very large blank center area for dedication text (DO NOT draw text).\nAdd a simple thin border of vines and stars.\nIMPORTANT: Do NOT draw any letters/words/symbols. Keep center blank.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "front_matter",
+      "page": 1,
+      "overlays": [
+        {
+          "type": "text",
+          "style": "dedication",
+          "content": "For our two brave adventurers \u2014 may every dragon you meet become a friend.",
+          "region_pct": {
+            "x": 15,
+            "y": 38,
+            "w": 70,
+            "h": 24
+          }
+        }
+      ]
+    }
+  ],
+  "interior_prompts": [
+    {
+      "title": "Entering the Dragon Realm",
+      "file": "page_02_entering-the-dragon-realm.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 stands at the swirling portal, one foot already through,\nleaning back to grab companion's collar with both hands.\ncompanion strains forward eagerly into the portal, all four paws scrabbling,\nears pinned back, tail a blur.\nStrange plants and distant mountains glow on the other side.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 2
+    },
+    {
+      "title": "Dragon Hatchling",
+      "file": "page_03_dragon-hatchling.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nOne baby dragon peeks out from a cracked shell.\nThe hatchling looks curious and friendly.\nhuman_01 kneels down to get a closer look,\nwhile companion watches closely.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 3
+    },
+    {
+      "title": "The Grateful Hatchling",
+      "file": "page_04_the-grateful-hatchling.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nThe baby dragon has just been freed from tangled forest vines.\nThe dragon happily nuzzles against human_01,\nwho wraps both arms around the small dragon laughing.\ncompanion stands nearby wagging excitedly.\nBroken vines lie on the ground.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 4
+    },
+    {
+      "title": "Dragon Training",
+      "file": "page_05_dragon-training.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 stands with arms raised as the baby dragon flies toward them.\ncompanion runs beneath the dragon.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 5
+    },
+    {
+      "title": "The Forest Guardian",
+      "file": "page_06_the-forest-guardian.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nA large forest dragon stands between tall trees watching them.\nhuman_01 reaches one hand out toward the dragon.\nThe baby dragon stands beside them.\ncompanion stands close at their feet.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 6
+    },
+    {
+      "title": "Preparing for Adventure",
+      "file": "page_07_preparing-for-adventure.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 fastens a simple piece of armor while the baby dragon stands beside them.\ncompanion stands at their feet.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 7
+    },
+    {
+      "title": "The Sky Bridge",
+      "file": "page_08_the-sky-bridge.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 edges across a floating stone bridge,\narms out for balance, one foot testing each stone.\ncompanion scrambles forward on the bridge, claws scrabbling on the stone, nose to the edge.\nThe young dragon swoops low overhead, neck craning back to check on them.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 8
+    },
+    {
+      "title": "The Thunder Dragon",
+      "file": "page_09_the-thunder-dragon.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nStorm clouds churn above a rocky hill.\nhuman_01 plants both feet wide and throws both arms up toward the sky,\nshouting into the wind.\ncompanion barks up at the storm, front paws raised off the ground.\nA powerful thunder dragon banks hard across the sky above,\nlightning crackling around its wings.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 9
+    },
+    {
+      "title": "The Ancient Dragon",
+      "file": "page_10_the-ancient-dragon.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nBefore a massive ancient stone gate covered in carved dragon runes,\nan enormous ancient dragon rests with its wings folded,\nhead lowered slowly toward the ground as if greeting them.\nThe dragon is so large its head alone fills most of the frame above the child.\nhuman_01 stands completely still, head tilted all the way back, mouth open in awe.\ncompanion sits frozen at their feet, staring straight up, ears perked forward.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 10
+    },
+    {
+      "title": "Frostfall Peaks",
+      "file": "page_11_frostfall-peaks.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nA majestic ice dragon stands on a frozen ridge above.\nhuman_01 steps up onto an icy ledge reaching a hand toward it.\ncompanion stands at their feet.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 11
+    },
+    {
+      "title": "The Ocean Dragon",
+      "file": "page_12_the-ocean-dragon.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nA wave crashes onto the shore as human_01 leaps back laughing.\nhuman_01 then kneels at the water's edge reaching toward an ocean dragon rising from the surf.\ncompanion runs away from the wave.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 12
+    },
+    {
+      "title": "Rest and Recuperate",
+      "file": "page_13_rest-and-recuperate.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 sits beside their dragon friend in an open clearing.\nThe baby dragon rests close beside them.\ncompanion lies nearby.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 13
+    },
+    {
+      "title": "Dragon Flight",
+      "file": "page_14_dragon-flight.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 rides on their dragon friend high in the sky.\ncompanion runs far below.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 14
+    },
+    {
+      "title": "The Dragon Festival",
+      "file": "page_15_the-dragon-festival.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nIn a wide valley, human_01 runs toward a small dragon with arms open.\ncompanion runs beside them.\nA few dragons gather in the background.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 15
+    },
+    {
+      "title": "Goodbye Dragon Realm",
+      "file": "page_16_goodbye-dragon-realm.png",
+      "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nSTYLE: Children should show clear emotion and movement.\nAvoid stiff standing poses.\nUse expressive body language such as pointing,\nleaning, running, kneeling, reaching, or reacting.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nhuman_01 and companion\noccupy roughly the lower 75\u201380% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\nBack at the glowing portal, the dragon lowers its head all the way to the ground,\npressing its snout gently against human_01's cheek.\nhuman_01 wraps both arms around the dragon's nose, eyes shut tight.\ncompanion sits pressed against the dragon's jaw, tail still.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 16
+    }
+  ],
+  "back_matter_prompts": [],
+  "covers": {
+    "front": {
+      "file": "cover_front.png",
+      "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nFull-color, premium children\u2019s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm\u2013cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nRendering must feel like a frame from a high-end animated fantasy film.\n\nFRONT COVER SCENE:\nhuman_01 and companion in the foreground,\ndiscovering a swirling magical portal in a forest clearing.\nA large friendly dragon rises protectively behind them,\nwings subtly framing the composition.\nA distant castle silhouette beyond the trees.\n\nLIGHTING:\nThe forest environment should be cool twilight blue and indigo.\nAdd subtle cool moonlight or sky glow from above/behind.\nThe portal emits a soft golden magical light that illuminates faces and nearby ground.\nKeep warm light localized \u2014 do NOT turn the entire scene orange.\nAdd gentle cool-violet shadow tones in unlit areas.\nAdd slight teal undertones in darker forest areas for depth.\n\nATMOSPHERE:\nSoft volumetric glow around the portal.\nLight mist or particles catching cool blue light in the distance.\nMaintain strong warm\u2013cool color separation.\n\nCOMPOSITION:\nSubjects fill the lower ~65\u201370% of the cover.\nReserve the upper ~30\u201335% as open cool-toned sky for title placement.\nKeep this upper area clean and uncluttered (no branches or wings behind text).\n\nTITLE PLACEMENT RULES:\nInclude the exact title text:\nThe Dragon Realm Adventure\n\nThe title must sit comfortably inside the safe zone.\nLeave a generous clear margin above the word \"The\".\nThe top of the title block must not approach the trim edge.\nEnsure visible breathing room between the top of the cover and the title.\n\nCenter the title horizontally in the upper sky area.\nPosition the entire title block slightly lower than the very top \u2014\nnever tight to the edge.\n\nUse elegant fantasy serif typography.\nGold-ivory lettering with subtle bevel and soft warm glow.\nProfessional book-cover quality.\nClean, readable letterforms.\nCorrect spelling is critical.\nDo not distort letters.\nDo not add extra words.\nNo other text anywhere on the cover.\n\nDo NOT draw placeholder boxes or frames.\nDo NOT draw fake lettering or symbols.",
+      "pixels": {
+        "w": 2588,
+        "h": 3375
+      },
+      "style_reference_image": null,
+      "title": "Front Cover Art",
+      "overlays": []
+    },
+    "back": {
+      "file": "cover_back.png",
+      "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nFull-color, premium children\u2019s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm\u2013cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nBACK COVER SCENE:\nA whimsical magical dragon-realm landscape suitable for the back cover.\nRolling hills, distant castle silhouette, glowing stars,\nsubtle magical particles in the air, and gentle twilight sky.\nInclude soft atmospheric depth and rich color, but keep composition calm and balanced.\n\nLeave the central area moderately open in case a small blurb is added later.\nDo NOT include the children or pets on the back cover.\nDo NOT draw any text.\nDo NOT draw placeholder boxes or frames.",
+      "pixels": {
+        "w": 2588,
+        "h": 3375
+      },
+      "style_reference_image": null,
+      "title": "Back Cover Art",
+      "overlays": []
+    }
+  },
+  "character_names": [
+    "human_01",
+    "companion"
+  ],
+  "character_roles": {},
+  "ref_description_string": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]",
+  "overlay_styles": {
+    "dedication": {
+      "font_path": "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf",
+      "size": 145,
+      "fill": "black",
+      "stroke_width": 1,
+      "stroke_fill": "white",
+      "line_spacing": 1.18
+    }
+  }
+}

@@ -127,10 +127,15 @@ class GeminiImageSorter:
             char_to_ids["style_reference"].append(f"[{current_idx}]")
             current_idx += 1
 
+        # Track which other_paths indices have already been assigned so each photo
+        # appears under exactly one role, even if Gemini duplicates indices across roles.
+        used_indices: set[int] = set()
+
         # 3b. Add 'unknown' from the Gemini sorting to the same bucket
         if "unknown" in results:
             for idx in results["unknown"]:
-                if 0 <= idx < len(other_paths):
+                if 0 <= idx < len(other_paths) and idx not in used_indices:
+                    used_indices.add(idx)
                     sorted_paths.append(other_paths[idx])
                     char_to_ids["style_reference"].append(f"[{current_idx}]")
                     current_idx += 1
@@ -145,7 +150,8 @@ class GeminiImageSorter:
             label = name
 
             for idx in indices:
-                if 0 <= idx < len(other_paths):
+                if 0 <= idx < len(other_paths) and idx not in used_indices:
+                    used_indices.add(idx)
                     sorted_paths.append(other_paths[idx])
                     char_to_ids[label].append(f"[{current_idx}]")
                     current_idx += 1

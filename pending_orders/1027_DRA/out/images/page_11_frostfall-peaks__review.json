@@ -1,0 +1,11 @@
+{
+  "kind": "interior",
+  "page": 11,
+  "title": "Frostfall Peaks",
+  "prompt": "REFERENCES: style_reference: [1]\nhuman_01: [2]\ncompanion: [3], [4]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nA majestic ice dragon stands on a frozen ridge above.\nhuman_01 steps up onto an icy ledge reaching a hand toward it.\ncompanion stands at their feet.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_11_frostfall-peaks__cand00.png"
+  ]
+}

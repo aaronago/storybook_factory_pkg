@@ -1,0 +1,11 @@
+{
+  "kind": "front-matter",
+  "page": 1,
+  "title": "Dedication Page",
+  "prompt": "Black-and-white coloring-book line art. Clean outlines only. No shading.\nLeave a very large blank center area for dedication text (DO NOT draw text).\nAdd a simple thin border of vines and stars.\nIMPORTANT: Do NOT draw any letters/words/symbols. Keep center blank.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "front_01_dedication-page__cand00.png"
+  ]
+}

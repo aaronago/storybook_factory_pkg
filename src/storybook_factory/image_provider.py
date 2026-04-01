@@ -271,32 +271,76 @@ class ImageProvider:
         # Use model name from args directly
         clean_model = model_name.removeprefix("models/")
 
-        _STYLE_ANCHOR = (
-            "STYLE ANCHOR: Use the first image ONLY for line quality and facial likeness.\n"
-            "IGNORE the pose, composition, and background of the reference image.\n"
-            "The characters MUST be placed in the new action described in the SCENE section below."
-        )
-        prompt = f"{_STYLE_ANCHOR}\n\n{prompt}"
-
         try:
             # If reference images are provided, use generate_content (multimodal)
             if refs:
                 contents = []
-                for ref_path in refs:
-                    with open(ref_path, "rb") as f:
-                        image_bytes = f.read()
-                    # Determine mime type from extension
-                    mime_type = "image/jpeg"
-                    if ref_path.suffix.lower() == ".png":
-                        mime_type = "image/png"
 
+                # 1. STYLE ANCHOR — first ref is always the global style reference
+                contents.append(
+                    "STYLE ANCHOR: Use this image ONLY for line-weight, stroke style, "
+                    "and coloring book aesthetic."
+                )
+                with open(refs[0], "rb") as f:
                     contents.append(
                         _google_types.Part.from_bytes(
-                            data=image_bytes, mime_type=mime_type
+                            data=f.read(),
+                            mime_type=(
+                                "image/png"
+                                if refs[0].suffix.lower() == ".png"
+                                else "image/jpeg"
+                            ),
                         )
                     )
+                contents.append(
+                    "CRITICAL: Do NOT copy the children's faces or identities from the image above."
+                )
 
-                contents.append(prompt)
+                # 2. CHARACTER IDENTITY — remaining refs are character photos.
+                # Parse role labels from the REFERENCES block already in the prompt
+                # (e.g. "human_01", "human_02", "companion") so each image is labelled
+                # with its actual role rather than a generic Human-0N index.
+                if len(refs) > 1:
+                    # Extract ordered role labels from REFERENCES block in prompt
+                    role_labels: list[str] = []
+                    for line in prompt.splitlines():
+                        line = line.strip()
+                        if line.startswith("REFERENCES:") or not line:
+                            continue
+                        # Lines look like "human_01: [2], [3]" or "companion: [4]"
+                        if ":" in line and not line.startswith("style_reference"):
+                            role_labels.append(line.split(":")[0].strip())
+
+                    contents.append(
+                        "NEW CHARACTER IDENTITY: Use the images below ONLY for the "
+                        "facial features, hair, and likeness of the characters."
+                    )
+                    for i, char_ref in enumerate(refs[1:]):
+                        label = (
+                            role_labels[i]
+                            if i < len(role_labels)
+                            else f"character_{i + 1}"
+                        )
+                        contents.append(f"Identity Reference for {label}:")
+                        with open(char_ref, "rb") as f:
+                            contents.append(
+                                _google_types.Part.from_bytes(
+                                    data=f.read(),
+                                    mime_type=(
+                                        "image/png"
+                                        if char_ref.suffix.lower() == ".png"
+                                        else "image/jpeg"
+                                    ),
+                                )
+                            )
+
+                # 3. FINAL COMMAND — scene instructions + reminder
+                final_prompt = (
+                    f"SCENE INSTRUCTIONS:\n{prompt}\n\n"
+                    "FINAL REMINDER: The characters MUST look like the 'NEW CHARACTER IDENTITY' "
+                    "images, NOT the 'STYLE ANCHOR' image."
+                )
+                contents.append(final_prompt)
 
                 response = self._google_client.models.generate_content(
                     model=clean_model,
@@ -305,7 +349,7 @@ class ImageProvider:
                         response_modalities=["TEXT", "IMAGE"],
                         image_config=_google_types.ImageConfig(aspect_ratio="3:4"),
                         candidate_count=n,
-                        temperature=(0.9),
+                        temperature=(0.3),
                         thinking_config=_google_types.ThinkingConfig(
                             include_thoughts=True, thinking_level="high"
                         ),

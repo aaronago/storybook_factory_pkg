@@ -110,11 +110,17 @@ class PromptOptimizer:
     def optimize(
         self, prompt: str, *, page_title: str | None = None, kind: str = "interior"
     ) -> str:
-        if os.getenv("STORYBOOK_DISABLE_PROMPT_OPT", "").lower() in {
+        # Optimizer is OFF by default. Set STORYBOOK_ENABLE_PROMPT_OPT=1 to enable.
+        if os.getenv("STORYBOOK_ENABLE_PROMPT_OPT", "").lower() not in {
             "1",
             "true",
             "yes",
         }:
+            return prompt
+
+        # Front-matter pages (dedication, etc.) must be sent as-is — no style anchor,
+        # no reference injection, no optimizer rewrite.
+        if kind in ("front_matter", "front-matter", "back_matter", "back-matter"):
             return prompt
 
         if kind == "cover":

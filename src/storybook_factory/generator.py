@@ -195,13 +195,21 @@ def _build_prompt_item(
     title = item.get("title")
 
     # Select the right prompt variant based on cast size.
-    # single_child_prompt is used when the brief has exactly 1 child.
-    # no_pet_prompt is used when the brief has no pets.
-    # Fall back to the standard prompt if the alternate isn't defined.
+    # Priority (highest first):
+    #   single_child_no_companion_prompt — 1 child AND 0 pets
+    #   single_child_prompt              — 1 child (any pets)
+    #   no_pet_prompt                    — 0 pets (any children)
+    #   prompt                           — default fallback
     child_count = len(ctx.get("child_names", []))
     pet_count = len(ctx.get("pet_names", []))
 
-    if child_count <= 1 and item.get("single_child_prompt"):
+    if (
+        child_count <= 1
+        and pet_count == 0
+        and item.get("single_child_no_companion_prompt")
+    ):
+        prompt_t = item.get("single_child_no_companion_prompt")
+    elif child_count <= 1 and item.get("single_child_prompt"):
         prompt_t = item.get("single_child_prompt")
     elif pet_count == 0 and item.get("no_pet_prompt"):
         prompt_t = item.get("no_pet_prompt")
@@ -397,6 +405,7 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
         "global_safety_rules": global_safety_rules,
         "ref_description_string": brief.get("ref_description_string", ""),
         "mythic_elements": theme.get("mythic_elements", {}),
+        "dedication_text": str(brief.get("dedication_text", "")).strip(),
     }
     return ctx
 
@@ -526,9 +535,25 @@ def generate_from_brief(
         if not isinstance(cov, dict):
             raise ValueError(f"Cover entry must be mapping. key={key}, got={type(cov)}")
 
+        # Select cover prompt variant based on cast size (mirrors _build_prompt_item logic).
+        child_count = len(ctx.get("child_names", []))
+        pet_count = len(ctx.get("pet_names", []))
+        if (
+            child_count <= 1
+            and pet_count == 0
+            and cov.get("single_child_no_companion_prompt")
+        ):
+            cover_prompt_t = cov["single_child_no_companion_prompt"]
+        elif child_count <= 1 and cov.get("single_child_prompt"):
+            cover_prompt_t = cov["single_child_prompt"]
+        elif pet_count == 0 and cov.get("no_pet_prompt"):
+            cover_prompt_t = cov["no_pet_prompt"]
+        else:
+            cover_prompt_t = cov.get("prompt", "")
+
         # Multi-pass template render so {{ globals.* }} can themselves contain templates.
         scene_text = _render_template_multipass(
-            str(cov.get("prompt", "")), ctx, passes=3
+            str(cover_prompt_t), ctx, passes=3
         ).strip()
 
         final_cover_prompt = (

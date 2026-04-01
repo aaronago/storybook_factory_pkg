@@ -63,7 +63,7 @@ globals:
     FULL-PAGE COMPOSITION: medium-close character-focused framing.
     The children are the primary focus of the illustration.
 
-    {{ human_01 }} & {{ human_02 }} and {{ companion }}
+    {% if pet_names %}{{ human_01 }}{% if child_names | length > 1 %} & {{ human_02 }}{% endif %} and {{ companion }}{% else %}{{ human_01 }}{% if child_names | length > 1 %} & {{ human_02 }}{% endif %}{% endif %}
     occupy roughly the lower 75–80% of the page.
 
     Leave open space above for environment elements.
@@ -71,7 +71,7 @@ globals:
 
   comp_vertical_dynamic: |
     FULL-PAGE COMPOSITION: dynamic vertical composition.
-    {{ human_01 }} & {{ human_02 }} and {{ companion }}
+    {% if pet_names %}{{ human_01 }}{% if child_names | length > 1 %} & {{ human_02 }}{% endif %} and {{ companion }}{% else %}{{ human_01 }}{% if child_names | length > 1 %} & {{ human_02 }}{% endif %}{% endif %}
     fill most of the lower two-thirds.
     Key elements extend upward toward the top edge.
 
@@ -213,6 +213,171 @@ covers:
       Do NOT draw placeholder boxes or frames.
       Do NOT draw fake lettering or symbols.
 
+    single_child_prompt: |
+      {{ globals.cover_art_style }}
+
+      Rendering must feel like a frame from a high-end animated fantasy film.
+
+      FRONT COVER SCENE:
+      {{ human_01 }} and {{ companion }} in the foreground,
+      discovering a swirling magical portal in a forest clearing.
+      A large friendly dragon rises protectively behind them,
+      wings subtly framing the composition.
+      A distant castle silhouette beyond the trees.
+
+      LIGHTING:
+      The forest environment should be cool twilight blue and indigo.
+      Add subtle cool moonlight or sky glow from above/behind.
+      The portal emits a soft golden magical light that illuminates faces and nearby ground.
+      Keep warm light localized — do NOT turn the entire scene orange.
+      Add gentle cool-violet shadow tones in unlit areas.
+      Add slight teal undertones in darker forest areas for depth.
+
+      ATMOSPHERE:
+      Soft volumetric glow around the portal.
+      Light mist or particles catching cool blue light in the distance.
+      Maintain strong warm–cool color separation.
+
+      COMPOSITION:
+      Subjects fill the lower ~65–70% of the cover.
+      Reserve the upper ~30–35% as open cool-toned sky for title placement.
+      Keep this upper area clean and uncluttered (no branches or wings behind text).
+
+      TITLE PLACEMENT RULES:
+      Include the exact title text:
+      The Dragon Realm Adventure
+
+      The title must sit comfortably inside the safe zone.
+      Leave a generous clear margin above the word "The".
+      The top of the title block must not approach the trim edge.
+      Ensure visible breathing room between the top of the cover and the title.
+
+      Center the title horizontally in the upper sky area.
+      Position the entire title block slightly lower than the very top —
+      never tight to the edge.
+
+      Use elegant fantasy serif typography.
+      Gold-ivory lettering with subtle bevel and soft warm glow.
+      Professional book-cover quality.
+      Clean, readable letterforms.
+      Correct spelling is critical.
+      Do not distort letters.
+      Do not add extra words.
+      No other text anywhere on the cover.
+
+      Do NOT draw placeholder boxes or frames.
+      Do NOT draw fake lettering or symbols.
+
+    no_pet_prompt: |
+      {{ globals.cover_art_style }}
+
+      Rendering must feel like a frame from a high-end animated fantasy film.
+
+      FRONT COVER SCENE:
+      {{ human_01 }} & {{ human_02 }} in the foreground,
+      discovering a swirling magical portal in a forest clearing.
+      A large friendly dragon rises protectively behind them,
+      wings subtly framing the composition.
+      A distant castle silhouette beyond the trees.
+
+      LIGHTING:
+      The forest environment should be cool twilight blue and indigo.
+      Add subtle cool moonlight or sky glow from above/behind.
+      The portal emits a soft golden magical light that illuminates faces and nearby ground.
+      Keep warm light localized — do NOT turn the entire scene orange.
+      Add gentle cool-violet shadow tones in unlit areas.
+      Add slight teal undertones in darker forest areas for depth.
+
+      ATMOSPHERE:
+      Soft volumetric glow around the portal.
+      Light mist or particles catching cool blue light in the distance.
+      Maintain strong warm–cool color separation.
+
+      COMPOSITION:
+      Subjects fill the lower ~65–70% of the cover.
+      Reserve the upper ~30–35% as open cool-toned sky for title placement.
+      Keep this upper area clean and uncluttered (no branches or wings behind text).
+
+      TITLE PLACEMENT RULES:
+      Include the exact title text:
+      The Dragon Realm Adventure
+
+      The title must sit comfortably inside the safe zone.
+      Leave a generous clear margin above the word "The".
+      The top of the title block must not approach the trim edge.
+      Ensure visible breathing room between the top of the cover and the title.
+
+      Center the title horizontally in the upper sky area.
+      Position the entire title block slightly lower than the very top —
+      never tight to the edge.
+
+      Use elegant fantasy serif typography.
+      Gold-ivory lettering with subtle bevel and soft warm glow.
+      Professional book-cover quality.
+      Clean, readable letterforms.
+      Correct spelling is critical.
+      Do not distort letters.
+      Do not add extra words.
+      No other text anywhere on the cover.
+
+      Do NOT draw placeholder boxes or frames.
+      Do NOT draw fake lettering or symbols.
+
+    single_child_no_companion_prompt: |
+      {{ globals.cover_art_style }}
+
+      Rendering must feel like a frame from a high-end animated fantasy film.
+
+      FRONT COVER SCENE:
+      {{ human_01 }} in the foreground,
+      discovering a swirling magical portal in a forest clearing.
+      A large friendly dragon rises protectively behind them,
+      wings subtly framing the composition.
+      A distant castle silhouette beyond the trees.
+
+      LIGHTING:
+      The forest environment should be cool twilight blue and indigo.
+      Add subtle cool moonlight or sky glow from above/behind.
+      The portal emits a soft golden magical light that illuminates faces and nearby ground.
+      Keep warm light localized — do NOT turn the entire scene orange.
+      Add gentle cool-violet shadow tones in unlit areas.
+      Add slight teal undertones in darker forest areas for depth.
+
+      ATMOSPHERE:
+      Soft volumetric glow around the portal.
+      Light mist or particles catching cool blue light in the distance.
+      Maintain strong warm–cool color separation.
+
+      COMPOSITION:
+      Subjects fill the lower ~65–70% of the cover.
+      Reserve the upper ~30–35% as open cool-toned sky for title placement.
+      Keep this upper area clean and uncluttered (no branches or wings behind text).
+
+      TITLE PLACEMENT RULES:
+      Include the exact title text:
+      The Dragon Realm Adventure
+
+      The title must sit comfortably inside the safe zone.
+      Leave a generous clear margin above the word "The".
+      The top of the title block must not approach the trim edge.
+      Ensure visible breathing room between the top of the cover and the title.
+
+      Center the title horizontally in the upper sky area.
+      Position the entire title block slightly lower than the very top —
+      never tight to the edge.
+
+      Use elegant fantasy serif typography.
+      Gold-ivory lettering with subtle bevel and soft warm glow.
+      Professional book-cover quality.
+      Clean, readable letterforms.
+      Correct spelling is critical.
+      Do not distort letters.
+      Do not add extra words.
+      No other text anywhere on the cover.
+
+      Do NOT draw placeholder boxes or frames.
+      Do NOT draw fake lettering or symbols.
+
   back:
     title: 'Back Cover Art'
     prefix: 'cover'
@@ -248,7 +413,7 @@ front_matter:
     overlays:
       - type: 'text'
         style: 'dedication'
-        content: "For {{ human_01 }} & {{ human_02 }}—\nmay your imaginations always soar."
+        content: '{{ dedication_text }}'
         region_pct: { x: 15, y: 38, w: 70, h: 24 }
 
 # ============================================================
@@ -277,6 +442,21 @@ scenes:
       ears pinned back, tail a blur.
       Strange plants and distant mountains glow on the other side.
 
+    no_pet_prompt: |
+
+      SCENE:
+      {{ human_02 }} has both feet planted through the portal and is hauling
+      {{ human_01 }} forward by the hand, leaning back with all her weight.
+      {{ human_01 }}'s free arm trails behind, fingers splayed wide, heels dragging.
+      Strange plants and distant mountains glow on the other side.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      {{ human_01 }} stands at the swirling portal, one foot already through,
+      leaning forward with arms wide, eyes full of wonder.
+      Strange plants and distant mountains glow on the other side.
+
   - page: 3
     title: 'Dragon Hatchling'
     prompt: |
@@ -286,6 +466,29 @@ scenes:
       The hatchling looks curious and friendly.
       {{ human_01 }} & {{ human_02 }} kneel down to get a closer look,
       while {{ companion }} watches closely.
+
+    single_child_prompt: |
+
+      SCENE:
+      One baby dragon peeks out from a cracked shell.
+      The hatchling looks curious and friendly.
+      {{ human_01 }} kneels down to get a closer look,
+      while {{ companion }} watches closely.
+
+    no_pet_prompt: |
+
+      SCENE:
+      One baby dragon peeks out from a cracked shell.
+      The hatchling looks curious and friendly.
+      {{ human_01 }} & {{ human_02 }} kneel down to get a closer look,
+      faces full of wonder.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      One baby dragon peeks out from a cracked shell.
+      The hatchling looks curious and friendly.
+      {{ human_01 }} kneels down to get a closer look, face full of wonder.
 
   - page: 4
     title: 'The Grateful Hatchling'
@@ -298,6 +501,33 @@ scenes:
       One child laughs while the other pets the dragon's head.
       {{ companion }} stands nearby wagging excitedly.
       Broken vines lie on the ground.
+
+    single_child_prompt: |
+
+      SCENE:
+      The baby dragon has just been freed from tangled forest vines.
+      The dragon happily nuzzles against {{ human_01 }},
+      who wraps both arms around the small dragon laughing.
+      {{ companion }} stands nearby wagging excitedly.
+      Broken vines lie on the ground.
+
+    no_pet_prompt: |
+
+      SCENE:
+      The baby dragon has just been freed from tangled forest vines.
+      The dragon happily nuzzles against them
+      as the children gently hug the small dragon.
+      One child laughs while the other pets the dragon's head.
+      Broken vines lie on the ground.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      The baby dragon has just been freed from tangled forest vines.
+      The dragon happily nuzzles against {{ human_01 }},
+      who wraps both arms around the small dragon laughing.
+      Broken vines lie on the ground.
+
   - page: 5
     title: 'Dragon Training'
     prompt: |
@@ -306,6 +536,24 @@ scenes:
       {{ human_01 }} stands with arms raised as the baby dragon flies toward them.
       {{ human_02 }} crouches nearby watching.
       {{ companion }} runs beneath the dragon.
+
+    single_child_prompt: |
+
+      SCENE:
+      {{ human_01 }} stands with arms raised as the baby dragon flies toward them.
+      {{ companion }} runs beneath the dragon.
+
+    no_pet_prompt: |
+
+      SCENE:
+      {{ human_01 }} stands with arms raised as the baby dragon flies toward them.
+      {{ human_02 }} crouches nearby watching.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      {{ human_01 }} stands with arms raised as the baby dragon flies toward them,
+      laughing with delight.
 
   - page: 6
     title: 'The Forest Guardian'
@@ -317,6 +565,29 @@ scenes:
       The baby dragon stands beside them.
       {{ human_02 }} stays just behind {{ human_01 }}.
       {{ companion }} stands close at their feet.
+
+    single_child_prompt: |
+
+      SCENE:
+      A large forest dragon stands between tall trees watching them.
+      {{ human_01 }} reaches one hand out toward the dragon.
+      The baby dragon stands beside them.
+      {{ companion }} stands close at their feet.
+
+    no_pet_prompt: |
+
+      SCENE:
+      A large forest dragon stands between tall trees watching them.
+      {{ human_01 }} reaches one hand out toward the dragon.
+      The baby dragon stands beside them.
+      {{ human_02 }} stays just behind {{ human_01 }}.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      A large forest dragon stands between tall trees watching them.
+      {{ human_01 }} reaches one hand out toward the dragon.
+      The baby dragon stands beside them.
 
   - page: 7
     title: 'Preparing for Adventure'
@@ -333,6 +604,18 @@ scenes:
       {{ human_01 }} fastens a simple piece of armor while the baby dragon stands beside them.
       {{ companion }} stands at their feet.
 
+    no_pet_prompt: |
+
+      SCENE:
+      {{ human_01 }} fastens a simple piece of armor while standing beside the baby dragon.
+      {{ human_02 }} holds a small pack of supplies.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      {{ human_01 }} fastens a simple piece of armor while the baby dragon stands beside them,
+      watching with curious eyes.
+
   - page: 8
     title: 'The Sky Bridge'
     prompt: |
@@ -341,6 +624,26 @@ scenes:
       arms out for balance, one foot testing each stone.
       {{ human_02 }} crouches behind, peering through the gaps at the clouds swirling far below.
       {{ companion }} scrambles forward on the bridge, claws scrabbling on the stone, nose to the edge.
+      The young dragon swoops low overhead, neck craning back to check on them.
+
+    single_child_prompt: |
+      SCENE:
+      {{ human_01 }} edges across a floating stone bridge,
+      arms out for balance, one foot testing each stone.
+      {{ companion }} scrambles forward on the bridge, claws scrabbling on the stone, nose to the edge.
+      The young dragon swoops low overhead, neck craning back to check on them.
+
+    no_pet_prompt: |
+      SCENE:
+      {{ human_01 }} edges across a floating stone bridge,
+      arms out for balance, one foot testing each stone.
+      {{ human_02 }} crouches behind, peering through the gaps at the clouds swirling far below.
+      The young dragon swoops low overhead, neck craning back to check on them.
+
+    single_child_no_companion_prompt: |
+      SCENE:
+      {{ human_01 }} edges across a floating stone bridge,
+      arms out for balance, one foot testing each stone.
       The young dragon swoops low overhead, neck craning back to check on them.
 
   - page: 9
@@ -353,6 +656,35 @@ scenes:
       shouting into the wind.
       {{ human_02 }} crouches low behind the young dragon, hands on its side, peeking around its shoulder.
       {{ companion }} barks up at the storm, front paws raised off the ground.
+      A powerful thunder dragon banks hard across the sky above,
+      lightning crackling around its wings.
+
+    single_child_prompt: |
+
+      SCENE:
+      Storm clouds churn above a rocky hill.
+      {{ human_01 }} plants both feet wide and throws both arms up toward the sky,
+      shouting into the wind.
+      {{ companion }} barks up at the storm, front paws raised off the ground.
+      A powerful thunder dragon banks hard across the sky above,
+      lightning crackling around its wings.
+
+    no_pet_prompt: |
+
+      SCENE:
+      Storm clouds churn above a rocky hill.
+      {{ human_01 }} plants both feet wide and throws both arms up toward the sky,
+      shouting into the wind.
+      {{ human_02 }} crouches low behind the young dragon, hands on its side, peeking around its shoulder.
+      A powerful thunder dragon banks hard across the sky above,
+      lightning crackling around its wings.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      Storm clouds churn above a rocky hill.
+      {{ human_01 }} plants both feet wide and throws both arms up toward the sky,
+      shouting into the wind.
       A powerful thunder dragon banks hard across the sky above,
       lightning crackling around its wings.
 
@@ -370,6 +702,36 @@ scenes:
       equally stunned and amazed.
       {{ companion }} sits frozen between their feet, staring straight up, ears perked forward.
 
+    single_child_prompt: |
+
+      SCENE:
+      Before a massive ancient stone gate covered in carved dragon runes,
+      an enormous ancient dragon rests with its wings folded,
+      head lowered slowly toward the ground as if greeting them.
+      The dragon is so large its head alone fills most of the frame above the child.
+      {{ human_01 }} stands completely still, head tilted all the way back, mouth open in awe.
+      {{ companion }} sits frozen at their feet, staring straight up, ears perked forward.
+
+    no_pet_prompt: |
+
+      SCENE:
+      Before a massive ancient stone gate covered in carved dragon runes,
+      an enormous ancient dragon rests with its wings folded,
+      head lowered slowly toward the ground as if greeting them.
+      The dragon is so large its head alone fills most of the frame above the children.
+      {{ human_01 }} stands completely still, head tilted all the way back, mouth open in awe.
+      {{ human_02 }} grabs {{ human_01 }}'s arm with both hands, leaning into them,
+      equally stunned and amazed.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      Before a massive ancient stone gate covered in carved dragon runes,
+      an enormous ancient dragon rests with its wings folded,
+      head lowered slowly toward the ground as if greeting them.
+      The dragon is so large its head alone fills most of the frame above the child.
+      {{ human_01 }} stands completely still, head tilted all the way back, mouth open in awe.
+
   - page: 11
     title: 'Frostfall Peaks'
     prompt: |
@@ -380,6 +742,26 @@ scenes:
       {{ human_01 }} stands just behind.
       {{ companion }} stands at their feet.
 
+    single_child_prompt: |
+
+      SCENE:
+      A majestic ice dragon stands on a frozen ridge above.
+      {{ human_01 }} steps up onto an icy ledge reaching a hand toward it.
+      {{ companion }} stands at their feet.
+
+    no_pet_prompt: |
+
+      SCENE:
+      A majestic ice dragon stands on a frozen ridge above.
+      {{ human_02 }} steps up onto an icy ledge reaching a hand toward it.
+      {{ human_01 }} stands just behind.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      A majestic ice dragon stands on a frozen ridge above.
+      {{ human_01 }} steps up onto an icy ledge reaching a hand toward it.
+
   - page: 12
     title: 'The Ocean Dragon'
     prompt: |
@@ -388,6 +770,25 @@ scenes:
       A wave crashes onto the shore as {{ human_01 }} leaps back laughing.
       {{ human_02 }} kneels at the water's edge reaching toward an ocean dragon rising from the surf.
       {{ companion }} runs away from the wave.
+
+    single_child_prompt: |
+
+      SCENE:
+      A wave crashes onto the shore as {{ human_01 }} leaps back laughing.
+      {{ human_01 }} then kneels at the water's edge reaching toward an ocean dragon rising from the surf.
+      {{ companion }} runs away from the wave.
+
+    no_pet_prompt: |
+
+      SCENE:
+      A wave crashes onto the shore as {{ human_01 }} leaps back laughing.
+      {{ human_02 }} kneels at the water's edge reaching toward an ocean dragon rising from the surf.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      A wave crashes onto the shore as {{ human_01 }} leaps back laughing.
+      {{ human_01 }} then kneels at the water's edge reaching toward an ocean dragon rising from the surf.
 
   - page: 13
     title: 'Rest and Recuperate'
@@ -398,6 +799,25 @@ scenes:
       The baby dragon rests close beside them.
       {{ companion }} lies nearby.
 
+    single_child_prompt: |
+
+      SCENE:
+      {{ human_01 }} sits beside their dragon friend in an open clearing.
+      The baby dragon rests close beside them.
+      {{ companion }} lies nearby.
+
+    no_pet_prompt: |
+
+      SCENE:
+      {{ human_01 }} & {{ human_02 }} sit beside their dragon friend in an open clearing.
+      The baby dragon rests close beside them.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      {{ human_01 }} sits beside their dragon friend in an open clearing.
+      The baby dragon rests close beside them.
+
   - page: 14
     title: 'Dragon Flight'
     prompt: |
@@ -405,6 +825,23 @@ scenes:
       SCENE:
       {{ human_01 }} & {{ human_02 }} ride together on their dragon friend high in the sky.
       {{ companion }} runs far below.
+
+    single_child_prompt: |
+
+      SCENE:
+      {{ human_01 }} rides on their dragon friend high in the sky.
+      {{ companion }} runs far below.
+
+    no_pet_prompt: |
+
+      SCENE:
+      {{ human_01 }} & {{ human_02 }} ride together on their dragon friend high in the sky.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      {{ human_01 }} rides on their dragon friend high in the sky,
+      arms wide, wind in their hair.
 
   - page: 15
     title: 'The Dragon Festival'
@@ -414,6 +851,26 @@ scenes:
       In a wide valley, {{ human_01 }} runs toward a small dragon with arms open.
       {{ human_02 }} stands nearby watching.
       {{ companion }} runs beside them.
+      A few dragons gather in the background.
+
+    single_child_prompt: |
+
+      SCENE:
+      In a wide valley, {{ human_01 }} runs toward a small dragon with arms open.
+      {{ companion }} runs beside them.
+      A few dragons gather in the background.
+
+    no_pet_prompt: |
+
+      SCENE:
+      In a wide valley, {{ human_01 }} runs toward a small dragon with arms open.
+      {{ human_02 }} stands nearby watching.
+      A few dragons gather in the background.
+
+    single_child_no_companion_prompt: |
+
+      SCENE:
+      In a wide valley, {{ human_01 }} runs toward a small dragon with arms open.
       A few dragons gather in the background.
 
   - page: 16
@@ -428,3 +885,30 @@ scenes:
       {{ human_02 }} has one hand on the dragon's cheek and one foot already
       stepping backward into the portal, not yet ready to let go.
       {{ companion }} sits pressed against the dragon's jaw, tail still.
+
+    single_child_prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      Back at the glowing portal, the dragon lowers its head all the way to the ground,
+      pressing its snout gently against {{ human_01 }}'s cheek.
+      {{ human_01 }} wraps both arms around the dragon's nose, eyes shut tight.
+      {{ companion }} sits pressed against the dragon's jaw, tail still.
+
+    no_pet_prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      Back at the glowing portal, the dragon lowers its head all the way to the ground,
+      pressing its snout gently against {{ human_01 }}'s cheek.
+      {{ human_01 }} wraps both arms around the dragon's nose, eyes shut tight.
+      {{ human_02 }} has one hand on the dragon's cheek and one foot already
+      stepping backward into the portal, not yet ready to let go.
+
+    single_child_no_companion_prompt: |
+      {{ globals.base_scene_header }}
+
+      SCENE:
+      Back at the glowing portal, the dragon lowers its head all the way to the ground,
+      pressing its snout gently against {{ human_01 }}'s cheek.
+      {{ human_01 }} wraps both arms around the dragon's nose, eyes shut tight.

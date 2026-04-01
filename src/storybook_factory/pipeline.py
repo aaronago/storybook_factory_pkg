@@ -349,7 +349,9 @@ def _ensure_prompt_images(
         if isinstance(page_num, int):
             page_title = f"{title} (page {page_num})"
 
-        optimized = optimizer.optimize(raw_prompt, page_title=page_title)
+        optimized = optimizer.optimize(
+            raw_prompt, page_title=page_title, kind=kind_label
+        )
 
         # Checking if raw_prompt already contains REFERENCES to avoid double-injection
         if use_refs and ref_sheets and "REFERENCES:" not in raw_prompt:
@@ -607,6 +609,7 @@ def run_pipeline(
     image_quality: str = "standard",
     ref_description_string: str = "",
     output_format: str = "download",
+    sorted_ref_paths: list[Path] | None = None,
 ) -> dict[str, Any]:
     """
     Pipeline expects config_dir contains:
@@ -705,91 +708,101 @@ def run_pipeline(
     char_names = page_prompts.get("character_names", [])
     character_roles: dict[str, str] = page_prompts.get("character_roles", {})
 
-    if not char_names:
-        print("[pipeline] Warning: No character_names found in page_prompts.json")
-        # Fallback to subdirs if for some reason character_names isn't in JSON
-        chars_root = assets_dir / "characters"
-        if chars_root.exists():
-            subdirs = [d.name for d in chars_root.iterdir() if d.is_dir()]
-            if subdirs:
-                char_names = [d.capitalize() for d in subdirs]
-
-    if not char_names:
-        print("[pipeline] Error: No character names could be found. Sorting will fail.")
-
-    # real_names is what Gemini needs to identify images; role names are used for labels
-    real_names = list(character_roles.keys()) if character_roles else char_names
-
-    if not ref_description_string:
-        print("[pipeline] ref_description_string is empty, initiating sort...")
-        chars_root = assets_dir / "characters"
-
-        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
-        all_refs = []
-        if chars_root.exists():
-            all_refs = sorted(
-                [
-                    p
-                    for p in chars_root.rglob("*")
-                    if p.suffix.lower() in image_extensions
-                ]
-            )
-
-        print(f"[pipeline] Found {len(all_refs)} reference images in {chars_root}")
-
-        if all_refs and real_names:
-            from .image_sorter import GeminiImageSorter
-
-            try:
-                sorter = GeminiImageSorter()
-                res_string, res_sheets = sorter.get_reference_mapping(
-                    all_refs,
-                    real_names,
-                    style_ref_dir=assets_dir / "style_reference",
-                    character_roles=character_roles or None,
-                )
-                ref_description_string = res_string
-                ref_sheets = res_sheets
-            except Exception as e:
-                print(
-                    f"[pipeline] Warning: Gemini sorter failed: {e}. No references attached."
-                )
-                ref_sheets = []
+    # If the caller already sorted refs (e.g. process-order), use them directly
+    # and skip all re-sorting so we never accidentally pull from assets/characters/.
+    if sorted_ref_paths is not None:
+        ref_sheets = sorted_ref_paths
+        if not ref_description_string:
+            ref_description_string = page_prompts.get("ref_description_string", "")
+        print(f"[pipeline] Using {len(ref_sheets)} pre-sorted ref(s) from caller.")
     else:
-        print(
-            f"[pipeline] ref_description_string already exists: {ref_description_string[:50]}..."
-        )
-        # Re-sort to recover correct Path order matching the existing index-based prompt
-        chars_root = assets_dir / "characters"
+        if not char_names:
+            print("[pipeline] Warning: No character_names found in page_prompts.json")
+            # Fallback to subdirs if for some reason character_names isn't in JSON
+            chars_root = assets_dir / "characters"
+            if chars_root.exists():
+                subdirs = [d.name for d in chars_root.iterdir() if d.is_dir()]
+                if subdirs:
+                    char_names = [d.capitalize() for d in subdirs]
 
-        image_extensions = (".png", ".jpg", ".jpeg", ".webp")
-        all_refs = []
-        if chars_root.exists():
-            all_refs = sorted(
-                [
-                    p
-                    for p in chars_root.rglob("*")
-                    if p.suffix.lower() in image_extensions
-                ]
+        if not char_names:
+            print(
+                "[pipeline] Error: No character names could be found. Sorting will fail."
             )
 
-        if all_refs and real_names:
-            from .image_sorter import GeminiImageSorter
+        # real_names is what Gemini needs to identify images; role names are used for labels
+        real_names = list(character_roles.keys()) if character_roles else char_names
 
-            try:
-                sorter = GeminiImageSorter()
-                _, ref_sheets = sorter.get_reference_mapping(
-                    all_refs,
-                    real_names,
-                    style_ref_dir=assets_dir / "style_reference",
-                    character_roles=character_roles or None,
+        if not ref_description_string:
+            print("[pipeline] ref_description_string is empty, initiating sort...")
+            chars_root = assets_dir / "characters"
+
+            image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+            all_refs = []
+            if chars_root.exists():
+                all_refs = sorted(
+                    [
+                        p
+                        for p in chars_root.rglob("*")
+                        if p.suffix.lower() in image_extensions
+                    ]
                 )
-                print(
-                    f"[pipeline] Re-sort complete. Found {len(ref_sheets)} identified images."
+
+            print(f"[pipeline] Found {len(all_refs)} reference images in {chars_root}")
+
+            if all_refs and real_names:
+                from .image_sorter import GeminiImageSorter
+
+                try:
+                    sorter = GeminiImageSorter()
+                    res_string, res_sheets = sorter.get_reference_mapping(
+                        all_refs,
+                        real_names,
+                        style_ref_dir=assets_dir / "style_reference",
+                        character_roles=character_roles or None,
+                    )
+                    ref_description_string = res_string
+                    ref_sheets = res_sheets
+                except Exception as e:
+                    print(
+                        f"[pipeline] Warning: Gemini sorter failed: {e}. No references attached."
+                    )
+                    ref_sheets = []
+        else:
+            print(
+                f"[pipeline] ref_description_string already exists: {ref_description_string[:50]}..."
+            )
+            # Re-sort to recover correct Path order matching the existing index-based prompt
+            chars_root = assets_dir / "characters"
+
+            image_extensions = (".png", ".jpg", ".jpeg", ".webp")
+            all_refs = []
+            if chars_root.exists():
+                all_refs = sorted(
+                    [
+                        p
+                        for p in chars_root.rglob("*")
+                        if p.suffix.lower() in image_extensions
+                    ]
                 )
-            except Exception as e:
-                print(f"[pipeline] Warning: Gemini sorter failed: {e}.")
-                ref_sheets = []
+
+            if all_refs and real_names:
+                from .image_sorter import GeminiImageSorter
+
+                try:
+                    sorter = GeminiImageSorter()
+                    _, ref_sheets = sorter.get_reference_mapping(
+                        all_refs,
+                        real_names,
+                        style_ref_dir=assets_dir / "style_reference",
+                        character_roles=character_roles or None,
+                    )
+                    print(
+                        f"[pipeline] Re-sort complete. Found {len(ref_sheets)} identified images."
+                    )
+                except Exception as e:
+                    print(f"[pipeline] Warning: Gemini sorter failed: {e}.")
+                    ref_sheets = []
 
     overlay_styles = _build_overlay_styles(page_prompts)
     overlays_enabled = not bool(pipeline_cfg.get("disable_overlays", True))
