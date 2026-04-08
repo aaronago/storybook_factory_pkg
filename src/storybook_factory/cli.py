@@ -459,11 +459,13 @@ def main():
         config_dir = order_dir / "config"
         output_dir = order_dir / "out"
         assets_dir = Path(args.assets_dir).resolve()
-        theme_path = (
-            Path(__file__).resolve().parent.parent
-            / "scene_packs"
-            / f"{(_yaml.safe_load(brief_path.read_text()) or {}).get('theme', '')}.yaml"
-        )
+        _theme_name = (_yaml.safe_load(brief_path.read_text()) or {}).get("theme", "")
+        _scene_packs_root = Path(__file__).resolve().parent.parent / "scene_packs"
+        # Support both flat (scene_packs/dragon_realm.yaml) and
+        # subdirectory (scene_packs/dragon_realm/dragon_realm.yaml) layouts.
+        theme_path = _scene_packs_root / f"{_theme_name}.yaml"
+        if not theme_path.exists():
+            theme_path = _scene_packs_root / _theme_name / f"{_theme_name}.yaml"
 
         if not theme_path.exists():
             print(f"Scene pack not found: {theme_path}")
@@ -471,11 +473,6 @@ def main():
 
         # ── Step 1: sort character photos via Gemini ──────────────────────────
         image_extensions = (".png", ".jpg", ".jpeg", ".webp")
-        all_refs = sorted(
-            p
-            for p in chars_root.iterdir()
-            if p.is_file() and p.suffix.lower() in image_extensions
-        )
 
         _brief_raw = _yaml.safe_load(brief_path.read_text()) or {}
         char_roles: list[str] = []
@@ -493,28 +490,100 @@ def main():
         ref_description_string = ""
         sorted_ref_paths: list[Path] = []
 
-        if all_refs and char_roles:
-            print(f"[{args.order_id}] Sorting {len(all_refs)} photo(s) with Gemini...")
-            try:
-                sorter = GeminiImageSorter()
-                ref_description_string, sorted_ref_paths = sorter.get_reference_mapping(
-                    all_refs,
-                    char_roles,
-                    style_ref_dir=assets_dir / "style_reference",
-                    character_descs=char_descs,
+        # Check if photos are pre-organised into per-role subfolders
+        # e.g. characters/human_01/*.jpg, characters/human_02/*.jpg
+        # If so, skip Gemini sorting entirely — use the folder layout as ground truth.
+        pre_sorted: dict[str, list[Path]] = {}
+        for role in char_roles:
+            role_dir = chars_root / role
+            if role_dir.is_dir():
+                role_photos = sorted(
+                    p
+                    for p in role_dir.iterdir()
+                    if p.is_file() and p.suffix.lower() in image_extensions
                 )
-                for i, p in enumerate(sorted_ref_paths):
-                    print(f"  [{i+1}] {p.name}")
-                print()
-            except Exception as e:
-                print(f"  Warning: Gemini sorter failed: {e}. Continuing without refs.")
-                ref_description_string = ""
-                sorted_ref_paths = []
+                if role_photos:
+                    pre_sorted[role] = role_photos
+
+        if pre_sorted:
+            # Build refs directly from subfolders — no Gemini call needed
+            print(
+                f"[{args.order_id}] Using pre-sorted character subfolders (skipping Gemini sort)."
+            )
+            style_ref_dir = assets_dir / "style_reference"
+            style_refs = (
+                sorted(
+                    p
+                    for p in style_ref_dir.iterdir()
+                    if p.is_file() and p.suffix.lower() in image_extensions
+                )
+                if style_ref_dir.exists()
+                else []
+            )
+
+            sorted_ref_paths = list(style_refs)
+            current_idx = 1
+            from collections import defaultdict
+
+            char_to_ids: dict[str, list[str]] = defaultdict(list)
+            for _p in style_refs:
+                char_to_ids["style_reference"].append(f"[{current_idx}]")
+                current_idx += 1
+            for role in char_roles:
+                for p in pre_sorted.get(role, []):
+                    sorted_ref_paths.append(p)
+                    char_to_ids[role].append(f"[{current_idx}]")
+                    current_idx += 1
+
+            lines = []
+            if "style_reference" in char_to_ids:
+                lines.append(
+                    f"style_reference: {', '.join(char_to_ids['style_reference'])}"
+                )
+            for role in char_roles:
+                if role in char_to_ids:
+                    lines.append(f"{role}: {', '.join(char_to_ids[role])}")
+            ref_description_string = "REFERENCES: " + "\n".join(lines)
+
+            for i, p in enumerate(sorted_ref_paths):
+                print(f"  [{i+1}] {p.name}")
+            print()
         else:
-            if not all_refs:
+            # Fall back to flat folder + Gemini sorting
+            all_refs = sorted(
+                p
+                for p in chars_root.iterdir()
+                if p.is_file() and p.suffix.lower() in image_extensions
+            )
+
+            if all_refs and char_roles:
                 print(
-                    f"[{args.order_id}] No photos in {chars_root} — generating without character refs."
+                    f"[{args.order_id}] Sorting {len(all_refs)} photo(s) with Gemini..."
                 )
+                try:
+                    sorter = GeminiImageSorter()
+                    ref_description_string, sorted_ref_paths = (
+                        sorter.get_reference_mapping(
+                            all_refs,
+                            char_roles,
+                            style_ref_dir=assets_dir / "style_reference",
+                            character_descs=char_descs,
+                        )
+                    )
+                    for i, p in enumerate(sorted_ref_paths):
+                        print(f"  [{i+1}] {p.name}")
+                    print()
+                except Exception as e:
+                    print(
+                        f"  Warning: Gemini sorter failed: {e}. Continuing without refs."
+                    )
+                    ref_description_string = ""
+                    sorted_ref_paths = []
+            else:
+                if not all_refs:
+                    print(
+                        f"[{args.order_id}] No photos in {chars_root} — generating without character refs."
+                    )
 
         # ── Step 2: brief2json ────────────────────────────────────────────────
         print(f"[{args.order_id}] Generating page prompts...")
@@ -590,11 +659,12 @@ def main():
     if args.command == "brief2json":
         brief_path = Path(args.brief)
         theme_name = args.theme
-        theme_path = (
-            Path(__file__).resolve().parent.parent
-            / "scene_packs"
-            / f"{theme_name}.yaml"
-        )
+        _scene_packs_root = Path(__file__).resolve().parent.parent / "scene_packs"
+        # Support both flat (scene_packs/dragon_realm.yaml) and
+        # subdirectory (scene_packs/dragon_realm/dragon_realm.yaml) layouts.
+        theme_path = _scene_packs_root / f"{theme_name}.yaml"
+        if not theme_path.exists():
+            theme_path = _scene_packs_root / theme_name / f"{theme_name}.yaml"
 
         if not theme_path.exists():
             print(f"Scene pack not found: {theme_path}")

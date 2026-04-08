@@ -1,0 +1,16 @@
+{
+  "trim_in": {
+    "w": 8.5,
+    "h": 11.0
+  },
+  "dpi": 300,
+  "interior_pixels": {
+    "w": 2550,
+    "h": 3300
+  },
+  "cover_pixels": {
+    "w": 2588,
+    "h": 3375
+  },
+  "project_title": "Custom Storybook"
+}

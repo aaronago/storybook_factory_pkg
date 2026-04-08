@@ -100,8 +100,7 @@ def _ensure_cover_image(
     Ensure cover image exists (front/back). Applies overlays (RGB) after generation.
 
     Conventions:
-      - front cover uses reference sheets (identity/style anchoring)
-      - back cover does NOT use refs (keeps it generic)
+      - both front and back covers use reference sheets (identity/style anchoring)
     """
     fname = item.get("file")
     raw_prompt = item.get("prompt", "")
@@ -147,8 +146,8 @@ def _ensure_cover_image(
         raw_prompt, page_title=f"{title} ({key})", kind="cover"
     )
 
-    # Use refs only for front cover (keeps back generic)
-    use_refs = key.lower() == "front"
+    # Use refs for both front and back covers
+    use_refs = True
     if use_refs and ref_sheets:
         ref_msg = "\n\nUse the attached character sheet reference images as the canonical identity and style."
         if ref_description_string:
@@ -181,7 +180,8 @@ def _ensure_cover_image(
             "kind": "cover",
             "key": key,
             "title": title,
-            "prompt": optimized,
+            "prompt_optimized": optimized,
+            "prompt_sent_to_model": provider.last_prompt,
             "selected": "first",
             "num_candidates": len(cands),
             "candidates": [c.name for c in cands],

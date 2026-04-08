@@ -1,0 +1,12 @@
+{
+  "kind": "interior",
+  "page": 8,
+  "title": "The Sky Bridge",
+  "prompt_optimized": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\ncompanion: [5], [6]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 tiptoes across a narrow floating stone bridge high above the clouds, arms out for balance.\ncompanion scrambles ahead, tail straight up.\nA dragon flies alongside the bridge, keeping pace with them.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "prompt_sent_to_model": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\ncompanion: [5], [6]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 tiptoes across a narrow floating stone bridge high above the clouds, arms out for balance.\ncompanion scrambles ahead, tail straight up.\nA dragon flies alongside the bridge, keeping pace with them.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_08_the-sky-bridge__cand00.png"
+  ]
+}

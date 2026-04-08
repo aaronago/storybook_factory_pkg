@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -300,7 +301,7 @@ def _ensure_prompt_images(
 
         if not fname:
             raise ValueError(f"{kind_label} item missing 'file': {item}")
-        if not raw_prompt:
+        if not raw_prompt and not item.get("source_image"):
             raise ValueError(f"{kind_label} item missing 'prompt': {item}")
 
         final_path = images_dir / fname
@@ -314,6 +315,27 @@ def _ensure_prompt_images(
                 force_grayscale=True,
             )
             print(f"[pipeline] skipping existing {kind_label} image: {fname}")
+            continue
+
+        # If a pre-made template image is specified, copy it in instead of generating.
+        source_image = item.get("source_image")
+        if source_image:
+            src = Path(source_image)
+            if not src.is_absolute():
+                src = (Path.cwd() / src).resolve()
+            if not src.exists():
+                raise FileNotFoundError(
+                    f"source_image not found for {kind_label} '{fname}': {src}"
+                )
+            shutil.copy2(src, final_path)
+            print(f"[pipeline] copied template for {kind_label}: {fname}")
+            _apply_item_overlays_if_any(
+                images_dir=images_dir,
+                item=item,
+                overlay_styles=overlay_styles,
+                overlays_enabled=overlays_enabled,
+                force_grayscale=False,  # keep template colours
+            )
             continue
 
         if image_provider_mode == "folder":
@@ -390,7 +412,8 @@ def _ensure_prompt_images(
                 "kind": kind_label,
                 "page": page_num,
                 "title": title,
-                "prompt": optimized,
+                "prompt_optimized": optimized,
+                "prompt_sent_to_model": provider.last_prompt,
                 "selected": "first",
                 "num_candidates": len(cands),
                 "candidates": [c.name for c in cands],

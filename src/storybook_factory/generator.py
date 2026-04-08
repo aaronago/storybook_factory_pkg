@@ -218,7 +218,8 @@ def _build_prompt_item(
 
     if not isinstance(title, str) or not title.strip():
         raise ValueError(f"{kind} item missing non-empty 'title': {item}")
-    if not isinstance(prompt_t, str) or not prompt_t.strip():
+    has_source_image = bool(item.get("source_image"))
+    if not has_source_image and (not isinstance(prompt_t, str) or not prompt_t.strip()):
         raise ValueError(f"{kind} item missing non-empty 'prompt': {item}")
 
     page_val = item.get("page")
@@ -236,8 +237,12 @@ def _build_prompt_item(
     include_safety = bool(item.get("include_safety", defaults.include_safety))
 
     # Render the scene template (which can reference {{ globals.* }}) with multi-pass support
-    rendered = _render_template_multipass(str(prompt_t), ctx, passes=3)
-    rendered = _strip_leading_scene_label(rendered).strip()
+    # source_image items have no prompt to render.
+    if prompt_t:
+        rendered = _render_template_multipass(str(prompt_t), ctx, passes=3)
+        rendered = _strip_leading_scene_label(rendered).strip()
+    else:
+        rendered = ""
 
     # Support for explicit prompt blocks (REFERENCES, TASK, STYLE, COMPOSITION, SCENE)
     ref_desc = str(ctx.get("ref_description_string") or "").strip()
@@ -290,6 +295,11 @@ def _build_prompt_item(
 
     if page is not None:
         out["page"] = page
+
+    # Pass-through source_image (template file path) if present
+    source_image = item.get("source_image")
+    if source_image is not None:
+        out["source_image"] = str(source_image)
 
     # Pass-through overlays (YAML -> JSON) + TEMPLATE RENDER
 
