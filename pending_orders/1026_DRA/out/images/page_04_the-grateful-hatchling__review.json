@@ -1,0 +1,12 @@
+{
+  "kind": "interior",
+  "page": 4,
+  "title": "The Grateful Hatchling",
+  "prompt_optimized": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\ncompanion: [5], [6]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 hugs a baby dragon, pulling away the last of the tangled vines.\nThe baby dragon nuzzles happily against them.\ncompanion wags excitedly beside them.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.",
+  "prompt_sent_to_model": "STYLE ANCHOR: Use this image ONLY for line-weight, stroke style, and coloring book aesthetic.\n---\n[image: 8dad8687-22c7-46dc-bb30-9e1e6805cb55.jpg]\n---\nCRITICAL: Do NOT copy the children's faces or identities from the image above.\n---\nNEW CHARACTER IDENTITY: Use the images below ONLY for the facial features, hair, and likeness of the characters.\n---\nIdentity Reference for human_01:\n---\n[image: kid1.jpeg]\n---\nIdentity Reference for companion:\n---\n[image: kid2.jpg]\n---\nIdentity Reference for Outfit:\n---\n[image: kid3.jpg]\n---\nIdentity Reference for GLOBAL SAFETY (IMPORTANT):\n---\n[image: dog1.jpg]\n---\nIdentity Reference for character_5:\n---\n[image: dog2.jpeg]\n---\nSCENE INSTRUCTIONS:\nREFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\ncompanion: [5], [6]\nOutfit: simple medieval fantasy adventure clothing, not modern clothing\n\nhuman_01 hugs a baby dragon, pulling away the last of the tangled vines.\nThe baby dragon nuzzles happily against them.\ncompanion wags excitedly beside them.\n\nGLOBAL SAFETY (IMPORTANT):\n- No words, letters, symbols, or text of any kind anywhere in the image.\n\nFINAL REMINDER: The characters MUST look like the 'NEW CHARACTER IDENTITY' images, NOT the 'STYLE ANCHOR' image.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_04_the-grateful-hatchling__cand00.png"
+  ]
+}

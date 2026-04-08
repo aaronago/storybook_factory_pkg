@@ -1,0 +1,53 @@
+{
+  "visual_bible_version": "1.5",
+  "project": "Custom Storybook",
+  "character_names": [
+    "human_01",
+    "human_02"
+  ],
+  "ref_description_string": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3], [4]\nhuman_02: [5], [6], [7]",
+  "page_format": {
+    "trim_in": {
+      "w": 8.5,
+      "h": 11.0
+    },
+    "bleed_in": 0.125,
+    "dpi": 300,
+    "pixels": {
+      "w": 2550,
+      "h": 3300
+    },
+    "orientation": "portrait"
+  },
+  "cast": {
+    "child_descs": [
+      "5yo girl, medium-length wavy dirty-blonde hair, dark brown eyes, gap-toothed smile",
+      "3yo girl named Maeve, light blonde hair, round cheeks, blue eyes, big wide smile"
+    ],
+    "pet_descs": []
+  },
+  "print_safety": {
+    "interior_bleed_in": 0.125,
+    "cover_bleed_in": 0.125,
+    "safety_margin_in": 0.5
+  },
+  "globals_keys": [
+    "base_scene_header",
+    "base_scene_header_action",
+    "base_scene_header_epic",
+    "base_scene_header_flight",
+    "base_scene_header_vertical",
+    "comp_epic_upward",
+    "comp_flight_diagonal",
+    "comp_medium_close",
+    "comp_vertical_dynamic",
+    "cover_art_style",
+    "cover_comp_rules",
+    "global_safety_rules",
+    "overlay_styles",
+    "style_action",
+    "style_classic",
+    "style_emotional",
+    "style_line_art"
+  ]
+}
