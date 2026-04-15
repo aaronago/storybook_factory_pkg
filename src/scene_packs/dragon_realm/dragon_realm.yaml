@@ -556,28 +556,30 @@ scenes:
     prompt: |
 
       SCENE:
-      {{ human_01 }} points firmly at a rock and the baby dragon lands on it obediently, looking proud.
-      {{ human_02 }} holds up a fish as a reward, grinning.
-      {{ companion }} sits at attention watching like a very serious assistant trainer.
+      The baby dragon hovers in the air, wings beating hard, having just obeyed a command to fly.
+      {{ human_01 }} pumps a fist in the air cheering, delighted it worked.
+      {{ human_02 }} claps excitedly beside them.
+      {{ companion }} barks up at the dragon encouragingly.
 
     single_child_prompt: |
 
       SCENE:
-      {{ human_01 }} points firmly at a rock and the baby dragon lands on it obediently, looking proud.
-      {{ human_01 }} holds up a fish as a reward, grinning.
-      {{ companion }} sits at attention watching like a very serious assistant trainer.
+      The baby dragon hovers in the air, wings beating hard, having just obeyed a command to fly.
+      {{ human_01 }} pumps a fist in the air cheering, delighted it worked.
+      {{ companion }} barks up at the dragon encouragingly.
 
     no_pet_prompt: |
 
       SCENE:
-      {{ human_01 }} points firmly at a rock and the baby dragon lands on it obediently, looking proud.
-      {{ human_02 }} holds up a fish as a reward, grinning.
+      The baby dragon hovers in the air, wings beating hard, having just obeyed a command to fly.
+      {{ human_01 }} pumps a fist in the air cheering, delighted it worked.
+      {{ human_02 }} claps excitedly beside them.
 
     single_child_no_companion_prompt: |
 
       SCENE:
-      {{ human_01 }} points firmly at a rock and the baby dragon lands on it obediently, looking proud.
-      {{ human_01 }} holds up a fish as a reward, grinning.
+      The baby dragon hovers in the air, wings beating hard, having just obeyed a command to fly.
+      {{ human_01 }} pumps a fist in the air cheering, delighted it worked.
 
   - page: 6
     title: 'Preparing for Adventure'

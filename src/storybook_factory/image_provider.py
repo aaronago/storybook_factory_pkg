@@ -101,6 +101,9 @@ class ImageProvider:
                 vertexai=False,
             )
 
+        # Stores the exact prompt string sent to the model on the last generate call.
+        self.last_prompt: str = ""
+
     @staticmethod
     def _normalize_px(val, name: str):
         if isinstance(val, dict):
@@ -276,11 +279,18 @@ class ImageProvider:
             if refs:
                 contents = []
 
-                # 1. STYLE ANCHOR — first ref is always the global style reference
-                contents.append(
+                STYLE_ANCHOR_TEXT = (
                     "STYLE ANCHOR: Use this image ONLY for line-weight, stroke style, "
                     "and coloring book aesthetic."
                 )
+                CRITICAL_TEXT = "CRITICAL: Do NOT copy the children's faces or identities from the image above."
+                IDENTITY_TEXT = (
+                    "NEW CHARACTER IDENTITY: Use the images below ONLY for the "
+                    "facial features, hair, and likeness of the characters."
+                )
+
+                # 1. STYLE ANCHOR — first ref is always the global style reference
+                contents.append(STYLE_ANCHOR_TEXT)
                 with open(refs[0], "rb") as f:
                     contents.append(
                         _google_types.Part.from_bytes(
@@ -292,36 +302,12 @@ class ImageProvider:
                             ),
                         )
                     )
-                contents.append(
-                    "CRITICAL: Do NOT copy the children's faces or identities from the image above."
-                )
+                contents.append(CRITICAL_TEXT)
 
                 # 2. CHARACTER IDENTITY — remaining refs are character photos.
-                # Parse role labels from the REFERENCES block already in the prompt
-                # (e.g. "human_01", "human_02", "companion") so each image is labelled
-                # with its actual role rather than a generic Human-0N index.
                 if len(refs) > 1:
-                    # Extract ordered role labels from REFERENCES block in prompt
-                    role_labels: list[str] = []
-                    for line in prompt.splitlines():
-                        line = line.strip()
-                        if line.startswith("REFERENCES:") or not line:
-                            continue
-                        # Lines look like "human_01: [2], [3]" or "companion: [4]"
-                        if ":" in line and not line.startswith("style_reference"):
-                            role_labels.append(line.split(":")[0].strip())
-
-                    contents.append(
-                        "NEW CHARACTER IDENTITY: Use the images below ONLY for the "
-                        "facial features, hair, and likeness of the characters."
-                    )
-                    for i, char_ref in enumerate(refs[1:]):
-                        label = (
-                            role_labels[i]
-                            if i < len(role_labels)
-                            else f"character_{i + 1}"
-                        )
-                        contents.append(f"Identity Reference for {label}:")
+                    contents.append(IDENTITY_TEXT)
+                    for char_ref in refs[1:]:
                         with open(char_ref, "rb") as f:
                             contents.append(
                                 _google_types.Part.from_bytes(
@@ -334,13 +320,24 @@ class ImageProvider:
                                 )
                             )
 
-                # 3. FINAL COMMAND — scene instructions + reminder
-                final_prompt = (
-                    f"SCENE INSTRUCTIONS:\n{prompt}\n\n"
-                    "FINAL REMINDER: The characters MUST look like the 'NEW CHARACTER IDENTITY' "
-                    "images, NOT the 'STYLE ANCHOR' image."
+                # 3. Scene instructions — keep REFERENCES index block intact so the
+                # model knows which numbered image maps to which character role.
+                contents.append(prompt)
+
+                # Record exact text contents sent to model (images noted by filename)
+                self.last_prompt = "\n".join(
+                    [
+                        STYLE_ANCHOR_TEXT,
+                        f"[image: {refs[0].name}]",
+                        CRITICAL_TEXT,
+                    ]
+                    + (
+                        [IDENTITY_TEXT] + [f"[image: {r.name}]" for r in refs[1:]]
+                        if len(refs) > 1
+                        else []
+                    )
+                    + [prompt]
                 )
-                contents.append(final_prompt)
 
                 response = self._google_client.models.generate_content(
                     model=clean_model,
@@ -402,6 +399,7 @@ class ImageProvider:
 
             else:
                 # Text-to-image: use generate_content for image preview models
+                self.last_prompt = prompt
                 response = self._google_client.models.generate_content(
                     model=clean_model,
                     contents=prompt,

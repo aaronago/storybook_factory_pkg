@@ -87,6 +87,32 @@ def _extract_cast(brief: dict[str, Any]) -> tuple[list[str], list[str]]:
     return child_descs, pet_descs
 
 
+def _extract_gender_age(desc: str) -> str:
+    """
+    Pull just the age and gender tokens from a character description so they
+    can be injected into the prompt even when full appearance descriptions are
+    suppressed (i.e. when reference photos are present).
+
+    e.g. '5yo girl, wavy hair, dark eyes' → '5yo girl'
+         '3-year-old boy, curly hair'      → '3-year-old boy'
+    """
+    import re
+
+    # Match patterns like "5yo girl", "3yo boy", "3-year-old girl", "5 year old boy"
+    m = re.search(
+        r"(\d+[\-\s]?(?:yo|year[s]?[\s\-]?old)?)\s*(girl|boy|child|kid)",
+        desc,
+        re.IGNORECASE,
+    )
+    if m:
+        return m.group(0).strip()
+    # Fall back to just girl/boy if no age found
+    m2 = re.search(r"\b(girl|boy)\b", desc, re.IGNORECASE)
+    if m2:
+        return m2.group(0).strip()
+    return ""
+
+
 def _join_human(names: list[str], fallback: str) -> str:
     if not names:
         return fallback
@@ -338,8 +364,19 @@ def _build_context(brief: dict[str, Any], theme: dict[str, Any]) -> dict[str, An
     outfit_hint = str(brief.get("outfit_hint", "")).strip()
 
     if has_refs:
-        # Reference build: no text appearance lines; outfit hint only if set
-        character_bible = f"Outfit: {outfit_hint}" if outfit_hint else ""
+        # Reference build: photos are authoritative for appearance.
+        # Only inject gender/age (not hair/eyes) to avoid conflicting with photos,
+        # plus outfit hint. Ages imply relative size.
+        ref_char_lines: list[str] = []
+        roles = ["human_01", "human_02"]
+        for i, desc in enumerate(child_descs):
+            role = roles[i] if i < len(roles) else f"human_0{i+1}"
+            gender_age = _extract_gender_age(desc)
+            if gender_age:
+                ref_char_lines.append(f"{role} is a {gender_age}")
+        if outfit_hint:
+            ref_char_lines.append(f"Outfit: {outfit_hint}")
+        character_bible = "\n".join(ref_char_lines)
     else:
         character_bible_lines: list[str] = []
 
