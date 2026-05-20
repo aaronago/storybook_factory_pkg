@@ -298,9 +298,9 @@ def _build_prompt_item(
     parts.append(rendered)
 
     if include_safety:
-        global_safety = str(ctx.get("global_safety_rules") or "").strip()
-        if global_safety:
-            parts.append("GLOBAL SAFETY (IMPORTANT):\n" + global_safety)
+        parts.append(
+            "NO TEXT IN IMAGE. All animals outline-only, never filled solid black."
+        )
 
     final_prompt = "\n\n".join(p for p in parts if p).strip()
 

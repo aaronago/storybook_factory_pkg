@@ -1,0 +1,12 @@
+{
+  "kind": "interior",
+  "page": 13,
+  "title": "Rest and Recuperate",
+  "prompt_optimized": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3]\nhuman_02: [4]\nhuman_01 is a 5yo boy\nOutfit: medieval fantasy clothing; child and adult dressed appropriately for their gender and age; no modern clothing\n\nhuman_01 and human_02 are fast asleep against the dragon's warm side.\nThe dragon is wide awake, watching over them.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+  "prompt_sent_to_model": "ARTISTIC DNA (IMAGE 1): Use this image ONLY for technical ink properties: line weight, stroke texture, and \"coloring book\" high-contrast aesthetic.\nSTRICT NEGATIVE CONSTRAINT: You must discard and ignore the faces, eye shapes, and hair of any children in Image 1. They are NOT the subjects of this book.\n[image: 8dad8687-22c7-46dc-bb30-9e1e6805cb55.jpg]\nBIOLOGICAL DNA (IMAGES 2\u20134): These are the CANONICAL references for the characters in this book. Replicate the exact facial geometry, eye shape, and hair texture found in these specific photos.\nCONFLICT RESOLUTION RULE: If any feature in the Style Image (Image 1) contradicts the Character Photos, the Character Photos must be followed with 100% priority.\n[image: 0641e023-5edb-4a26-9443-3cbd20ccc797.jpg]\n[image: 906bfa84-29b6-4834-9710-8fce1238ca85.jpg]\n[image: c259db50-de33-4394-8fae-b091b1028e05.jpg]\nREFERENCES: style_reference: [1]\nhuman_01: [2], [3]\nhuman_02: [4]\nhuman_01 is a 5yo boy\nOutfit: medieval fantasy clothing; child and adult dressed appropriately for their gender and age; no modern clothing\n\nhuman_01 and human_02 are fast asleep against the dragon's warm side.\nThe dragon is wide awake, watching over them.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_13_rest-and-recuperate__cand00.png"
+  ]
+}

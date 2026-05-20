@@ -1,0 +1,56 @@
+{
+  "visual_bible_version": "1.5",
+  "project": "Custom Storybook",
+  "character_names": [
+    "human_01",
+    "human_02",
+    "companion"
+  ],
+  "ref_description_string": "The character reference images that follow are the ONLY source of truth for each character's facial features, hair, and likeness: [1]\nhuman_01: [2], [3]\nhuman_02: [4], [5]\ncompanion: [6], [7]",
+  "page_format": {
+    "trim_in": {
+      "w": 8.5,
+      "h": 11.0
+    },
+    "bleed_in": 0.125,
+    "dpi": 300,
+    "pixels": {
+      "w": 2550,
+      "h": 3300
+    },
+    "orientation": "portrait"
+  },
+  "cast": {
+    "child_descs": [
+      "4.5yo boy named Elliott, short dark brown hair, grey-hazel eyes, fair skin, serious and curious expression",
+      "2yo girl named Colette, curly brown hair in a high ponytail, large grey-blue eyes, olive skin, round toddler cheeks"
+    ],
+    "pet_descs": [
+      "a dark-furred dog named Jean-Luc with light markings on the chest; drawn with outline only, not filled solid black"
+    ]
+  },
+  "print_safety": {
+    "interior_bleed_in": 0.125,
+    "cover_bleed_in": 0.125,
+    "safety_margin_in": 0.5
+  },
+  "globals_keys": [
+    "base_scene_header",
+    "base_scene_header_action",
+    "base_scene_header_epic",
+    "base_scene_header_flight",
+    "base_scene_header_vertical",
+    "comp_epic_upward",
+    "comp_flight_diagonal",
+    "comp_medium_close",
+    "comp_vertical_dynamic",
+    "cover_art_style",
+    "cover_comp_rules",
+    "global_safety_rules",
+    "overlay_styles",
+    "style_action",
+    "style_classic",
+    "style_emotional",
+    "style_line_art"
+  ]
+}

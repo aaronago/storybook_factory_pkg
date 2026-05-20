@@ -1,0 +1,238 @@
+{
+  "front_matter_prompts": [
+    {
+      "title": "Dedication Page",
+      "file": "front_01_dedication-page.png",
+      "prompt": "",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "front_matter",
+      "page": 1,
+      "source_image": "src/scene_packs/dragon_realm/dedication_template01.png",
+      "overlays": [
+        {
+          "type": "text",
+          "style": "dedication",
+          "content": "To Elliott & Colette — may your adventures together never end.",
+          "region_pct": {
+            "x": 15,
+            "y": 38,
+            "w": 70,
+            "h": 24
+          }
+        }
+      ]
+    }
+  ],
+  "interior_prompts": [
+    {
+      "title": "Entering the Dragon Realm",
+      "file": "page_02_entering-the-dragon-realm.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nhuman_02 pulls human_01 by the hand through a swirling magical portal.\ncompanion leaps through between their legs.\nStrange glowing plants and distant mountains on the other side.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 2
+    },
+    {
+      "title": "Dragon Hatchling",
+      "file": "page_03_dragon-hatchling.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nhuman_01 and human_02 crouch over a nest of cracking dragon eggs.\nA tiny dragon head pokes out of one egg reaching toward human_01's finger.\ncompanion peers in from behind them.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 3
+    },
+    {
+      "title": "The Grateful Hatchling",
+      "file": "page_04_the-grateful-hatchling.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nA baby dragon is pinned under a large fallen log, one wing trapped.\nhuman_01 strains with both hands to lift the log, face showing effort.\nhuman_02 crouches beside the dragon, carefully easing it free.\nThe baby dragon looks up at them with grateful eyes.\ncompanion stands close, watching intently.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 4
+    },
+    {
+      "title": "Dragon Training",
+      "file": "page_05_dragon-training.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nThe baby dragon hovers in the air, wings beating hard, having just obeyed a command to fly.\nhuman_01 pumps a fist in the air cheering, delighted it worked.\nhuman_02 claps excitedly beside them.\ncompanion barks up at the dragon encouragingly.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 5
+    },
+    {
+      "title": "Preparing for Adventure",
+      "file": "page_06_preparing-for-adventure.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nA baby dragon wears a tiny crooked helmet and oversized armor, trying to look brave.\nhuman_01 and human_02 laugh, trying to straighten the gear.\ncompanion watches with head tilted.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 6
+    },
+    {
+      "title": "The First Greeting",
+      "file": "page_07_the-first-greeting.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nCamera sits behind and above the dragon's neck, looking down over its shoulder.\nThe dragon's head and the curve of its neck fill the upper portion of the page, seen from behind.\nFar below, human_01 and human_02 are tiny figures on the ground,\nfaces tilted up toward the dragon, expressions full of wonder.\ncompanion sits close between them, also looking up.\nThe scale difference is enormous and breathtaking.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 7
+    },
+    {
+      "title": "The Sky Bridge",
+      "file": "page_08_the-sky-bridge.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nhuman_01 tiptoes across a narrow floating stone bridge high above the clouds, arms out for balance.\nhuman_02 follows close behind, peeking down at the drop.\ncompanion scrambles ahead, tail straight up.\nA dragon flies alongside the bridge, keeping pace with them.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 8
+    },
+    {
+      "title": "The Thunder Dragon",
+      "file": "page_09_the-thunder-dragon.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nA massive thunder dragon with crackling lightning around its wings soars overhead.\nhuman_01 throws both arms up cheering into the wind.\nhuman_02 and companion shelter behind the young dragon, peeking out.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 9
+    },
+    {
+      "title": "The Ancient Dragon",
+      "file": "page_10_the-ancient-dragon.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nAn enormous ancient dragon lowers its massive head toward the ground in greeting.\nhuman_01 and human_02 stare up at it, mouths open in awe.\ncompanion freezes between their feet, staring straight up.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 10
+    },
+    {
+      "title": "Frostfall Peaks",
+      "file": "page_11_frostfall-peaks.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nView from behind human_01 and human_02 — we see their backs as small figures\nstanding at the edge of a snowy cliff, facing an enormous ice dragon perched on the peak opposite.\nThe dragon fills the upper two-thirds of the page, scales shimmering like ice crystals,\nexhaling a slow breath of glittering frost across the chasm.\ncompanion sits between the children's feet, also facing the dragon.\nThe scale contrast between the tiny children and the vast dragon is dramatic.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 11
+    },
+    {
+      "title": "The Ocean Dragon",
+      "file": "page_12_the-ocean-dragon.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nA magnificent sea dragon rises from the ocean waves, curious and friendly.\nhuman_01 and human_02 stand at the water's edge, both leaning forward with wide grins,\narms outstretched toward it — thrilled and delighted, not afraid.\nWaves splash playfully around their feet.\ncompanion splashes excitedly in the shallow surf beside them.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 12
+    },
+    {
+      "title": "Rest and Recuperate",
+      "file": "page_13_rest-and-recuperate.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nhuman_01 and human_02 are fast asleep against the dragon's warm side.\ncompanion is curled up asleep on human_01's lap.\nThe dragon is wide awake, watching over them all.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 13
+    },
+    {
+      "title": "Dragon Flight",
+      "file": "page_14_dragon-flight.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nThe dragon soars high above the clouds with human_01 and human_02 riding on its back.\nhuman_01 holds on tight. human_02 throws both arms up screaming with joy.\ncompanion is tucked between them, eyes wide.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 14
+    },
+    {
+      "title": "The Dragon Festival",
+      "file": "page_15_the-dragon-festival.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nA lively village festival in a cobblestone square, decorated with colorful banners and garlands.\nVillagers and friendly dragons celebrate together.\nhuman_01 and human_02 stand center-stage, each holding a glowing paper lantern,\nbeaming with delight. A large friendly dragon leans its head into the square,\nwearing a flower garland around its neck.\ncompanion sits nearby, wearing a tiny festive bow.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 15
+    },
+    {
+      "title": "Goodbye Dragon Realm",
+      "file": "page_16_goodbye-dragon-realm.png",
+      "prompt": "human_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nclean black ink line drawing suitable for coloring\nClean black outlines on white.\nNo shading, no gray, no gradients, no shadows.\nAvoid large filled-black regions; keep interiors open for coloring.\n\nAvoid exaggerated cartoon faces or oversized eyes.\nPreserve the real facial proportions from the reference images.\n\nSTYLE: Children should show clear emotion and movement.\nAvoid stiff standing poses.\nUse expressive body language such as pointing,\nleaning, running, kneeling, reaching, or reacting.\n\nFULL-PAGE COMPOSITION: medium-close character-focused framing.\nThe children are the primary focus of the illustration.\n\nhuman_01 & human_02 and companion\noccupy roughly the lower 75–80% of the page.\n\nLeave open space above for environment elements.\nAvoid pushing the characters too far from the viewer.\n\n\n\nSCENE:\nAt the glowing portal, the dragon lowers its head to the ground.\nhuman_01 wraps both arms around the dragon's snout. human_02 hugs its jaw.\ncompanion is pressed close, tail still. No one wants to leave.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+      "pixels": {
+        "w": 2550,
+        "h": 3300
+      },
+      "kind": "scene",
+      "page": 16
+    }
+  ],
+  "back_matter_prompts": [],
+  "covers": {
+    "front": {
+      "file": "cover_front.png",
+      "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nhuman_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nFull-color, premium children’s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm–cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nRendering must feel like a frame from a high-end animated fantasy film.\n\nFRONT COVER SCENE:\nhuman_01 & human_02 and companion in the foreground,\ndiscovering a swirling magical portal in a forest clearing.\nA large friendly dragon rises protectively behind them,\nwings subtly framing the composition.\nA distant castle silhouette beyond the trees.\n\nLIGHTING:\nThe forest environment should be cool twilight blue and indigo.\nAdd subtle cool moonlight or sky glow from above/behind.\nThe portal emits a soft golden magical light that illuminates faces and nearby ground.\nKeep warm light localized — do NOT turn the entire scene orange.\nAdd gentle cool-violet shadow tones in unlit areas.\nAdd slight teal undertones in darker forest areas for depth.\n\nATMOSPHERE:\nSoft volumetric glow around the portal.\nLight mist or particles catching cool blue light in the distance.\nMaintain strong warm–cool color separation.\n\nCOMPOSITION:\nSubjects fill the lower ~65–70% of the cover.\nReserve the upper ~30–35% as open cool-toned sky for title placement.\nKeep this upper area clean and uncluttered (no branches or wings behind text).\n\nTITLE PLACEMENT RULES:\nInclude the exact title text:\nThe Dragon Realm Adventure\n\nThe title must sit comfortably inside the safe zone.\nLeave a generous clear margin above the word \"The\".\nThe top of the title block must not approach the trim edge.\nEnsure visible breathing room between the top of the cover and the title.\n\nCenter the title horizontally in the upper sky area.\nPosition the entire title block slightly lower than the very top —\nnever tight to the edge.\n\nUse elegant fantasy serif typography.\nGold-ivory lettering with subtle bevel and soft warm glow.\nProfessional book-cover quality.\nClean, readable letterforms.\nCorrect spelling is critical.\nDo not distort letters.\nDo not add extra words.\nNo other text anywhere on the cover.\n\nDo NOT draw placeholder boxes or frames.\nDo NOT draw fake lettering or symbols.",
+      "pixels": {
+        "w": 2588,
+        "h": 3375
+      },
+      "style_reference_image": null,
+      "title": "Front Cover Art",
+      "overlays": []
+    },
+    "back": {
+      "file": "cover_back.png",
+      "prompt": "You are drawing a full-color storybook cover illustration.\nFull color, rich saturation, painterly lighting. NOT black-and-white. NOT line art.\n\nCharacter bible (keep consistent with the interior cast):\nhuman_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nFull-color, premium children’s fantasy book cover illustration.\nHigh-end animated feature film lighting (Pixar-style fantasy cool).\n\nCOLOR DIRECTION:\n- World lighting = cool twilight blues, indigo, and soft violet.\n- Shadows lean blue-violet or teal, NOT brown or orange.\n- Portal glow = warm golden key light with soft falloff.\n- Strong warm–cool contrast between portal light and forest atmosphere.\n- Background should feel cool and magical, not sepia or sunset-orange.\n\nLIGHTING STYLE:\n- Cinematic global illumination.\n- Soft rim lighting separating characters from background.\n- Subtle cool moonlight or sky fill balancing the warm portal light.\n- Warm light affects only nearby surfaces; avoid flooding entire scene with orange.\n\nRENDERING:\n- Painterly but polished.\n- Smooth gradients and volumetric glow.\n- No heavy black contour lines.\n- Edges defined by light and color transitions, not outlines.\n\nHARD RULES:\n- NOT a coloring book page.\n- No outline-only rendering.\n- No large white fill areas.\n- Maintain full color depth and dynamic lighting.\n\nExpressive faces.\nModern animated-feature aesthetic.\nNo watermark.\n\n\nBACK COVER SCENE:\nhuman_01 and human_02 walk side by side away from the camera,\nhand in hand, into a sweeping dragon-realm landscape.\ncompanion trots just ahead of them, tail up.\nTheir backs are fully to the viewer — faces never visible.\nA large friendly dragon soars as a silhouette high against the twilight sky above them.\nRolling hills, a distant castle silhouette, glowing stars,\nsubtle magical particles drifting in the air, and a gentle twilight sky.\nSoft atmospheric depth and rich color. Calm, wistful mood.\n\nLeave the central-upper area moderately open for a potential blurb.\nDo NOT draw any text.\nDo NOT draw placeholder boxes or frames.",
+      "pixels": {
+        "w": 2588,
+        "h": 3375
+      },
+      "style_reference_image": null,
+      "title": "Back Cover Art",
+      "overlays": []
+    }
+  },
+  "character_names": [
+    "human_01",
+    "human_02",
+    "companion"
+  ],
+  "character_roles": {},
+  "ref_description_string": "The character reference images that follow are the ONLY source of truth for each character's facial features, hair, and likeness: [1]\nhuman_01: [2], [3]\nhuman_02: [4], [5]\ncompanion: [6], [7]",
+  "overlay_styles": {
+    "dedication": {
+      "font_path": "assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf",
+      "size": 145,
+      "fill": "black",
+      "stroke_width": 1,
+      "stroke_fill": "white",
+      "line_spacing": 1.18
+    }
+  }
+}

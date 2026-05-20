@@ -375,8 +375,11 @@ def _ensure_prompt_images(
             raw_prompt, page_title=page_title, kind=kind_label
         )
 
-        # Checking if raw_prompt already contains REFERENCES to avoid double-injection
-        if use_refs and ref_sheets and "REFERENCES:" not in raw_prompt:
+        # Avoid double-injection if the prompt already embeds any reference block
+        _already_has_refs = (
+            "ONLY source of truth" in raw_prompt or "REFERENCES:" in raw_prompt
+        )
+        if use_refs and ref_sheets and not _already_has_refs:
             ref_msg = "\n\nUse the attached character sheet reference images as the canonical identity and style."
             if ref_description_string:
                 ref_msg += f" {ref_description_string}"

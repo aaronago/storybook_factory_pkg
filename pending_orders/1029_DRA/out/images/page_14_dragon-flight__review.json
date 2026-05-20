@@ -1,0 +1,12 @@
+{
+  "kind": "interior",
+  "page": 14,
+  "title": "Dragon Flight",
+  "prompt_optimized": "REFERENCES: style_reference: [1]\nhuman_01: [2], [3]\nhuman_02: [4], [5]\ncompanion: [6], [7]\nhuman_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nThe dragon soars high above the clouds with human_01 and human_02 riding on its back.\nhuman_01 holds on tight. human_02 throws both arms up screaming with joy.\ncompanion is tucked between them, eyes wide.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+  "prompt_sent_to_model": "STYLE ANCHOR: Use this image ONLY for line-weight, stroke style, and coloring book aesthetic.\n[image: 8dad8687-22c7-46dc-bb30-9e1e6805cb55.jpg]\nCRITICAL: Do NOT copy the children's faces or identities from the image above. The character reference images that follow are the ONLY source of truth for each character's facial features, hair, and likeness.\n[image: PXL_20260412_182149807.PORTRAIT.jpg]\n[image: PXL_20260418_160453334.PORTRAIT.jpg]\n[image: PXL_20260412_172712558.PORTRAIT.jpg]\n[image: icm_fullxfull.875262607_h58tnp7pjkoc8kogko8s.jpg]\n[image: PXL_20251213_173804240.PORTRAIT.jpg]\n[image: PXL_20260301_174505676.PORTRAIT.jpg]\nREFERENCES: style_reference: [1]\nhuman_01: [2], [3]\nhuman_02: [4], [5]\ncompanion: [6], [7]\nhuman_01 is a 5yo boy\nhuman_02 is a 2yo girl\nOutfit: medieval fantasy clothing; boy and girl dressed appropriately for their gender; no modern clothing\n\nThe dragon soars high above the clouds with human_01 and human_02 riding on its back.\nhuman_01 holds on tight. human_02 throws both arms up screaming with joy.\ncompanion is tucked between them, eyes wide.\n\nNO TEXT IN IMAGE. All animals outline-only, never filled solid black.",
+  "selected": "first",
+  "num_candidates": 1,
+  "candidates": [
+    "page_14_dragon-flight__cand00.png"
+  ]
+}

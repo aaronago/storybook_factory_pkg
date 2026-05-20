@@ -40,7 +40,7 @@ class GeminiImageSorter:
         self,
         image_paths: list[Path],
         character_names: list[str],
-        model: str = "gemini-3.1-flash-lite-preview",
+        model: str = "gemini-3.1-flash-lite",
         style_ref_dir: Path | None = None,
         character_roles: dict[str, str] | None = None,
         character_descs: dict[str, str] | None = None,
@@ -172,15 +172,24 @@ class GeminiImageSorter:
             ids_str = ", ".join(char_to_ids[label])
             char_lines.append(f"{label}: {ids_str}")
 
-        # Compose final string
-        ref_description_string = "REFERENCES: " + "\n".join(char_lines)
+        # Compose final string — style_reference index is embedded in the opening sentence
+        style_ids = char_to_ids.get("style_reference", [])
+        style_suffix = ": " + ", ".join(style_ids) if style_ids else ""
+        char_only_lines = [
+            line for line in char_lines if not line.startswith("style_reference")
+        ]
+        ref_description_string = (
+            "The character reference images that follow are the ONLY source of truth"
+            f" for each character's facial features, hair, and likeness{style_suffix}\n"
+            + "\n".join(char_only_lines)
+        )
         return ref_description_string, sorted_paths
 
     def sort_user_uploads(
         self,
         image_paths: list[Path],
         character_names: list[str],
-        model: str = "gemini-3.1-flash-lite-preview",
+        model: str = "gemini-3.1-flash-lite",
         character_descs: dict[str, str] | None = None,
     ) -> dict[str, list[int]]:
         """

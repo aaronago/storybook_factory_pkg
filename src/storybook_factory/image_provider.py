@@ -278,19 +278,19 @@ class ImageProvider:
             # If reference images are provided, use generate_content (multimodal)
             if refs:
                 contents = []
+                log_parts: list[str] = []
 
+                # 1. STYLE ANCHOR — label then image so the instruction is "sticky"
                 STYLE_ANCHOR_TEXT = (
-                    "STYLE ANCHOR: Use this image ONLY for line-weight, stroke style, "
-                    "and coloring book aesthetic."
+                    "STYLE REFERENCE: Use this image ONLY for technical ink "
+                    'properties: line weight, stroke texture, and "coloring book" '
+                    "high-contrast aesthetic. "
+                    "STRICT NEGATIVE CONSTRAINT: You must discard and ignore the faces, "
+                    "eye shapes, and hair of any children in this image. They are NOT the "
+                    "subjects of this book."
                 )
-                CRITICAL_TEXT = "CRITICAL: Do NOT copy the children's faces or identities from the image above."
-                IDENTITY_TEXT = (
-                    "NEW CHARACTER IDENTITY: Use the images below ONLY for the "
-                    "facial features, hair, and likeness of the characters."
-                )
-
-                # 1. STYLE ANCHOR — first ref is always the global style reference
                 contents.append(STYLE_ANCHOR_TEXT)
+                log_parts.append(STYLE_ANCHOR_TEXT)
                 with open(refs[0], "rb") as f:
                     contents.append(
                         _google_types.Part.from_bytes(
@@ -302,42 +302,63 @@ class ImageProvider:
                             ),
                         )
                     )
-                contents.append(CRITICAL_TEXT)
+                log_parts.append(f"[image: {refs[0].name}]")
 
-                # 2. CHARACTER IDENTITY — remaining refs are character photos.
+                # 2. CHARACTER IDENTITY — one label per character, then all their
+                #    photos together, so the instruction is "sticky" to every photo
+                #    for that character without repeating it per image.
                 if len(refs) > 1:
-                    contents.append(IDENTITY_TEXT)
-                    for char_ref in refs[1:]:
-                        with open(char_ref, "rb") as f:
-                            contents.append(
-                                _google_types.Part.from_bytes(
-                                    data=f.read(),
-                                    mime_type=(
-                                        "image/png"
-                                        if char_ref.suffix.lower() == ".png"
-                                        else "image/jpeg"
-                                    ),
+                    import re
+                    from itertools import groupby
+
+                    def _char_key(p: Path) -> str:
+                        """
+                        Extract a character identifier from the filename stem.
+                        e.g. 'human_01_photo1' -> 'human_01'
+                             'human_02'         -> 'human_02'
+                             'companion_01'     -> 'companion_01'
+                        Falls back to the full stem if no match.
+                        """
+                        m = re.match(r"^([a-z]+_\d+)", p.stem.lower())
+                        return m.group(1) if m else p.stem.lower()
+
+                    for char_id, group_iter in groupby(refs[1:], key=_char_key):
+                        char_photos = list(group_iter)
+                        photo_word = "photo" if len(char_photos) == 1 else "photos"
+                        char_label = (
+                            f"CHARACTER IDENTITY — {char_id}: "
+                            f"The {photo_word} below are the CANONICAL reference(s) for this character. "
+                            "Replicate the exact facial geometry, eye shape, and hair texture "
+                            "from these photos with 100% priority over the Style Reference above."
+                        )
+                        contents.append(char_label)
+                        log_parts.append(char_label)
+                        for char_ref in char_photos:
+                            with open(char_ref, "rb") as f:
+                                contents.append(
+                                    _google_types.Part.from_bytes(
+                                        data=f.read(),
+                                        mime_type=(
+                                            "image/png"
+                                            if char_ref.suffix.lower() == ".png"
+                                            else "image/jpeg"
+                                        ),
+                                    )
                                 )
-                            )
+                            log_parts.append(f"[image: {char_ref.name}]")
 
-                # 3. Scene instructions — keep REFERENCES index block intact so the
-                # model knows which numbered image maps to which character role.
-                contents.append(prompt)
-
-                # Record exact text contents sent to model (images noted by filename)
-                self.last_prompt = "\n".join(
-                    [
-                        STYLE_ANCHOR_TEXT,
-                        f"[image: {refs[0].name}]",
-                        CRITICAL_TEXT,
-                    ]
-                    + (
-                        [IDENTITY_TEXT] + [f"[image: {r.name}]" for r in refs[1:]]
-                        if len(refs) > 1
-                        else []
-                    )
-                    + [prompt]
+                # 3. Scene instructions — placed last so it is the final thing the
+                #    model reads before generating.
+                scene_text = (
+                    f"SCENE TO DRAW:\n{prompt}\n\n"
+                    "REMINDER: Match character faces to the Identity Photos above, "
+                    "NOT the Style Reference."
                 )
+                contents.append(scene_text)
+                log_parts.append(scene_text)
+
+                # Record exact contents sent to model (images noted by filename)
+                self.last_prompt = "\n".join(log_parts)
 
                 response = self._google_client.models.generate_content(
                     model=clean_model,
